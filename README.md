@@ -2,10 +2,10 @@
 
 
 # front
-react
+<a href="https://ja.react.dev/blog/2023/03/16/introducing-react-dev">react JS<a>
 
 # back
-nest
+<a href="https://nestjs.com/">nest JS<a>
 
 # db
-postgresql
+<a href="https://www.postgresql.org/">postgresql<a>
