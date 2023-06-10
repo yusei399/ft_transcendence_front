@@ -8,6 +8,7 @@ import {
   Box
 } from "@chakra-ui/react";
 import axios from "axios";
+import { chakra } from "@chakra-ui/react";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -16,45 +17,59 @@ const Register = () => {
   const [profileImage, setProfileImage] = useState<string | Blob | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+
+  const clearForm = () => {
+	setUsername("");
+	setPassword("");
+	setConfirmPassword("");
+	setProfileImage(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
-
-    try {
-      const formData = new FormData();
-      formData.append("username", username);
-      formData.append("password", password);
-      formData.append("confirmPassword", confirmPassword);
-      if (profileImage) {
-        formData.append("profileImage", profileImage);
-      }
-
-      const res = await axios.post("/users/register", formData);
-      console.log(res.data);
-      setIsSubmitted(true);
-    } catch (err) {
-      console.error(err);
-    }
-
-    setUsername("");
-    setPassword("");
-    setConfirmPassword("");
-    setProfileImage(null);
+	e.preventDefault();
+  
+	if (password !== confirmPassword) {
+	  alert("Passwords do not match");
+	  return;
+	}
+  
+	try {
+	  const formData = new FormData();
+	  formData.append("username", username);
+	  formData.append("password", password);
+	  formData.append("confirmPassword", confirmPassword);
+	  if (profileImage) {
+		formData.append("profileImage", profileImage);
+	  }
+  
+	  const res = await axios.post("/users/register", formData);
+	  console.log(res.data);
+	  clearForm();
+	  setIsSubmitted(true);
+	} catch (err) {
+	  console.error(err);
+	}
+	setUsername("");
+	setPassword("");
+	setConfirmPassword("");
+	setProfileImage(null);
+	setIsSubmitted(true);
   };
 
   const isUsernameEmpty = username.trim() === "";
   const isPasswordEmpty = password.trim() === "";
   const isConfirmPasswordEmpty = confirmPassword.trim() === "";
 
+
+  
+
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setProfileImage(file);
-    }
+	const file = e.target.files?.[0];
+	if (file) {
+	  setProfileImage(file);
+	} else {
+	  setProfileImage(null); // ファイルが選択されていない場合、profileImageをnullに設定する
+	}
   };
 
   return (
@@ -72,7 +87,7 @@ const Register = () => {
           {isUsernameEmpty && (
             <FormErrorMessage color="red">Username is required.</FormErrorMessage>
           )}
-        </FormControl>
+		</FormControl>
 
         <FormControl isRequired isInvalid={isPasswordEmpty}>
           <FormLabel>Password</FormLabel>
@@ -106,16 +121,21 @@ const Register = () => {
 
         <FormControl>
           <FormLabel>Profile Image</FormLabel>
-          <Input type="file" accept="image/*" onChange={handleProfileImageChange} />
+          <Input isRequired type="file" accept="image/*" onChange={handleProfileImageChange} />
         </FormControl>
 
-        <Button type="submit">Submit</Button>
+		<chakra.button 
+				py='2'
+				bg='green.200'
+				rounded='md'
+				_hover={{ bg: 'green.300' }}
+				type="submit">Submit
+		</chakra.button>
       </form>
 
       {isSubmitted && (
         <Box mt={4} color="green">Registration successful! You can now log in.</Box>
       )}
-
       <h1>#Register Page</h1>
     </>
   );
