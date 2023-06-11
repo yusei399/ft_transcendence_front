@@ -2,8 +2,8 @@ import React from 'react';
 import Home from './Home';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from './Login';
-import Register from './Register';
 import { ChakraBaseProvider } from '@chakra-ui/react';
+import Signup from './Signup';
 
 function App() {
   return (
@@ -13,7 +13,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register/>} />
+            <Route path="/signup" element={<Signup/>} />
           </Routes>
         </BrowserRouter>
       </ChakraBaseProvider>
