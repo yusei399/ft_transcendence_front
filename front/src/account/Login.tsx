@@ -28,18 +28,18 @@ const Login = () => {
 						px={5}
 						/>
 				</FormControl>
-              <FormControl isRequired>
+				<FormControl isRequired>
                 <Input
-                  placeholder="password"
-                  variant="outline"
-                  sx={{
-                    borderWidth: "1px",
-                    borderColor: isPasswordEmpty ? "gray.300" : "blue.500",
-                  }}
-                  rounded="full"
-                  px={5}
-				  marginLeft={5}
-				  marginBottom={5}
+					placeholder="password"
+					variant="outline"
+					sx={{
+					borderWidth: "1px",
+					borderColor: isPasswordEmpty ? "gray.300" : "blue.500",
+					}}
+					rounded="full"
+					px={5}
+					marginLeft={5}
+					marginBottom={5}
                 />
               </FormControl>
 
@@ -50,7 +50,7 @@ const Login = () => {
                 rounded="full"
                 margin={7}
                 _hover={{ bg: "green.300" }}
-              >
+				>
                 Login
               </chakra.button>
       </form>
