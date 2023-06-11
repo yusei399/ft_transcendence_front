@@ -14,28 +14,19 @@ const Login = () => {
 
   return (
     <div
-		style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-		}}
     >
 		<form>
-        <Flex flexDirection="column" alignItems="center">
-			<Card border="1px solid gray" borderRadius="md" height={300} >
-				<CardBody marginTop={20}>
 				<FormControl isRequired margin={5}>
-                <Input
-					placeholder="username"
-					variant="outline"
-					sx={{
-						borderWidth: "1px",
-						borderColor: isUsernameEmpty ? "gray.300" : "blue.500",
-					}}
-					rounded="full"
-					px={5}
-					/>
+					<Input
+						placeholder="username"
+						variant="outline"
+						sx={{
+							borderWidth: "1px",
+							borderColor: isUsernameEmpty ? "gray.300" : "blue.500",
+						}}
+						rounded="full"
+						px={5}
+						/>
 				</FormControl>
               <FormControl isRequired>
                 <Input
@@ -59,13 +50,9 @@ const Login = () => {
                 rounded="full"
                 margin={7}
                 _hover={{ bg: "green.300" }}
-                onClick={() => navigate("/")}
               >
                 Login
               </chakra.button>
-            </CardBody>
-          </Card>
-        </Flex>
       </form>
     </div>
   );
