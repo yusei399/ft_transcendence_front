@@ -7,7 +7,6 @@ import {
 	Req,
 } from '@nestjs/common';
 
-import { request, response } from 'express';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import { Csrf, Msg } from './interfaces/auth.interface';
@@ -15,12 +14,12 @@ import { Csrf, Msg } from './interfaces/auth.interface';
 
 @Controller('auth')
 export class AuthController {
-	constructor(private readonly auth: AuthService) {}
+  constructor(private readonly auth: AuthService) {}
 
-	@Post('signup')
-	async signUp(@Body() authDto: AuthDto): Promise<Msg> {
-		return this.auth.signUp(authDto);
-	}
+  @Post('signup')
+  signUp(@Body() dto: AuthDto): Promise<Msg> {
+    return this.auth.signUp(dto);
+  }
 
 	// @Post('login')
 	// async login(@Body() authDto: AuthDto): Promise<Csrf> {

@@ -11,56 +11,57 @@ import { PrismaService } from "../prisma/prisma.service";
 @Injectable()
 export class AuthService {
 	constructor(
-		private readonly jwt: JwtService,
-		private readonly config: ConfigService,
-		private readonly prisma: PrismaService
+	  private readonly prisma: PrismaService,
+	  private readonly jwt: JwtService,
+	  private readonly config: ConfigService,
 	) {}
-	async signUp(authDto: AuthDto) {
-		const hashedPassword = await bcrypt.hash(authDto.password, 12);
-		try {
-			const user = await this.prisma.user.create({
-				data: {
-					name: authDto.name,
-					email: authDto.email,
-					password: hashedPassword
-				}
-			});
-			return { msg: "success" };
-		}catch(e) {
-			if(e instanceof PrismaClientKnownRequestError) {
-				if(e.code === "P2002") {
-					throw new ForbiddenException("Email already exists");
-				}
-			}
-			throw e;
-		}
-	}
-
-	async login(authDto: AuthDto){
-		const user = await this.prisma.user.findUnique({
-			where: {
-			  email:authDto.email ,
-			},
-		  });
-		if(!user) {
-			throw new ForbiddenException("Invalid credentials");
-		}
-		const isPasswordValid = await bcrypt.compare(authDto.password, user.password);
-		if(!isPasswordValid) {
-			throw new ForbiddenException("Invalid credentials");
-		}
-		return this.generateJwtToken(user.id, user.email);
-	}
-
-	async generateJwtToken(userId: number, email: string){
-		const payload = { sub: userId,
-							email,
-						};
-		const secret = this.config.get("JWT_SECRET");
-		const token = await this.jwt.signAsync(payload, { 
-			expiresIn: "5m"
+	async signUp(dto: AuthDto): Promise<Msg> {
+	  const hashed = await bcrypt.hash(dto.password, 12);
+	  try {
+		await this.prisma.user.create({
+		  data: {
+			email: dto.email,
+			hashedPassword: hashed,
+		  },
 		});
+		return {
+		  msg: 'ok',
+		};
+	  } catch (error) {
+		if (error instanceof PrismaClientKnownRequestError) {
+		  if (error.code === 'P2002') {
+			throw new ForbiddenException('This email is already taken');
+		  }
+		}
+		throw error;
+	  }
 	}
+
+	// async login(authDto: AuthDto){
+	// 	const user = await this.prisma.user.findUnique({
+	// 		where: {
+	// 			email:authDto.email ,
+	// 			},
+	// 		});
+	// 	if(!user) {
+	// 		throw new ForbiddenException("Invalid credentials");
+	// 	}
+	// 	const isPasswordValid = await bcrypt.compare(authDto.password, user.password);
+	// 	if(!isPasswordValid) {
+	// 		throw new ForbiddenException("Invalid credentials");
+	// 	}
+	// 	return this.generateJwtToken(user.id, user.email);
+	// }
+
+	// async generateJwtToken(userId: number, email: string){
+	// 	const payload = { sub: userId,
+	// 						email,
+	// 					};
+	// 	const secret = this.config.get("JWT_SECRET");
+	// 	const token = await this.jwt.signAsync(payload, { 
+	// 		expiresIn: "5m"
+	// 	});
+	// }
 }
 
 
