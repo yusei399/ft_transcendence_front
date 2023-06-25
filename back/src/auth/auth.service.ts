@@ -25,7 +25,7 @@ export class AuthService {
 		  },
 		});
 		return {
-		  msg: 'ok',
+		  msg: 'sign up ok',
 		};
 	  } catch (error) {
 		if (error instanceof PrismaClientKnownRequestError) {
@@ -37,31 +37,35 @@ export class AuthService {
 	  }
 	}
 
-	// async login(authDto: AuthDto){
-	// 	const user = await this.prisma.user.findUnique({
-	// 		where: {
-	// 			email:authDto.email ,
-	// 			},
-	// 		});
-	// 	if(!user) {
-	// 		throw new ForbiddenException("Invalid credentials");
-	// 	}
-	// 	const isPasswordValid = await bcrypt.compare(authDto.password, user.password);
-	// 	if(!isPasswordValid) {
-	// 		throw new ForbiddenException("Invalid credentials");
-	// 	}
-	// 	return this.generateJwtToken(user.id, user.email);
-	// }
+	async login(authDto: AuthDto){
+		const user = await this.prisma.user.findUnique({
+			where: {
+				email:authDto.email ,
+				},
+			});
+		if(!user) {
+			throw new ForbiddenException("Invalid credentials");
+		}
+		const isPasswordValid = await bcrypt.compare(authDto.password, user.hashedPassword);
+		if(!isPasswordValid) {
+			throw new ForbiddenException("Invalid credentials");
+		}
+		return this.generateJwtToken(user.id, user.email);
+	}
 
-	// async generateJwtToken(userId: number, email: string){
-	// 	const payload = { sub: userId,
-	// 						email,
-	// 					};
-	// 	const secret = this.config.get("JWT_SECRET");
-	// 	const token = await this.jwt.signAsync(payload, { 
-	// 		expiresIn: "5m"
-	// 	});
-	// }
+	async generateJwtToken(userId: number, email: string){
+		const payload = { sub: userId,
+							email,
+						};
+		const secret = this.config.get("JWT_SECRET");
+		const token = await this.jwt.signAsync(payload, { 
+			expiresIn: "5m",
+			secret: secret,
+		});
+		return {
+			accessToken: token,
+		};
+	}
 }
 
 
