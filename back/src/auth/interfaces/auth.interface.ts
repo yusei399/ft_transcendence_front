@@ -3,8 +3,8 @@ export interface Msg {
 }
 
 export interface Csrf {
-	csrf: string;
-}
+	csrfToken: string;
+	}
 
 export interface Jwt {
 	accessToken: string;

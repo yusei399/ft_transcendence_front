@@ -20,12 +20,11 @@ const Signup = () => {
   const [profileImage, setProfileImage] = useState<string | Blob | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-
   const clearForm = () => {
-	setUsername("");
-	setPassword("");
-	setConfirmPassword("");
-	setProfileImage(null);
+    setUsername("");
+    setPassword("");
+    setConfirmPassword("");
+    setProfileImage(null);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

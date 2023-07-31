@@ -1,3 +1,4 @@
+import * as express from 'express';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Request } from 'express';
@@ -14,6 +15,16 @@ async function bootstrap() {
     credentials: true,
   });
   app.use(cookieParser());
-  await app.listen(3005);
+  // app.use(csurf({
+  //   cookie: {
+  //     httpOnly: true,
+  //     secure: false,
+  //     sameSite: 'none',
+  //   },
+  //   value: (req: Request) => {
+  //     return req.header('csrf-token');
+  //   },
+  // }));
+  await app.listen(process.env.PORT || 3005);
 }
 bootstrap();

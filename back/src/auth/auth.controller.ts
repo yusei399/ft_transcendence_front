@@ -2,18 +2,16 @@ import {
 	Controller,
 	Post,
 	Body,
-	Get,
-	UseGuards,
-	Req,
 	HttpCode,
 	HttpStatus,
 	Res,
-} from '@nestjs/common';
-
-import { AuthService } from './auth.service';
-import { AuthDto } from './dto/auth.dto';
-import { Csrf, Msg } from './interfaces/auth.interface';
-import { Response } from 'express';
+	Req,
+	Get,
+  } from '@nestjs/common';
+  import { Request, Response } from 'express';
+  import { AuthService } from './auth.service';
+  import { AuthDto } from './dto/auth.dto';
+  import { Csrf, Msg } from './interfaces/auth.interface';
 
 
 @Controller('auth')
