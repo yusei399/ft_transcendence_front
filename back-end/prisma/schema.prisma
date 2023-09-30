@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  name String
+  friends Friend[]
+  // channels Channel[]
+  Participation Participant[]
+  @@map("Users")
+}
+
+
+model Friend {
+  id Int @id @default(autoincrement())
+  userIds Int[]
+  users User @relation(fields: [userIds], references: [id])
+  status Status
+}
+
+enum Status {
+  PENDING
+  ACCEPTED
+  REFUSED
+}
+
+model Channel {
+  id Int @id @default(autoincrement())
+  participantIds Int[]
+  participants Participant @relation(fields: [participantIds], references: [id])
+}
+
+model Participant {
+  id Int @id @default(autoincrement())
+  role Role
+  userId Int
+  isAdmin Boolean
+  mutedUntil DateTime
+  channels Channel
+  participants User @relation(fields: [userId], references: [id])
+
+	@@map("Participants")
+}
+
+
+enum Role{
+  CREATOR
+  ADMIN
+  MEMBER
+}
