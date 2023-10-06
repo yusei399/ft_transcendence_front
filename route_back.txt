@@ -1,0 +1,15 @@
+
+
+/auth
+Sign up {}
+Sign In {}
+
+/game
+calculate-position {x , y | winner? P1 | P2}
+
+/Chat
+
+
+
+
+

@@ -1,0 +1,26 @@
+/home
+Login / Logout
+- Sign up
+- Profile {stats}
+
+/Profile_edit
+
+
+/Game
+	/Play
+	/Invite
+
+/chat/[chatId]
+- Private msg
+- Room
+- {ignore / invite / block}
+
+/Ranking
+- Match History
+
+-------------
+[Sign up with 42 Oauth]
+
+
+
+
