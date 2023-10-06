@@ -18,8 +18,6 @@ Login / Logout
 /Ranking
 - Match History
 
-
-
 -------------
 [Sign up with 42 Oauth]
 
