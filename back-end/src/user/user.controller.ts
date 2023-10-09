@@ -11,6 +11,6 @@ export class UserController {
 
   @Patch('edit')
   async editProfile(@GetUser('id') id: number, @Body() dto: EditUserDto) {
-    return await this.userService.editUserInfo(id, dto);
+    return (await this.userService.editUserInfo(id, dto));
   }
 }
