@@ -9,48 +9,146 @@ datasource db {
 
 model User {
   id Int @id @default(autoincrement())
-  nickName String?
-  email String @unique
+  id42 Int? @unique
+
+  nickname  String? @unique
+  email     String
   avatarUrl String?
-  // friends Friend[]
-  // // channels Channel[]
-  // Participation Participant[]
+
+  sentInvitations     Invitation[] @relation("SentInvitations")
+  receivedInvitations Invitation[] @relation("ReceivedInvitations")
+
+  chatParticipation ChatParticipation[]
+  gameParticipation GameParticipation[]
+
   @@map("Users")
 }
 
+model Invitation {
+  id Int @id @default(autoincrement())
 
-// model Friend {
-//   id Int @id @default(autoincrement())
-//   userIds Int[]
-//   users User @relation(fields: [userIds], references: [id])
-//   status Status
-// }
+  senderId   Int
+  receiverId Int
+  sender     User @relation("SentInvitations", fields: [senderId], references: [id])
+  receiver   User @relation("ReceivedInvitations", fields: [receiverId], references: [id])
 
-// enum Status {
-//   PENDING
-//   ACCEPTED
-//   REFUSED
-// }
+  invitationStatus InvitationStatus
+  kind             InvitationKind
 
-// model Channel {
-//   id Int @id @default(autoincrement())
-//   participantIds Int[]
-// 	@@map("Channels")
-// }
+  targetChatId Int?
+  targetChat   Chat? @relation(fields: [targetChatId], references: [id])
 
-// model Participant {
-//   id Int @id @default(autoincrement())
-//   role Role
-//   userId Int
-//   isAdmin Boolean
-//   mutedUntil DateTime
-//   participants User @relation(fields: [userId], references: [id])
+  targetGameId Int?
+  targetGame   Game? @relation(fields: [targetGameId], references: [id])
 
-// 	@@map("Participants")
-// }
+  targetRelationshipId Int?
+  targetRelationship   Relationship? @relation(fields: [targetRelationshipId], references: [id])
 
-// enum Role{
-//   CREATOR
-//   ADMIN
-//   MEMBER
-// }
+  @@map("Invitations")
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REFUSED
+}
+
+enum InvitationKind {
+  FRIEND
+  CHAT
+  GAME
+}
+
+model Relationship {
+  id          Int          @id @default(autoincrement())
+  invitations Invitation[]
+
+  @@map("Relationships")
+}
+
+model Chat {
+  id Int @id @default(autoincrement())
+
+  chatAvatarUrl String?
+  hashedPassword   String?
+
+  invitations  Invitation[]
+  participants ChatParticipation[]
+
+  @@map("Chats")
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime
+
+  senderId Int
+  sender   ChatParticipation @relation(fields: [senderId], references: [id])
+
+  @@map("Messages")
+}
+
+model ChatParticipation {
+  id Int @id @default(autoincrement())
+
+  role         Role      @default(MEMBER)
+  mutedUntil   DateTime?
+  blockedUntil DateTime?
+
+  messages     Message[]
+
+  chatId Int
+  chat   Chat @relation(fields: [chatId], references: [id])
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  @@map("ChatParticipations")
+}
+
+enum Role {
+  CREATOR
+  ADMIN
+  MEMBER
+}
+
+model GameParticipation {
+  id Int @id @default(autoincrement())
+
+  Point    Int      @default(0)
+  isWinner Boolean?
+
+  gameId Int
+  game   Game @relation(fields: [gameId], references: [id])
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  @@map("GameParticipations")
+}
+
+model Game {
+  id         Int @id @default(autoincrement())
+
+  scoreToWin Int @default(3)
+  gameStatus GameStatus @default(WAITING_FOR_PLAYER)
+
+  playerOnePaddlePos Int @default(0)
+  playerTwoPaddlePos Int @default(0)
+
+  ballPositionX Int @default(0)
+  ballPositionY Int @default(0)
+
+  invitations  Invitation[]
+  participants GameParticipation[]
+
+  @@map("Games")
+}
+
+enum GameStatus {
+  WAITING_FOR_PLAYER
+  IN_PROGRESS
+  PAUSED
+  FINISHED
+  CANCELED
+}

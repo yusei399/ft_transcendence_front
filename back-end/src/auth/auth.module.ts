@@ -15,7 +15,6 @@ import { PrismaModule } from 'src/prisma/prisma.module';
     }),
     PassportModule,
     HttpModule,
-    PrismaModule,
   ],
   providers: [FortyTwoStrategy, JwtStrategy, AuthService],
   exports: [AuthService],
