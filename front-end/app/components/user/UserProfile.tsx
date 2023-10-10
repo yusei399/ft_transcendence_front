@@ -1,12 +1,13 @@
-import Image from 'next/image';
+// import Image from 'next/image';
 
-const UserProfile = () => {
+const UserProfile = ({ userData }: { userData: any }) => {
+	console.log(userData.name);
 	return (
 		<div>
 			<div className='personal'>
-				<h1>name</h1>
-				<h1>email</h1>
-				<Image src="../../../assets/sample.png" alt="User Profile" width={500} height={500} />
+				<h1>{userData.name}</h1>
+				<h1>{userData.email}</h1>
+				{/* <Image src="../../../assets/sample.png" alt="User Profile" width={500} height={500} /> */}
 				<button>Edit</button>
 			</div>
 			<div className='user-function'>
