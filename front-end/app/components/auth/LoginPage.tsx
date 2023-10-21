@@ -1,9 +1,9 @@
-
+import { Button } from "@chakra-ui/react";
 
 const LoginPage =() => {
 	return (
 	  <>
-		<button>ログインボタン 42apiに置き換え</button>
+		<Button colorScheme='blue'>ログインボタン 42apiに置き換え</Button>
 	  </>
 	);
   }

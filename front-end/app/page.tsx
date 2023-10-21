@@ -1,8 +1,7 @@
 import LoginPage  from './components/auth/LoginPage'
 import UserEditProfile from './components/user/UserEditProfile';
 import UserProfile from './components/user/UserProfile';
-
-import styles from './page.module.css'
+import { ChakraProvider } from "@chakra-ui/react";
 
 export default function main() {
 
@@ -15,10 +14,12 @@ export default function main() {
     email: "test2.eamil.com",
   }]
   return (
-    <main className={styles.main}>
-      <LoginPage />
-      {/* <UserEditProfile prop={User}/> */}
-      <UserProfile userData={User}/>
-    </main>
+    <>
+      <ChakraProvider>
+        {/* <LoginPage />
+        <UserEditProfile/> */}
+        <UserProfile />
+      </ChakraProvider>
+    </>
   );
 }

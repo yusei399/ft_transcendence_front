@@ -6,7 +6,6 @@ const UserEditProfile = () => {
 		<div>
 			<form>name</form>
 			<h1>email</h1>
-			{/* <Image src="../../../assets/sample.png" alt="User Profile" width={500} height={500} /> */}
 			<button>Update</button>
 		</div>
 	)
