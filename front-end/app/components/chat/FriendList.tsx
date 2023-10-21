@@ -19,5 +19,4 @@ const FriendList = (prop : any) => {
 	);
 }
 
-
 export default FriendList;
