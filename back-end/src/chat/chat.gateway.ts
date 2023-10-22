@@ -1,27 +1,28 @@
-import {
-  ConnectedSocket,
-  MessageBody,
-  SubscribeMessage,
-  WebSocketGateway,
-  WebSocketServer,
-} from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import {MessageBody, SubscribeMessage, WebSocketGateway, WsException} from '@nestjs/websockets';
+import {SendMessageDto} from './dto';
+import {ChatService} from './chat.service';
+import {Socket} from 'socket.io';
+import {UseInterceptors} from '@nestjs/common';
+import {WebSocketValidationInterceptor} from 'src/interceptor/WebSocket.interceptor';
 
 @WebSocketGateway()
 export class ChatGateway {
-  @WebSocketServer() server: Server;
+  constructor(private readonly chat: ChatService) {}
 
-  // handleConnection(@ConnectedSocket() client: Socket) {
-  //   console.log('connection handling');
-  //   client.emit('connection', 'You are now connected to the channel.');
-  // }
-  // handleDisconnect(@ConnectedSocket() client: Socket) {
-  //   client.emit('connection', 'You are now disconnected from the channel.');
-  // }
+  @SubscribeMessage('newMessage')
+  @UseInterceptors(WebSocketValidationInterceptor)
+  async handleEvent(client: Socket, @MessageBody() dto: SendMessageDto) {
+    console.log('pass');
+    try {
+      return await this.chat.sendMessage(dto);
+    } catch (err) {
+      console.log('prismaError');
+      throw err instanceof WsException ? err : new WsException(`bad request`);
+    }
+  }
 
-  @SubscribeMessage('chat_message')
-  handleMessage(@MessageBody() data: string, @ConnectedSocket() client: Socket) {
-    console.log(data);
-    this.server.emit('new_message', data);
+  @SubscribeMessage('test2')
+  handleEvent2(@MessageBody() data: string): string {
+    throw new WsException('degage!');
   }
 }

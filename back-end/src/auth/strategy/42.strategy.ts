@@ -1,11 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-42';
-import { PrismaService } from 'src/prisma/prisma.service';
+import {Injectable, UnauthorizedException} from '@nestjs/common';
+import {PassportStrategy} from '@nestjs/passport';
+import {Strategy} from 'passport-42';
+import {UserService} from 'src/user/user.service';
+import {FortyTwoProfile} from '../interface';
+import {PrismaUser} from 'src/prisma/interfaces';
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(private readonly userService: UserService) {
     super({
       clientID: process.env.OAUTH42_CLIENT_ID,
       clientSecret: process.env.OAUTH42_SECRET,
@@ -14,31 +16,20 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
         id: 'id',
         username: 'login',
         email: 'email',
-        avatarUrl: 'image_url',
       },
     });
   }
-
-  async validate(accessToken: string, refreshToken: string, profile: any): Promise<any> {
-    const userInfo = profile?._json;
-    if (!userInfo.id)
-      throw new UnauthorizedException('Id is missing in the user profile.');
-
+  async validate(accessToken: string, refreshToken: string, profile: any): Promise<PrismaUser> {
+    const userInfo: FortyTwoProfile = {...profile?._json};
+    if (!userInfo?.id) throw new UnauthorizedException('Id is missing in the user profile.');
     try {
-      const isRegistred = await this.prisma.user.findUnique({
-        where: { id42: userInfo.id },
-      });
-      if (!isRegistred) {
-        await this.prisma.user.create({
-          data: {
-            id42: userInfo.id,
-            email: userInfo.email,
-          },
-        });
-      }
+      const user = await this.userService.getOrCreateUser(
+        {user42Id: userInfo.id},
+        {user42Id: userInfo.id, email: userInfo.email, nickname: userInfo.login},
+      );
+      return user;
     } catch (err) {
       throw new UnauthorizedException(err);
     }
-    return profile;
   }
 }

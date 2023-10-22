@@ -21,7 +21,7 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
-    "src/auth/guard/42_auth.guard.ts"
+    "src/auth/guard/42Auth.guard.ts"
   ],
   "exclude": [
     "node_modules"

@@ -8,41 +8,38 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  id42 Int? @unique
+  userId   Int  @id @default(autoincrement())
+  user42Id Int? @unique
 
   nickname  String? @unique
   email     String
+  password  String?
   avatarUrl String?
 
   sentInvitations     Invitation[] @relation("SentInvitations")
   receivedInvitations Invitation[] @relation("ReceivedInvitations")
 
-  chatParticipation ChatParticipation[]
-  gameParticipation GameParticipation[]
+  chatParticipations ChatParticipation[]
+  gameParticipations GameParticipation[]
 
   @@map("Users")
 }
 
 model Invitation {
-  id Int @id @default(autoincrement())
+  invitationId Int @id @default(autoincrement())
 
   senderId   Int
   receiverId Int
-  sender     User @relation("SentInvitations", fields: [senderId], references: [id])
-  receiver   User @relation("ReceivedInvitations", fields: [receiverId], references: [id])
+  sender     User @relation("SentInvitations", fields: [senderId], references: [userId])
+  receiver   User @relation("ReceivedInvitations", fields: [receiverId], references: [userId])
 
-  invitationStatus InvitationStatus
-  kind             InvitationKind
+  status InvitationStatus @default(PENDING)
+  kind   InvitationKind
 
-  targetChatId Int?
-  targetChat   Chat? @relation(fields: [targetChatId], references: [id])
-
-  targetGameId Int?
-  targetGame   Game? @relation(fields: [targetGameId], references: [id])
-
-  targetRelationshipId Int?
-  targetRelationship   Relationship? @relation(fields: [targetRelationshipId], references: [id])
+  chatId             Int?
+  targetChat         Chat?         @relation(fields: [chatId], references: [chatId])
+  targetGame         Game?
+  targetRelationship Relationship?
 
   @@map("Invitations")
 }
@@ -51,6 +48,7 @@ enum InvitationStatus {
   PENDING
   ACCEPTED
   REFUSED
+  CANCELED
 }
 
 enum InvitationKind {
@@ -60,18 +58,21 @@ enum InvitationKind {
 }
 
 model Relationship {
-  id          Int          @id @default(autoincrement())
-  invitations Invitation[]
+  relationshipId Int        @id @default(autoincrement())
+  invitationId   Int        @unique
+  invitation     Invitation @relation(fields: [invitationId], references: [invitationId])
 
   @@map("Relationships")
 }
 
 model Chat {
-  id Int @id @default(autoincrement())
+  chatId Int @id @default(autoincrement())
 
+  name          String?
   chatAvatarUrl String?
-  hashedPassword   String?
+  password      String?
 
+  invitationId Int[]
   invitations  Invitation[]
   participants ChatParticipation[]
 
@@ -79,30 +80,31 @@ model Chat {
 }
 
 model Message {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime
+  messageId Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
 
-  senderId Int
-  sender   ChatParticipation @relation(fields: [senderId], references: [id])
+  chatParticipationId Int
+  chatParticipation   ChatParticipation @relation(fields: [chatParticipationId], references: [chatParticipationId])
+  messageContent      String
 
   @@map("Messages")
 }
 
 model ChatParticipation {
-  id Int @id @default(autoincrement())
+  chatParticipationId Int       @id @default(autoincrement())
+  role                Role      @default(MEMBER)
+  mutedUntil          DateTime?
+  blockedUntil        DateTime?
 
-  role         Role      @default(MEMBER)
-  mutedUntil   DateTime?
-  blockedUntil DateTime?
-
-  messages     Message[]
+  messages Message[]
 
   chatId Int
-  chat   Chat @relation(fields: [chatId], references: [id])
+  chat   Chat @relation(fields: [chatId], references: [chatId])
 
   userId Int
-  user   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [userId])
 
+  @@unique([chatId, userId])
   @@map("ChatParticipations")
 }
 
@@ -113,24 +115,24 @@ enum Role {
 }
 
 model GameParticipation {
-  id Int @id @default(autoincrement())
+  GameParticipationId Int @id @default(autoincrement())
 
   Point    Int      @default(0)
   isWinner Boolean?
 
   gameId Int
-  game   Game @relation(fields: [gameId], references: [id])
+  game   Game @relation(fields: [gameId], references: [gameId])
 
   userId Int
-  user   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [userId])
 
   @@map("GameParticipations")
 }
 
 model Game {
-  id         Int @id @default(autoincrement())
+  gameId Int @id @default(autoincrement())
 
-  scoreToWin Int @default(3)
+  scoreToWin Int        @default(3)
   gameStatus GameStatus @default(WAITING_FOR_PLAYER)
 
   playerOnePaddlePos Int @default(0)
@@ -139,7 +141,8 @@ model Game {
   ballPositionX Int @default(0)
   ballPositionY Int @default(0)
 
-  invitations  Invitation[]
+  invitationId Int                 @unique
+  invitation   Invitation          @relation(fields: [invitationId], references: [invitationId])
   participants GameParticipation[]
 
   @@map("Games")
