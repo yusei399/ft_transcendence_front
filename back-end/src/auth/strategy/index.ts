@@ -1,2 +1,2 @@
-export { FortyTwoStrategy } from './42.strategy';
-export { JwtStrategy } from './jwt.strategy';
+export * from './42.strategy';
+export * from './Jwt.strategy';

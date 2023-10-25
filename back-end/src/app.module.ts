@@ -1,9 +1,14 @@
-import { Module } from '@nestjs/common';
-import { AppService } from './app.service';
-import { AppController } from './app.controller';
-import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
-import { PrismaModule } from './prisma/prisma.module';
+import {Module} from '@nestjs/common';
+import {AuthModule} from './auth/auth.module';
+import {ConfigModule} from '@nestjs/config';
+import {PrismaModule} from './prisma/prisma.module';
+import {UserModule} from './user/user.module';
+import {ChatModule} from './chat/chat.module';
+import {RelationshipModule} from './relationship/relationship.module';
+import {InvitationModule} from './invitation/invitation.module';
+import {WebSocketModule} from './webSocket/websocket.module';
+import {RoomMonitorModule} from './webSocket/room/roomMonitor.module';
+import {ConnectionMonitorModule} from './webSocket/connection/connectionMonitor.module';
 
 @Module({
   imports: [
@@ -11,10 +16,15 @@ import { PrismaModule } from './prisma/prisma.module';
       envFilePath: '.env',
       isGlobal: true,
     }),
-    AuthModule,
     PrismaModule,
+    WebSocketModule,
+    RoomMonitorModule,
+    ConnectionMonitorModule,
+    AuthModule,
+    UserModule,
+    ChatModule,
+    InvitationModule,
+    RelationshipModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

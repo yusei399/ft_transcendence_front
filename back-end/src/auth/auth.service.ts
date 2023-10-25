@@ -1,76 +1,50 @@
-import { HttpService } from '@nestjs/axios';
-import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
-import * as crypto from 'crypto';
-import { firstValueFrom } from 'rxjs';
-import { TokenResponseDto, FortyTwoProfileDto } from './dto';
+import {Injectable, UnauthorizedException} from '@nestjs/common';
+import {JwtTokenPayload} from './interface';
 import * as jwt from 'jsonwebtoken';
-import { PrismaService } from 'src/prisma/prisma.service';
+import * as argon from 'argon2';
+import {PrismaUser} from 'src/prisma/interfaces';
+import {SignInDto, SignUpDto} from './dto';
+import {UserService} from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private httpService: HttpService,
-    private prisma: PrismaService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
-  generateState(length: number): string {
-    return crypto.randomBytes(length).toString('hex');
-  }
-
-  async exchangeCodeForToken(code: string): Promise<TokenResponseDto> {
-    const clientId = process.env.OAUTH42_CLIENT_ID;
-    const clientSecret = process.env.OAUTH42_SECRET;
-    const redirectUri = process.env.OAUTH42_REDIRECT_URI;
-    const tokenUrl = 'https://api.intra.42.fr/oauth/token';
-
-    const formData = {
-      grant_type: 'authorization_code',
-      client_id: clientId,
-      client_secret: clientSecret,
-      code: code,
-      redirect_uri: redirectUri,
-    };
-    try {
-      const response = this.httpService.post<TokenResponseDto>(tokenUrl, formData);
-      return (await firstValueFrom(response)).data;
-    } catch (err) {
-      throw new UnauthorizedException();
-    }
-  }
-
-  async getUserInfo(accessToken: string): Promise<FortyTwoProfileDto> {
-    const userInfoUrl = 'https://api.intra.42.fr/v2/me';
-
-    try {
-      const headers = {
-        Authorization: `Bearer ${accessToken}`,
-      };
-
-      const response = this.httpService.get(userInfoUrl, { headers });
-      const userInfo: FortyTwoProfileDto = (await firstValueFrom(response)).data;
-      const email = userInfo.email;
-      let isRegistred = await this.prisma.user.findUnique({ where: { email: email } });
-      if (!isRegistred) {
-        await this.prisma.user.create({
-          data: {
-            email: email,
-          },
-        });
-      }
-      return userInfo;
-    } catch (error) {
-      throw new ForbiddenException(
-        'Unable to retrieve users informations from 42 Oauth API',
-      );
-    }
-  }
-
-  createAuthToken(user: FortyTwoProfileDto): string {
-    const tokenData: FortyTwoProfileDto = {
-      id: user.id,
-      login: user.login,
-      email: user.email,
-    };
+  async createAuthToken(user: PrismaUser): Promise<string> {
+    const tokenData: JwtTokenPayload = {userId: user.userId, nickname: user.nickname};
     return jwt.sign(tokenData, process.env.JWT_KEY);
+  }
+
+  static verifyToken(authToken: string) {
+    try {
+      jwt.verify(authToken, process.env.JWT_KEY);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  static decodeToken(authToken: string): JwtTokenPayload {
+    const payload = jwt.decode(authToken) as JwtTokenPayload;
+    return {userId: payload.userId, nickname: payload.nickname};
+  }
+
+  static verifyAndDecodeAuthToken(authToken: string): JwtTokenPayload | undefined {
+    if (this.verifyToken(authToken)) return this.decodeToken(authToken);
+    throw new UnauthorizedException('invalid token');
+  }
+
+  async signup(dto: SignUpDto) {
+    const user = await this.userService.createUser(dto);
+    delete user.password;
+    delete user.user42Id;
+    return user;
+  }
+
+  async signin(dto: SignInDto): Promise<PrismaUser> {
+    const user = await this.userService.getUser({nickname: dto.nickname});
+    if (!user || !(await argon.verify(user.password, dto.password)))
+      throw new UnauthorizedException('invalid credential');
+    return user;
   }
 }

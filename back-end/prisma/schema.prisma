@@ -8,49 +8,150 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  nickName String?
-  email String @unique
+  userId   Int  @id @default(autoincrement())
+  user42Id Int? @unique
+
+  nickname  String? @unique
+  email     String
+  password  String?
   avatarUrl String?
-  // friends Friend[]
-  // // channels Channel[]
-  // Participation Participant[]
+
+  sentInvitations     Invitation[] @relation("SentInvitations")
+  receivedInvitations Invitation[] @relation("ReceivedInvitations")
+
+  chatParticipations ChatParticipation[]
+  gameParticipations GameParticipation[]
+
   @@map("Users")
 }
 
+model Invitation {
+  invitationId Int @id @default(autoincrement())
 
-// model Friend {
-//   id Int @id @default(autoincrement())
-//   userIds Int[]
-//   users User @relation(fields: [userIds], references: [id])
-//   status Status
-// }
+  senderId   Int
+  receiverId Int
+  sender     User @relation("SentInvitations", fields: [senderId], references: [userId])
+  receiver   User @relation("ReceivedInvitations", fields: [receiverId], references: [userId])
 
-// enum Status {
-//   PENDING
-//   ACCEPTED
-//   REFUSED
-// }
+  status InvitationStatus @default(PENDING)
+  kind   InvitationKind
 
-// model Channel {
-//   id Int @id @default(autoincrement())
-//   participantIds Int[]
-// 	@@map("Channels")
-// }
+  chatId             Int?
+  targetChat         Chat?         @relation(fields: [chatId], references: [chatId])
+  targetGame         Game?
+  targetRelationship Relationship?
 
-// model Participant {
-//   id Int @id @default(autoincrement())
-//   role Role
-//   userId Int
-//   isAdmin Boolean
-//   mutedUntil DateTime
-//   participants User @relation(fields: [userId], references: [id])
+  @@map("Invitations")
+}
 
-// 	@@map("Participants")
-// }
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REFUSED
+  CANCELED
+}
 
-// enum Role{
-//   CREATOR
-//   ADMIN
-//   MEMBER
-// }
+enum InvitationKind {
+  FRIEND
+  CHAT
+  GAME
+}
+
+model Relationship {
+  relationshipId Int        @id @default(autoincrement())
+  invitationId   Int        @unique
+  invitation     Invitation @relation(fields: [invitationId], references: [invitationId])
+
+  @@map("Relationships")
+}
+
+model Chat {
+  chatId Int @id @default(autoincrement())
+
+  name          String?
+  chatAvatarUrl String?
+  password      String?
+
+  invitationId Int[]
+  invitations  Invitation[]
+  participants ChatParticipation[]
+
+  @@map("Chats")
+}
+
+model Message {
+  messageId Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  chatParticipationId Int
+  chatParticipation   ChatParticipation @relation(fields: [chatParticipationId], references: [chatParticipationId])
+  messageContent      String
+
+  @@map("Messages")
+}
+
+model ChatParticipation {
+  chatParticipationId Int       @id @default(autoincrement())
+  role                Role      @default(MEMBER)
+  mutedUntil          DateTime?
+  blockedUntil        DateTime?
+
+  messages Message[]
+
+  chatId Int
+  chat   Chat @relation(fields: [chatId], references: [chatId])
+
+  userId Int
+  user   User @relation(fields: [userId], references: [userId])
+
+  @@unique([chatId, userId])
+  @@map("ChatParticipations")
+}
+
+enum Role {
+  CREATOR
+  ADMIN
+  MEMBER
+}
+
+model GameParticipation {
+  GameParticipationId Int @id @default(autoincrement())
+
+  Point    Int      @default(0)
+  isWinner Boolean?
+
+  gameId Int
+  game   Game @relation(fields: [gameId], references: [gameId])
+
+  userId Int
+  user   User @relation(fields: [userId], references: [userId])
+
+  @@map("GameParticipations")
+}
+
+model Game {
+  gameId Int @id @default(autoincrement())
+
+  scoreToWin Int        @default(3)
+  gameStatus GameStatus @default(WAITING_FOR_PLAYER)
+
+  playerOnePaddlePos Int @default(0)
+  playerTwoPaddlePos Int @default(0)
+
+  ballPositionX Int @default(0)
+  ballPositionY Int @default(0)
+
+  invitationId Int                 @unique
+  invitation   Invitation          @relation(fields: [invitationId], references: [invitationId])
+  participants GameParticipation[]
+
+  @@map("Games")
+}
+
+enum GameStatus {
+  WAITING_FOR_PLAYER
+  IN_PROGRESS
+  PAUSED
+  FINISHED
+  CANCELED
+}
