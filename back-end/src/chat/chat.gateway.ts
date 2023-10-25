@@ -1,17 +1,15 @@
 import {MessageBody, SubscribeMessage, WebSocketGateway, WsException} from '@nestjs/websockets';
 import {SendMessageDto} from './dto';
 import {ChatService} from './chat.service';
-import {Socket} from 'socket.io';
-import {UseInterceptors} from '@nestjs/common';
-import {WebSocketValidationInterceptor} from 'src/interceptor/WebSocket.interceptor';
+import {ValidateAndTransformWebSocketDto} from 'src/decorator/ValidateWebSocketDto.decorator';
 
 @WebSocketGateway()
 export class ChatGateway {
   constructor(private readonly chat: ChatService) {}
 
   @SubscribeMessage('newMessage')
-  @UseInterceptors(WebSocketValidationInterceptor)
-  async handleEvent(client: Socket, @MessageBody() dto: SendMessageDto) {
+  async handleEvent(@ValidateAndTransformWebSocketDto(SendMessageDto) dto: SendMessageDto) {
+    console.log('dto', dto);
     console.log('pass');
     try {
       return await this.chat.sendMessage(dto);

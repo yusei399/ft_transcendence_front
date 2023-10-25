@@ -18,9 +18,9 @@ export class ConnectionMonitorService {
     this.relationship.handleUserDisconnection(userId);
   }
 
-  handleClientConnection(userId: number, client: Socket) {
-    this.socketMonitor.addUserToSocketMap(userId, client);
-    this.addClientToRelatedRooms(userId);
+  handleClientConnection(client: Socket) {
+    this.socketMonitor.addUserToSocketMap(client);
+    this.addClientToRelatedRooms(client.data.userId);
   }
 
   handleClientDisconnection(userId: number) {

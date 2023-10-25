@@ -9,8 +9,8 @@ export class SocketMonitorService {
     return this.socketsMap[userId];
   }
 
-  addUserToSocketMap(userId: number, client: Socket) {
-    this.socketsMap.set(userId, client);
+  addUserToSocketMap(client: Socket) {
+    this.socketsMap.set(client.data.userId, client);
   }
 
   removeUserFromSocketsMap(userId: number) {

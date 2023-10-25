@@ -53,11 +53,18 @@ fetch('http://localhost:3333/auth/signin', {
       rl.question('\n', () => {
         rl.question('EventName: ', eventName => {
           rl.question('Message: ', message => {
-            socket.emit(eventName, {roomId: 10, messageContent: 'prout'});
-            // socket.emit(eventName, message);
+            // socket.emit(eventName, {userId: 1, roomId: 10, messageContent: 'prout'});
+            try {
+              socket.emit(eventName, JSON.parse(message));
+            } catch (err) {
+              socket.emit(eventName, message);
+            }
             sendMessage();
           });
         });
       });
     })();
+  })
+  .catch(err => {
+    console.log('err', err);
   });

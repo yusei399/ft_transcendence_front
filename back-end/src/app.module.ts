@@ -9,7 +9,6 @@ import {InvitationModule} from './invitation/invitation.module';
 import {WebSocketModule} from './webSocket/websocket.module';
 import {RoomMonitorModule} from './webSocket/room/roomMonitor.module';
 import {ConnectionMonitorModule} from './webSocket/connection/connectionMonitor.module';
-import {InterceptorsModule} from './interceptor/interceptor.module';
 
 @Module({
   imports: [
@@ -18,7 +17,6 @@ import {InterceptorsModule} from './interceptor/interceptor.module';
       isGlobal: true,
     }),
     PrismaModule,
-    InterceptorsModule,
     WebSocketModule,
     RoomMonitorModule,
     ConnectionMonitorModule,

@@ -15,7 +15,7 @@ export class AuthService {
     return jwt.sign(tokenData, process.env.JWT_KEY);
   }
 
-  verifyToken(authToken: string) {
+  static verifyToken(authToken: string) {
     try {
       jwt.verify(authToken, process.env.JWT_KEY);
       return true;
@@ -24,14 +24,14 @@ export class AuthService {
     }
   }
 
-  decodeToken(authToken: string): JwtTokenPayload {
+  static decodeToken(authToken: string): JwtTokenPayload {
     const payload = jwt.decode(authToken) as JwtTokenPayload;
     return {userId: payload.userId, nickname: payload.nickname};
   }
 
-  verifyAndDecodeAuthToken(authToken: string): JwtTokenPayload | undefined {
+  static verifyAndDecodeAuthToken(authToken: string): JwtTokenPayload | undefined {
     if (this.verifyToken(authToken)) return this.decodeToken(authToken);
-    return undefined;
+    throw new UnauthorizedException('invalid token');
   }
 
   async signup(dto: SignUpDto) {
