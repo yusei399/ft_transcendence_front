@@ -1,5 +1,5 @@
 import {IsEmail, IsNotEmpty, IsOptional, IsString, IsUrl} from 'class-validator';
-import {AuthSignUpData} from 'src/shared/auth';
+import {AuthSignUpData} from 'src/shared/HttpEndpoints/auth';
 
 export class SignUpDto implements AuthSignUpData {
   @IsString()

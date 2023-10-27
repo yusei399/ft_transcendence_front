@@ -1,3 +1,5 @@
+import { UserPublicProfile } from "src/shared/base_interfaces";
+
 /****************PATCH****************/
 export const UserEditEndPoint = 'edit';
 export interface UserEditUserData {
@@ -7,12 +9,8 @@ export interface UserEditUserData {
   password?: string;
 }
 
-export interface UserEditUserResponse {
-  profile: {
-    profileId: number;
-    nickname: string;
-    avatarUrl: string;
-  };
+export class UserEditUserResponse implements UserPublicProfile {
   userId: number;
-  email: string;
+  nickname: string;
+  avatarUrl: string;
 }

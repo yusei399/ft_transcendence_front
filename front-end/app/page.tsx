@@ -16,9 +16,9 @@ export default function main() {
   return (
     <>
       <ChakraProvider>
-        {/* <LoginPage /> */}
+        <LoginPage />
         <UserEditProfile/>
-        {/* <UserProfile /> */}
+        <UserProfile />
       </ChakraProvider>
     </>
   );

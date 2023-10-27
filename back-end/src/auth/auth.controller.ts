@@ -11,7 +11,7 @@ import {
   Auth42CBEndPoint,
   Auth42EndPoint,
   Auth42Response,
-} from 'src/shared/auth';
+} from 'src/shared/HttpEndpoints/auth';
 
 @Controller(AuthEndPointBase)
 export class AuthController {
@@ -36,8 +36,7 @@ export class AuthController {
 
   @Post(AuthSignInEndPoint)
   async signin(@Body() dto: SignInDto): Promise<AuthSignInResponse> {
-    const user = await this.authService.signin(dto);
-    const authToken = await this.authService.createAuthToken(user);
+    const authToken = await this.authService.signin(dto);
     return {authToken};
   }
 }

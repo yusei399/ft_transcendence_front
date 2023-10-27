@@ -1,3 +1,5 @@
+import {UserPublicProfile} from 'src/shared/base_interfaces';
+
 /****************POST****************/
 export const AuthSignUpEndPoint = 'signup';
 export interface AuthSignUpData {
@@ -7,12 +9,8 @@ export interface AuthSignUpData {
   avatarUrl?: string;
 }
 
-export interface AuthSignUpResponse {
-  profile: {
-    profileId: number;
-    nickname: string;
-    avatarUrl: string;
-  };
+export class AuthSignUpResponse implements UserPublicProfile {
   userId: number;
-  email: string;
+  nickname: string;
+  avatarUrl: string;
 }

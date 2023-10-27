@@ -3,12 +3,12 @@ import {PrismaService} from 'src/prisma/prisma.service';
 import {UserService} from 'src/user/user.service';
 import {CreateRelationship} from './interface';
 import {RoomMonitorService} from 'src/webSocket/room/roomMonitor.service';
+import { UserPublicProfile } from 'src/shared/base_interfaces';
 
 @Injectable()
 export class FriendService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly user: UserService,
     private readonly roomMonitor: RoomMonitorService,
   ) {}
 
@@ -27,19 +27,20 @@ export class FriendService {
     });
   }
 
-  async getUserFriendProfilesList(userId: number) {
-    return await this.prisma.user.findUnique({
+  async getUserFriendProfilesList(userId: number): Promise<UserPublicProfile[]> {
+    const user = await this.prisma.user.findUnique({
       where: {userId},
-      select: {FriendsProfile: true},
+      select: {FriendsProfile: {select: {userId:true, nickname:true, avatarUrl:true}}},
     });
+    return user.FriendsProfile;
   }
 
-  async getUserFriendIdsList(userId: number) {
-    return await this.prisma.user.findUnique({
-      where: {userId},
-      select: {FriendsProfile: {select: {userId: true}}},
-    });
-  }
+  // async getUserFriendIdsList(userId: number) {
+  //   return await this.prisma.user.findUnique({
+  //     where: {userId},
+  //     select: {FriendsProfile: {select: {userId: true}}},
+  //   });
+  // }
 
   async createRelationship(dto: CreateRelationship) {
     const {invitationId, senderId, receiverId} = dto;

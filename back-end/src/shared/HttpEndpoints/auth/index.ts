@@ -12,4 +12,3 @@ export const AuthEndPoints = {
   signUp: `${AuthEndPointBase}/${AuthSignUpEndPoint}`,
   signIn: `${AuthEndPointBase}/${AuthSignInEndPoint}`,
 };
-
