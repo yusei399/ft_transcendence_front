@@ -1,6 +1,7 @@
 import {IsNotEmpty, IsString} from 'class-validator';
+import {AuthSignInData} from 'src/shared/auth';
 
-export class SignInDto {
+export class SignInDto implements AuthSignInData {
   @IsString()
   @IsNotEmpty()
   nickname: string;

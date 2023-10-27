@@ -7,9 +7,9 @@ import {
 } from '@nestjs/websockets';
 import {Server, Socket} from 'socket.io';
 import {AuthService} from 'src/auth/auth.service';
-import {RoomMonitorService} from './room/roomMonitor.service';
 import {ConnectionMonitorService} from './connection/connectionMonitor.service';
 import {SocketAuthMiddleware} from 'src/auth/middleware/ws.middleware';
+import {RoomMonitorService} from './room/roomMonitor.service';
 
 @WebSocketGateway()
 export class SocketMonitorGateway implements OnGatewayInit, OnGatewayDisconnect, OnGatewayConnection {

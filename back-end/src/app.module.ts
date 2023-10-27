@@ -4,11 +4,11 @@ import {ConfigModule} from '@nestjs/config';
 import {PrismaModule} from './prisma/prisma.module';
 import {UserModule} from './user/user.module';
 import {ChatModule} from './chat/chat.module';
-import {RelationshipModule} from './relationship/relationship.module';
 import {InvitationModule} from './invitation/invitation.module';
 import {WebSocketModule} from './webSocket/websocket.module';
-import {RoomMonitorModule} from './webSocket/room/roomMonitor.module';
 import {ConnectionMonitorModule} from './webSocket/connection/connectionMonitor.module';
+import {SocketMonitorModule} from './webSocket/socketMonitor/socketMonitor.module';
+import {FriendModule} from './friend/friend.module';
 
 @Module({
   imports: [
@@ -18,13 +18,13 @@ import {ConnectionMonitorModule} from './webSocket/connection/connectionMonitor.
     }),
     PrismaModule,
     WebSocketModule,
-    RoomMonitorModule,
+    SocketMonitorModule,
     ConnectionMonitorModule,
     AuthModule,
     UserModule,
     ChatModule,
     InvitationModule,
-    RelationshipModule,
+    FriendModule,
   ],
 })
 export class AppModule {}

@@ -1,22 +1,28 @@
-import {Body, Controller, Get, Patch, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Patch, UnprocessableEntityException, UseGuards} from '@nestjs/common';
 import {JwtAuthGuard} from 'src/auth/guard';
 import {EditUserDto} from './dto';
 import {UserService} from './user.service';
 import {GetInfoFromJwt} from 'src/decorator';
+import {UserMeEndPoint, UserMeUserResponse} from 'src/shared/user/me';
+import {UserEditEndPoint, UserEditUserResponse, UserEndPointBase} from 'src/shared/user';
 
-@Controller('user')
+@Controller(UserEndPointBase)
 @UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
-  async getMe(@GetInfoFromJwt('userId') userId: number) {
+  @Get(UserMeEndPoint)
+  async getMe(@GetInfoFromJwt('userId') userId: number): Promise<UserMeUserResponse> {
     return await this.userService.getUserPublicProfile({userId});
   }
 
-  @Patch('edit')
-  async editProfile(@GetInfoFromJwt('userId') userId: number, @Body() dto: EditUserDto) {
+  @Patch(UserEditEndPoint)
+  async editProfile(
+    @GetInfoFromJwt('userId') userId: number,
+    @Body() dto: EditUserDto,
+  ): Promise<UserEditUserResponse> {
+    if (!Object.keys(dto).length) throw new UnprocessableEntityException('no data to update');
     const userProfile = await this.userService.editUserInfo({userId}, dto);
-    return this.userService.removeUserPrivateInfoFromProfile(userProfile);
+    return userProfile; //this.userService.removeUserPrivateInfoFromProfile(userProfile);
   }
 }

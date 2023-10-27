@@ -1,9 +1,9 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, Scope} from '@nestjs/common';
 import {BroadcastMessageInRoom, JoinLeaveRoom, RoomName, SendMessageInRoom} from './interface';
-import {SocketMonitorService} from '../socket/socketMonitor.service';
+import {SocketMonitorService} from '../socketMonitor/socketMonitor.service';
 import {Server} from 'socket.io';
 
-@Injectable()
+@Injectable({scope: Scope.DEFAULT})
 export class RoomMonitorService {
   constructor(private readonly socketMonitor: SocketMonitorService) {}
   private roomsMap = new Map<string, number>();
@@ -13,37 +13,49 @@ export class RoomMonitorService {
     this.server = server;
   }
 
-  private getRoomNameFromTemplate(template: RoomName) {
+  private getNbClientsInRoom(roomName: string) {
+    return this.roomsMap.get(roomName) ?? 0;
+  }
+
+  private deleteServerRoom(roomName: string): void {
+    this.server.sockets.adapter.rooms.delete(roomName);
+  }
+
+  private getRoomNameFromTemplate(template: RoomName): string {
     return `${template.prefix}${template.roomId}`;
   }
 
-  addUserToRoom(data: JoinLeaveRoom) {
+  addUserToRoom(data: JoinLeaveRoom): void {
     const client = this.socketMonitor.getClientSocketByUserId(data.userId);
     if (client) {
       const roomName = this.getRoomNameFromTemplate(data);
       client.join(roomName);
-      this.roomsMap[roomName]++;
+      const nbClients = this.getNbClientsInRoom(roomName);
+      this.roomsMap.set(roomName, nbClients + 1);
     }
   }
 
-  removeUserFromRoom(data: JoinLeaveRoom) {
+  removeUserFromRoom(data: JoinLeaveRoom): void {
     const client = this.socketMonitor.getClientSocketByUserId(data.userId);
     if (client) {
       const roomName = this.getRoomNameFromTemplate(data);
       client.leave(roomName);
-      this.roomsMap[roomName]--;
-      if (this.roomsMap[roomName] === 0) this.server.sockets.adapter.rooms.delete(roomName);
+      const nbClients = this.getNbClientsInRoom(roomName);
+      this.roomsMap.set(roomName, nbClients - 1);
+      if (nbClients <= 1) this.deleteServerRoom(roomName);
     }
   }
 
-  sendMessageInRoom(data: SendMessageInRoom) {
+  sendMessageInRoom(data: SendMessageInRoom): void {
     const roomName = this.getRoomNameFromTemplate(data);
-    const client = this.socketMonitor.getClientSocketByUserId(data.roomId);
-    if (this.roomsMap[roomName] > 0) client.to(roomName).emit(data.eventName, data.message);
+    const socket = this.socketMonitor.getClientSocketByUserId(data.senderId) ?? this.server;
+    if (this.getNbClientsInRoom(roomName) > 0) {
+      socket.to(roomName).emit(data.eventName, data.message);
+    }
   }
 
-  broadcastMessageInRoom(data: BroadcastMessageInRoom) {
+  broadcastMessageInRoom(data: BroadcastMessageInRoom): void {
     const roomName = this.getRoomNameFromTemplate(data);
-    if (this.roomsMap[roomName] > 0) this.server.to(roomName).emit(data.eventName, data.message);
+    if (this.getNbClientsInRoom(roomName) > 0) this.server.to(roomName).emit(data.eventName, data.message);
   }
 }

@@ -1,11 +1,11 @@
 import {Injectable} from '@nestjs/common';
 import {PrismaService} from 'src/prisma/prisma.service';
 import {UserService} from 'src/user/user.service';
-import {RoomMonitorService} from 'src/webSocket/room/roomMonitor.service';
 import {CreateRelationship} from './interface';
+import {RoomMonitorService} from 'src/webSocket/room/roomMonitor.service';
 
 @Injectable()
-export class RelationshipService {
+export class FriendService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly user: UserService,
@@ -27,28 +27,26 @@ export class RelationshipService {
     });
   }
 
-  async getUserFriendList(userId: number) {
-    const relationships = await this.prisma.invitation.findMany({
-      where: {
-        kind: 'FRIEND',
-        status: 'ACCEPTED',
-        OR: [{senderId: userId}, {receiverId: userId}],
-      },
-      select: {sender: true, receiver: true},
+  async getUserFriendProfilesList(userId: number) {
+    return await this.prisma.user.findUnique({
+      where: {userId},
+      select: {FriendsProfile: true},
     });
+  }
 
-    return relationships.map(rel => {
-      const friendProfile = rel.receiver.userId !== userId ? rel.sender : rel.receiver;
-      return this.user.removeUserPrivateInfoFromProfile(friendProfile);
+  async getUserFriendIdsList(userId: number) {
+    return await this.prisma.user.findUnique({
+      where: {userId},
+      select: {FriendsProfile: {select: {userId: true}}},
     });
   }
 
   async createRelationship(dto: CreateRelationship) {
     const {invitationId, senderId, receiverId} = dto;
-    const relationship = await this.prisma.relationship.create({data: {invitationId}});
+    // const relationship = await this.prisma.relationship.create({data: {invitationId}});
     this.roomMonitor.addUserToRoom({prefix: 'Friend_Info-', roomId: receiverId, userId: senderId});
     this.roomMonitor.addUserToRoom({prefix: 'Friend_Info-', roomId: senderId, userId: receiverId});
-    return relationship;
+    // return relationship;
   }
 
   async addUserToAllFriendsRooms(userId: number, friendIds: number[]) {

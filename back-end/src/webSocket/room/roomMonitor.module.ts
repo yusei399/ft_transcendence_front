@@ -1,6 +1,6 @@
 import {Module} from '@nestjs/common';
 import {RoomMonitorService} from './roomMonitor.service';
-import {SocketMonitorModule} from '../socket/roomMonitor.module';
+import {SocketMonitorModule} from '../socketMonitor/socketMonitor.module';
 
 @Module({
   imports: [SocketMonitorModule],

@@ -1,10 +1,10 @@
 import {Module} from '@nestjs/common';
-import {RelationshipModule} from 'src/relationship/relationship.module';
 import {ConnectionMonitorService} from './connectionMonitor.service';
-import {SocketMonitorModule} from '../socket/roomMonitor.module';
+import {SocketMonitorModule} from '../socketMonitor/socketMonitor.module';
+import {FriendModule} from 'src/friend/friend.module';
 
 @Module({
-  imports: [SocketMonitorModule, RelationshipModule],
+  imports: [SocketMonitorModule, FriendModule],
   providers: [ConnectionMonitorService],
   exports: [ConnectionMonitorService],
 })

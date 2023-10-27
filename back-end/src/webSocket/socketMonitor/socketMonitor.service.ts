@@ -1,12 +1,12 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, Scope} from '@nestjs/common';
 import {Socket} from 'socket.io';
 
-@Injectable()
+@Injectable({scope: Scope.DEFAULT})
 export class SocketMonitorService {
   private socketsMap = new Map<number, Socket>();
 
   getClientSocketByUserId(userId: number) {
-    return this.socketsMap[userId];
+    return this.socketsMap.get(userId);
   }
 
   addUserToSocketMap(client: Socket) {

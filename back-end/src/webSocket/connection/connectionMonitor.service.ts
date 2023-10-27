@@ -1,21 +1,21 @@
 import {Injectable} from '@nestjs/common';
 import {Socket} from 'socket.io';
-import {RelationshipService} from 'src/relationship/relationship.service';
-import {SocketMonitorService} from '../socket/socketMonitor.service';
+import {SocketMonitorService} from '../socketMonitor/socketMonitor.service';
+import {FriendService} from 'src/friend/friend.service';
 
 @Injectable()
 export class ConnectionMonitorService {
   constructor(
     private readonly socketMonitor: SocketMonitorService,
-    private readonly relationship: RelationshipService,
+    private readonly friend: FriendService,
   ) {}
 
   addClientToRelatedRooms(userId: number) {
-    this.relationship.handleUserConnection(userId);
+    this.friend.handleUserConnection(userId);
   }
 
   removeClientFromRelatedRooms(userId: number) {
-    this.relationship.handleUserDisconnection(userId);
+    this.friend.handleUserDisconnection(userId);
   }
 
   handleClientConnection(client: Socket) {
