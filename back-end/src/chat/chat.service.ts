@@ -1,21 +1,21 @@
-import {Injectable, UnauthorizedException} from '@nestjs/common';
+import {Injectable, NotFoundException, UnauthorizedException} from '@nestjs/common';
 import {PrismaService} from 'src/prisma/prisma.service';
-import {CreateChatRoomDto, JoinChatRoomDto, SendChatInvitationDto, SendMessageDto} from './dto';
-import {AcceptOrDeclineChatInvitationDto} from './dto/AcceptChatInvitation.dto';
+import {CreateChatRoomDto, JoinChatRoomDto, SendMessageDto} from './dto';
 import {Socket} from 'socket.io';
+import {WsException} from '@nestjs/websockets';
 
 @Injectable()
 export class ChatService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createChatRoom(dto: CreateChatRoomDto) {
+  private async createChatRoom(dto: CreateChatRoomDto) {
     return this.prisma.chat.create({data: {...dto}});
   }
 
-  async joinChatRoom(dto: JoinChatRoomDto) {
+  private async joinChatRoom(dto: JoinChatRoomDto) {
     const room = await this.prisma.chat.findUnique({where: {chatId: dto.roomId}});
-
-    if (room.password && room.password !== dto.password) throw new UnauthorizedException();
+    if (!room) throw new NotFoundException(`no such room`);
+    if (room.password && room.password !== dto.password) throw new UnauthorizedException(`invalid password`);
     return this.prisma.chatParticipation.create({
       data: {
         chatId: room.chatId,
@@ -33,9 +33,10 @@ export class ChatService {
         },
       },
     });
+    if (!participation) throw new WsException('no such room available for this user');
     const now = Date.now();
-    if (participation?.blockedUntil.getDate() > now) throw new UnauthorizedException('user still blocked!');
-    if (participation?.mutedUntil.getDate() > now) throw new UnauthorizedException('user still mute!');
+    if (participation?.blockedUntil.getDate() > now) throw new WsException('user still blocked!');
+    if (participation?.mutedUntil.getDate() > now) throw new WsException('user still mute!');
     return this.prisma.message.create({
       data: {
         chatParticipationId: participation.chatParticipationId,
@@ -44,33 +45,8 @@ export class ChatService {
     });
   }
 
-  async sendChatInvitation(dto: SendChatInvitationDto) {
-    return this.prisma.invitation.create({
-      data: {
-        senderId: dto.senderId,
-        receiverId: dto.receiverId,
-        kind: 'CHAT',
-        chatId: dto.roomId,
-      },
-    });
-  }
-
-  async acceptChatInvitation(dto: AcceptOrDeclineChatInvitationDto) {
-    const invitation = await this.prisma.invitation.update({
-      where: {invitationId: dto.invitationId},
-      data: {status: 'ACCEPTED'},
-    });
-    return this.joinChatRoom({
-      userId: invitation.receiverId,
-      roomId: invitation.chatId,
-    });
-  }
-
-  async declineChatInvitation(dto: AcceptOrDeclineChatInvitationDto) {
-    return await this.prisma.invitation.update({
-      where: {invitationId: dto.invitationId},
-      data: {status: 'REFUSED'},
-    });
+  async handleAcceptedChatInvitation() {
+    return;
   }
 
   async getAllMessagesFromChatRoomId(userId: number, roomId: number) {
@@ -83,7 +59,7 @@ export class ChatService {
       where: {chatId: roomId},
       select: {
         blockedUntil: true,
-        user: {select: {userId: true, avatarUrl: true, nickname: true}},
+        user: {include: {profile: true}},
       },
     });
     participations.map(participation => {

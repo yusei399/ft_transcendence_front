@@ -1,11 +1,11 @@
 import {Module} from '@nestjs/common';
 import {InvitationsService} from './invitation.service';
 import {ChatModule} from 'src/chat/chat.module';
-import {RelationshipModule} from 'src/relationship/relationship.module';
 import {InvitationController} from './invitation.controller';
+import {FriendModule} from 'src/friend/friend.module';
 
 @Module({
-  imports: [ChatModule, RelationshipModule],
+  imports: [ChatModule, FriendModule],
   providers: [InvitationsService],
   controllers: [InvitationController],
   exports: [InvitationsService],

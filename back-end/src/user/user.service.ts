@@ -2,16 +2,26 @@ import {ConflictException, Injectable} from '@nestjs/common';
 import {EditUserDto} from './dto';
 import * as argon from 'argon2';
 import {PrismaService} from 'src/prisma/prisma.service';
-import {GetUserTemplate, CreateUserTemplate} from './interface';
+import {CreateUserTemplate, GetUserById, GetUserTemplate} from './interface';
 import {User} from '@prisma/client';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async editUserInfo(userInfo: GetUserTemplate, dto: EditUserDto) {
+  async editUserInfo(userInfo: GetUserById, dto: EditUserDto) {
     try {
-      return await this.prisma.user.update({where: {...userInfo}, data: {...dto}});
+      if (dto.password) dto.password = await argon.hash(dto.password);
+      const userModelInfo = {email: dto.email, password: dto.password};
+      const profileModelInfo = {nickname: dto.nickname, avatarUrl: dto.avatarUrl};
+      return await this.prisma.user.update({
+        where: {...userInfo},
+        include: {profile: true},
+        data: {
+          ...userModelInfo,
+          profile: {update: {...profileModelInfo}},
+        },
+      });
     } catch (err) {
       if (err.code === 'P2002')
         throw new ConflictException(
@@ -21,7 +31,13 @@ export class UserService {
   }
 
   async getUser(userInfo: GetUserTemplate) {
-    return await this.prisma.user.findUnique({where: {...userInfo}});
+    if ('nickname' in userInfo) {
+      return await this.prisma.user.findFirst({
+        where: {profile: {nickname: userInfo.nickname}},
+        include: {profile: true},
+      });
+    }
+    return await this.prisma.user.findUnique({where: {...userInfo}, include: {profile: true}});
   }
 
   removeUserPrivateInfoFromProfile(profile: User) {
@@ -32,15 +48,22 @@ export class UserService {
 
   async getUserPublicProfile(userInfo: GetUserTemplate) {
     const profile = await this.getUser(userInfo);
-    return this.removeUserPrivateInfoFromProfile(profile);
+    return profile; //this.removeUserPrivateInfoFromProfile(profile);
   }
 
-  async createUser(userInfo: CreateUserTemplate) {
+  async createUser(dto: CreateUserTemplate) {
     try {
-      if ('password' in userInfo) {
-        userInfo.password = await argon.hash(userInfo.password);
+      if ('password' in dto) {
+        dto.password = await argon.hash(dto.password);
       }
-      return await this.prisma.user.create({data: {...userInfo}});
+      const {nickname, avatarUrl, ...userInfo} = dto;
+      return await this.prisma.user.create({
+        data: {
+          ...userInfo,
+          profile: {create: {nickname, avatarUrl}},
+        },
+        include: {profile: true},
+      });
     } catch (err) {
       if (err.code === 'P2002')
         throw new ConflictException(`unable to create the user. ${err.meta.target} is not available`);

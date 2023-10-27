@@ -1,6 +1,7 @@
 import {IsEmail, IsOptional, IsString, IsUrl} from 'class-validator';
+import {UserEditUserData} from 'src/shared/user';
 
-export class EditUserDto {
+export class EditUserDto implements UserEditUserData {
   @IsEmail()
   @IsOptional()
   email?: string;
@@ -12,4 +13,8 @@ export class EditUserDto {
   @IsUrl()
   @IsOptional()
   avatarUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  password?: string;
 }
