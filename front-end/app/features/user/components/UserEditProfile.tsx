@@ -13,7 +13,7 @@ const UserEditProfile = () => {
 				<FormLabel>icon</FormLabel>
 				<Input type="icon"/>
 			</FormControl>
-				<Button>Update</Button>
+			<Button>Update</Button>
 		</div>
 	)
 }

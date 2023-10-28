@@ -1,9 +1,10 @@
-import {Injectable, UnauthorizedException} from '@nestjs/common';
+import {HttpException, Injectable, UnauthorizedException} from '@nestjs/common';
 import {PassportStrategy} from '@nestjs/passport';
 import {Strategy} from 'passport-42';
 import {UserService} from 'src/user/user.service';
 import {FortyTwoProfile} from '../interface';
 import {PrismaUser} from 'src/prisma/interfaces';
+import {UserPublicProfile} from 'src/shared/base_interfaces';
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
@@ -19,7 +20,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
       },
     });
   }
-  async validate(accessToken: string, refreshToken: string, profile: any): Promise<PrismaUser> {
+  async validate(accessToken: string, refreshToken: string, profile: any): Promise<UserPublicProfile> {
     const userInfo: FortyTwoProfile = {...profile?._json};
     if (!userInfo?.id) throw new UnauthorizedException('Id is missing in the user profile.');
     try {
@@ -29,6 +30,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
       );
       return user;
     } catch (err) {
+      if (err instanceof HttpException) throw err;
       throw new UnauthorizedException(err);
     }
   }

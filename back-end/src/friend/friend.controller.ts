@@ -1,15 +1,15 @@
 import {Controller, Get, UseGuards} from '@nestjs/common';
 import {JwtAuthGuard} from 'src/auth/guard';
-import {RelationshipService} from './relationship.service';
+import {FriendService} from './friend.service';
 import {GetInfoFromJwt} from 'src/decorator';
 
-@Controller('relationship')
+@Controller('friend')
 @UseGuards(JwtAuthGuard)
-export class RelationshipController {
-  constructor(private readonly relationship: RelationshipService) {}
+export class FriendController {
+  constructor(private readonly friend: FriendService) {}
 
   @Get()
   getUserRelationship(@GetInfoFromJwt('userId') userId: number) {
-    return this.relationship.getUserFriendList(userId);
+    return this.friend.getUserFriendProfilesList(userId);
   }
 }
