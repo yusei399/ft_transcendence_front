@@ -7,6 +7,7 @@ import {HandleUpdatedInvitationRelatedEvent} from 'src/friend/interface/handleUp
 import {SendInvitationReponse, UpdateInvitationReponse} from 'src/shared/HttpEndpoints/invitation';
 import {RoomMonitorService} from 'src/webSocket/room/roomMonitor.service';
 import {OnNewInvitationEvent} from 'src/shared/WsEvents/invitation';
+import {dot} from 'node:test/reporters';
 
 @Injectable()
 export class InvitationsService {
@@ -26,18 +27,17 @@ export class InvitationsService {
       if (userFriendIds.indexOf(data.senderId) >= 0)
         throw new BadRequestException('This relationship is already established');
     } else if (data.kind === 'CHAT') {
-      if (!data.targetChatId) throw new BadRequestException('No chatId provided');
+      if (!data.targetChatId) throw new BadRequestException('No targetChatId provided');
 
       const chat = await this.prisma.chat.findUnique({
         where: {chatId: data.targetChatId},
         select: {chatId: true, participants: {select: {userId: true}}},
       });
       if (!chat) throw new BadRequestException('No such chat exist');
-
-      if (chat?.participants.includes({userId: data.receiverId}))
+      if (chat?.participants.find(p => p.userId === data.receiverId))
         throw new BadRequestException('User already present in chatroom');
     } else if (data.kind === 'GAME') {
-      if (!data.targetGameId) throw new BadRequestException('No gameId provided');
+      if (!data.targetGameId) throw new BadRequestException('No targetGameId provided');
 
       const game = await this.prisma.game.findUnique({
         where: {gameId: data.targetGameId},
@@ -48,7 +48,7 @@ export class InvitationsService {
       if (game?.gameStatus !== 'WAITING_FOR_PLAYER')
         throw new BadRequestException('This game is no longer waiting for new player');
 
-      if (game?.participants.includes({userId: data.receiverId}))
+      if (game?.participants.find(p => p.userId === data.receiverId))
         throw new BadRequestException('User already present in this game');
     }
 
@@ -66,20 +66,23 @@ export class InvitationsService {
 
   async sendInvitation(data: SendInvitation): Promise<SendInvitationReponse> {
     await this.checkSentInvitation(data);
+    const {senderId, receiverId, kind, targetChatId, targetGameId} = data;
     try {
       const invitation = await this.prisma.invitation.create({
-        data: {senderId: data.senderId, receiverId: data.receiverId, kind: data.kind},
+        data: {senderId, receiverId, kind, targetChatId, targetGameId},
         select: {
           invitationId: true,
           senderId: true,
           receiverId: true,
           status: true,
           kind: true,
+          targetChatId: kind === 'CHAT',
+          targetGameId: kind === 'GAME',
         },
       });
       const WsMessage: OnNewInvitationEvent = invitation;
       this.room.sendMessageToUser({
-        userId: data.receiverId,
+        userId: receiverId,
         eventName: 'newInvitation',
         message: WsMessage,
       });
@@ -117,7 +120,7 @@ export class InvitationsService {
       const dto = {...invitation, targetStatus, kind};
       if (targetStatus === 'ACCEPTED') this.handleUpdatedInvitationRelatedEvent(dto);
       this.room.sendMessageToUser({
-        userId: dto.senderId ? invitation.receiverId : invitation.senderId,
+        userId: dto.senderId ? invitation.senderId : invitation.receiverId,
         eventName:
           targetStatus === 'ACCEPTED'
             ? 'invitationAccepted'

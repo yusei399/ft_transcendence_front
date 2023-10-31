@@ -1,8 +1,8 @@
-import {Injectable} from '@nestjs/common';
+import {ConflictException, Injectable} from '@nestjs/common';
 import {PrismaService} from 'src/prisma/prisma.service';
 import {SetRelationship} from './interface';
 import {RoomMonitorService} from 'src/webSocket/room/roomMonitor.service';
-import {UserPublicProfile} from 'src/shared/base_interfaces';
+import {FriendPublicProfilesList, UserPublicProfile} from 'src/shared/base_interfaces';
 
 @Injectable()
 export class FriendService {
@@ -19,12 +19,12 @@ export class FriendService {
     return profile.friendUserIds;
   }
 
-  async getUserFriendProfilesList(userId: number): Promise<UserPublicProfile[]> {
+  async getUserFriendProfilesList(userId: number): Promise<FriendPublicProfilesList> {
     const userProfile = await this.prisma.profile.findUnique({
       where: {userId},
       select: {friendsProfiles: {select: {userId: true, nickname: true, avatarUrl: true}}},
     });
-    return userProfile.friendsProfiles;
+    return {friendsProfiles: userProfile.friendsProfiles};
   }
 
   private async setSingleRelationship(userId: number, targetFriendId: number): Promise<void> {
@@ -37,7 +37,10 @@ export class FriendService {
     this.room.sendMessageToUser({userId: userId, eventName: 'newFriend', message: wsMessage});
   }
 
-  async setRelationship({userId, targetUserId}: SetRelationship): Promise<UserPublicProfile[]> {
+  async setRelationship({
+    userId,
+    targetUserId,
+  }: SetRelationship): Promise<FriendPublicProfilesList> {
     await this.setSingleRelationship(userId, targetUserId);
     await this.setSingleRelationship(targetUserId, userId);
     return this.getUserFriendProfilesList(userId);
@@ -53,7 +56,12 @@ export class FriendService {
     const wsMessage = `You are no longer friend with the user ${targetUserId}`;
     this.room.sendMessageToUser({userId: userId, eventName: 'leftFriend', message: wsMessage});
   }
-  async unsetRelationship({userId, targetUserId}: SetRelationship): Promise<UserPublicProfile[]> {
+  async unsetRelationship({
+    userId,
+    targetUserId,
+  }: SetRelationship): Promise<FriendPublicProfilesList> {
+    if (userId === targetUserId)
+      throw new ConflictException('userId and targetUserId are the same');
     await this.unsetSingleRelationship(userId, targetUserId);
     await this.unsetSingleRelationship(targetUserId, userId);
     return this.getUserFriendProfilesList(userId);

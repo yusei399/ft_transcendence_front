@@ -26,12 +26,11 @@ export class InvitationController {
     @Param('kind', new InvitationKindPipe()) kind: InvitationKind,
     @Body() dto: SendInvitationDto,
   ): Promise<SendInvitationReponse> {
-    console.log(dto);
     return this.invitation.sendInvitation({
-      senderId: userId,
       receiverId: dto.targetUserId,
-      kind,
       ...dto,
+      senderId: userId,
+      kind,
     });
   }
 

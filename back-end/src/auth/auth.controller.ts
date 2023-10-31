@@ -16,6 +16,7 @@ import {
 @Controller(AuthEndPointBase)
 export class AuthController {
   constructor(private authService: AuthService) {}
+
   @Get(Auth42EndPoint)
   @UseGuards(FortyTwoAuthGuard)
   redirectTo42Auth(): never {

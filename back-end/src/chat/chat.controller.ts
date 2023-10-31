@@ -8,6 +8,7 @@ import {
   Post,
   Query,
   UnprocessableEntityException,
+  UseGuards,
 } from '@nestjs/common';
 import {ChatService} from './chat.service';
 import {GetInfoFromJwt} from 'src/decorator';
@@ -31,8 +32,10 @@ import {
 } from 'src/shared/HttpEndpoints/chat/';
 import {ChatEndPointBase, GetChatInfoQuery} from 'src/shared/HttpEndpoints/chat';
 import {CreateChatDto, JoinChatDto, UpdateChatDto} from './dto';
+import {JwtAuthGuard} from 'src/auth/guard';
 
 @Controller(ChatEndPointBase)
+@UseGuards(JwtAuthGuard)
 export class ChatController {
   constructor(private readonly chat: ChatService) {}
 
