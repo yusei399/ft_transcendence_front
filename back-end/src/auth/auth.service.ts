@@ -3,7 +3,7 @@ import {JwtTokenPayload} from './interface';
 import * as jwt from 'jsonwebtoken';
 import {SignInDto, SignUpDto} from './dto';
 import {UserService} from 'src/user/user.service';
-import { AuthSignUpResponse } from 'src/shared/HttpEndpoints/auth';
+import {AuthSignUpResponse} from 'src/shared/HttpEndpoints/auth';
 
 @Injectable()
 export class AuthService {

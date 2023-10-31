@@ -1,14 +1,14 @@
-import {Expose} from 'class-transformer';
 import {IsNotEmpty, IsNumber, IsString} from 'class-validator';
+import {SendMessageData} from 'src/shared/WsEvents/chat';
 
-export class SendMessageDto {
+export class SendMessageDto implements SendMessageData {
   @IsNotEmpty()
   @IsNumber()
   userId: number;
 
   @IsNotEmpty()
   @IsNumber()
-  roomId: number;
+  chatId: number;
 
   @IsNotEmpty()
   @IsString()

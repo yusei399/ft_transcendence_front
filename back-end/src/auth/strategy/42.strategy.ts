@@ -20,7 +20,11 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
       },
     });
   }
-  async validate(accessToken: string, refreshToken: string, profile: any): Promise<UserPublicProfile> {
+  async validate(
+    accessToken: string,
+    refreshToken: string,
+    profile: any,
+  ): Promise<UserPublicProfile> {
     const userInfo: FortyTwoProfile = {...profile?._json};
     if (!userInfo?.id) throw new UnauthorizedException('Id is missing in the user profile.');
     try {

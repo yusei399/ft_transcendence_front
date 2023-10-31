@@ -1,15 +1,11 @@
-export enum InvitationKindEnum {
+export enum InvitationKindEnum_Url {
   'friend',
   'chat',
   'game',
 }
 
-export type InvitationKindType = 'friend' | 'chat' | 'game';
-
-export enum InvitationActionEnum {
+export enum InvitationActionEnum_Url {
   'accept',
   'decline',
   'cancel',
 }
-
-export type InvitationActionType = 'accept' | 'decline' | 'cancel';

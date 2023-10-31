@@ -1,4 +1,4 @@
-import { UserPublicProfile } from "src/shared/base_interfaces";
+import {UserPublicProfile} from '../../base_interfaces';
 
 /****************PATCH****************/
 export const UserEditEndPoint = 'edit';

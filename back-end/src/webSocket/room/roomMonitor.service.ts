@@ -2,6 +2,7 @@ import {Injectable, Scope} from '@nestjs/common';
 import {BroadcastMessageInRoom, JoinLeaveRoom, RoomName, SendMessageInRoom} from './interface';
 import {SocketMonitorService} from '../socketMonitor/socketMonitor.service';
 import {Server} from 'socket.io';
+import {SendWsMessageToClient} from '../socketMonitor/interface/socket.interface';
 
 @Injectable({scope: Scope.DEFAULT})
 export class RoomMonitorService {
@@ -56,6 +57,14 @@ export class RoomMonitorService {
 
   broadcastMessageInRoom(data: BroadcastMessageInRoom): void {
     const roomName = this.getRoomNameFromTemplate(data);
-    if (this.getNbClientsInRoom(roomName) > 0) this.server.to(roomName).emit(data.eventName, data.message);
+    if (this.getNbClientsInRoom(roomName) > 0)
+      this.server.to(roomName).emit(data.eventName, data.message);
+  }
+
+  sendMessageToUser(dto: SendWsMessageToClient): void {
+    const client = this.socketMonitor.getClientSocketByUserId(dto.userId);
+    if (client) {
+      client.emit(dto.eventName, dto.message);
+    }
   }
 }

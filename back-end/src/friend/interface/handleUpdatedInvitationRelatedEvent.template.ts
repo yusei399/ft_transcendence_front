@@ -6,4 +6,6 @@ export interface HandleUpdatedInvitationRelatedEvent {
   targetStatus: InvitationStatus;
   senderId: number;
   receiverId: number;
+  targetChatId?: number;
+  targetGameId?: number;
 }

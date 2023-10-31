@@ -1,4 +1,4 @@
-import {WsEventName} from './src/webSocket/room/interface/room.interface';
+import {WsEventName} from './src/shared/base_types';
 
 const {io} = require('socket.io-client');
 const readline = require('readline');
@@ -33,6 +33,8 @@ fetch('http://localhost:3333/auth/signin', {
     getSocketMessageFromEvent('connect');
     getSocketMessageFromEvent('disconnect');
     getSocketMessageFromEvent('exception');
+    getSocketMessageFromEvent('newFriend');
+    getSocketMessageFromEvent('leftFriend');
     getSocketMessageFromEvent('friendConnection');
     getSocketMessageFromEvent('friendDisconnection');
     getSocketMessageFromEvent('newMessage');

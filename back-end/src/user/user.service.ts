@@ -40,13 +40,13 @@ export class UserService {
     if ('user42Id' in userInfo) {
       const user = await this.prisma.user.findUnique({
         where: {...userInfo},
-        select: {profile: {select: {userId:true, nickname: true, avatarUrl: true}}},
+        select: {profile: {select: {userId: true, nickname: true, avatarUrl: true}}},
       });
       return user?.profile;
     }
     return await this.prisma.profile.findUnique({
       where: {...userInfo},
-      select: {userId:true, nickname: true, avatarUrl: true},
+      select: {userId: true, nickname: true, avatarUrl: true},
     });
   }
 
@@ -55,7 +55,8 @@ export class UserService {
       where: {profile: {nickname}},
       select: {userId: true, password: true},
     });
-    if (user && (await argon.verify(user.password, password))) return {userId: user.userId, nickname};
+    if (user && (await argon.verify(user.password, password)))
+      return {userId: user.userId, nickname};
     throw new UnauthorizedException('invalid credential');
   }
 
@@ -69,17 +70,22 @@ export class UserService {
           profile: {create: {nickname, avatarUrl}},
         },
         select: {
-          profile: {select: {userId:true, nickname: true, avatarUrl: true}},
+          profile: {select: {userId: true, nickname: true, avatarUrl: true}},
         },
       });
       return user?.profile;
     } catch (err) {
       if (err.code === 'P2002')
-        throw new ConflictException(`unable to create the user. ${err.meta.target} is not available`);
+        throw new ConflictException(
+          `unable to create the user. ${err.meta.target} is not available`,
+        );
     }
   }
 
-  async getOrCreateUser(getInfo: GetUserTemplate, createInfo: CreateUserTemplate): Promise<UserPublicProfile> {
+  async getOrCreateUser(
+    getInfo: GetUserTemplate,
+    createInfo: CreateUserTemplate,
+  ): Promise<UserPublicProfile> {
     let profile = await this.getUserPublicInfo(getInfo);
     if (!profile) profile = await this.createUser(createInfo);
     return profile;
