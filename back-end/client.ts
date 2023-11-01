@@ -55,7 +55,6 @@ fetch('http://localhost:3333/auth/signin', {
       rl.question('\n', () => {
         rl.question('EventName: ', eventName => {
           rl.question('Message: ', message => {
-            // socket.emit(eventName, {userId: 1, roomId: 10, messageContent: 'prout'});
             try {
               socket.emit(eventName, JSON.parse(message));
             } catch (err) {

@@ -1,9 +1,9 @@
-import {IsOptional, IsString, IsUrl} from 'class-validator';
+import {IsNotEmpty, IsOptional, IsString, IsUrl} from 'class-validator';
 import {CreateChatData} from 'src/shared/HttpEndpoints/chat';
 
 export class CreateChatDto implements CreateChatData {
-  @IsOptional()
   @IsString()
+  @IsNotEmpty()
   name: string;
 
   @IsOptional()
@@ -11,6 +11,7 @@ export class CreateChatDto implements CreateChatData {
   chatAvatarUrl?: string;
 
   @IsOptional()
+  @IsNotEmpty()
   @IsString()
   password?: string;
 }

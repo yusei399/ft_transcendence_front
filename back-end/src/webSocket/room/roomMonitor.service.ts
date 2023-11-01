@@ -7,7 +7,7 @@ import {SendWsMessageToClient} from '../socketMonitor/interface/socket.interface
 @Injectable({scope: Scope.DEFAULT})
 export class RoomMonitorService {
   constructor(private readonly socketMonitor: SocketMonitorService) {}
-  private roomsMap = new Map<string, number>();
+  private roomsMap = new Map<string, number[]>();
   private server: Server;
 
   setServer(server: Server) {
@@ -15,11 +15,28 @@ export class RoomMonitorService {
   }
 
   private getNbClientsInRoom(roomName: string) {
-    return this.roomsMap.get(roomName) ?? 0;
+    return this.roomsMap.get(roomName)?.length ?? 0;
+  }
+
+  private addUserToRoomMap(roomName: string, userId: number): void {
+    const users = this.roomsMap.get(roomName) ?? [];
+    users.push(userId);
+    this.roomsMap.set(roomName, users);
+  }
+
+  private removeUserFromRoomMap(roomName: string, userId: number): void {
+    const users = this.roomsMap.get(roomName) ?? [];
+    const index = users.indexOf(userId);
+    if (index >= 0) {
+      users.splice(index, 1);
+      this.roomsMap.set(roomName, users);
+      if (users.length === 0) this.deleteServerRoom(roomName);
+    }
   }
 
   private deleteServerRoom(roomName: string): void {
     this.server.sockets.adapter.rooms.delete(roomName);
+    this.roomsMap.delete(roomName);
   }
 
   private getRoomNameFromTemplate(template: RoomName): string {
@@ -31,8 +48,7 @@ export class RoomMonitorService {
     if (client) {
       const roomName = this.getRoomNameFromTemplate(data);
       client.join(roomName);
-      const nbClients = this.getNbClientsInRoom(roomName);
-      this.roomsMap.set(roomName, nbClients + 1);
+      this.addUserToRoomMap(roomName, data.userId);
     }
   }
 
@@ -41,9 +57,7 @@ export class RoomMonitorService {
     if (client) {
       const roomName = this.getRoomNameFromTemplate(data);
       client.leave(roomName);
-      const nbClients = this.getNbClientsInRoom(roomName);
-      this.roomsMap.set(roomName, nbClients - 1);
-      if (nbClients <= 1) this.deleteServerRoom(roomName);
+      this.removeUserFromRoomMap(roomName, data.userId);
     }
   }
 

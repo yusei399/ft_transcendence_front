@@ -52,7 +52,7 @@ export class ChatController {
     @GetInfoFromJwt('userId') userId: number,
     @Body() dto: CreateChatDto,
   ): Promise<CreateChatResponse> {
-    return this.chat.createChatRoom(userId, dto);
+    return this.chat.createChat(userId, dto);
   }
 
   @Get(GetChatInfoEndPoint)
@@ -68,7 +68,7 @@ export class ChatController {
     @Param(JoinChatParam, ParseIntPipe) chatId: number,
     @Body() dto: JoinChatDto,
   ): Promise<JoinChatRespone> {
-    await this.chat.joinChatRoom({userId, chatId, ...dto});
+    await this.chat.joinChat({userId, chatId, ...dto});
     return this.chat.getChatInfo(chatId);
   }
 
@@ -77,7 +77,7 @@ export class ChatController {
     @GetInfoFromJwt('userId') userId: number,
     @Param(LeaveChatParam, ParseIntPipe) chatId: number,
   ): Promise<LeaveChatRespone> {
-    await this.chat.leaveChatRoom({userId, chatId});
+    await this.chat.leaveChat({userId, chatId});
     return this.chat.getChatInfo(chatId);
   }
 

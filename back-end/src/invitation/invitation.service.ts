@@ -7,7 +7,6 @@ import {HandleUpdatedInvitationRelatedEvent} from 'src/friend/interface/handleUp
 import {SendInvitationReponse, UpdateInvitationReponse} from 'src/shared/HttpEndpoints/invitation';
 import {RoomMonitorService} from 'src/webSocket/room/roomMonitor.service';
 import {OnNewInvitationEvent} from 'src/shared/WsEvents/invitation';
-import {dot} from 'node:test/reporters';
 
 @Injectable()
 export class InvitationsService {
@@ -94,7 +93,7 @@ export class InvitationsService {
 
   async handleUpdatedInvitationRelatedEvent(dto: HandleUpdatedInvitationRelatedEvent) {
     if (dto.kind === 'CHAT') {
-      this.chat.joinChatRoom({userId: dto.receiverId, chatId: dto.targetChatId}, true);
+      this.chat.joinChat({userId: dto.receiverId, chatId: dto.targetChatId}, true);
     } else if (dto.kind === 'FRIEND') {
       this.friend.setRelationship({userId: dto.senderId, targetUserId: dto.receiverId});
     } else if (dto.kind === 'GAME') {
