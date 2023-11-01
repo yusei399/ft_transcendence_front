@@ -20,7 +20,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
       return true;
     }
   }
-  static validateToken(token: string): JwtTokenPayload {
-    return AuthService.verifyAndDecodeAuthToken(token);
+  static validateToken(token: string, ctx: "http" | "ws" = "http"): JwtTokenPayload {
+    return AuthService.verifyAndDecodeAuthToken(token, ctx);
   }
 }

@@ -1,6 +1,6 @@
 import {InvitationKind, InvitationStatus} from '@prisma/client';
-import {InvitationActionType} from '../enum';
 import {BadRequestException} from '@nestjs/common';
+import {InvitationAction_Url} from 'src/shared/base_types';
 
 abstract class UpdateInvitationBase {
   invitationId: number;
@@ -27,7 +27,7 @@ export type UpdateInvitationStatus = AcceptInvitation | DeclineInvitation | Canc
 
 export function generateUpdateInvitationDto(
   userId: number,
-  action: InvitationActionType,
+  action: InvitationAction_Url,
   kind: InvitationKind,
   invitationId: number,
 ): UpdateInvitationStatus {

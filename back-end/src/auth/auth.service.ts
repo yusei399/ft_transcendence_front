@@ -3,7 +3,8 @@ import {JwtTokenPayload} from './interface';
 import * as jwt from 'jsonwebtoken';
 import {SignInDto, SignUpDto} from './dto';
 import {UserService} from 'src/user/user.service';
-import { AuthSignUpResponse } from 'src/shared/HttpEndpoints/auth';
+import {AuthSignUpResponse} from 'src/shared/HttpEndpoints/auth';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class AuthService {
@@ -27,9 +28,10 @@ export class AuthService {
     return {userId: payload.userId, nickname: payload.nickname};
   }
 
-  static verifyAndDecodeAuthToken(authToken: string): JwtTokenPayload {
+  static verifyAndDecodeAuthToken(authToken: string, ctx: "http" | "ws" = "http"): JwtTokenPayload {
     if (this.verifyToken(authToken)) return this.decodeToken(authToken);
-    throw new UnauthorizedException('invalid token');
+    if (ctx === 'http') throw new UnauthorizedException('invalid token');
+    if (ctx === 'ws') throw new WsException('invalid token');
   }
 
   async signup(dto: SignUpDto): Promise<AuthSignUpResponse> {

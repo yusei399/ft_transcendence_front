@@ -1,4 +1,11 @@
-import {Body, Controller, Get, Patch, UnprocessableEntityException, UseGuards} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  UnprocessableEntityException,
+  UseGuards,
+} from '@nestjs/common';
 import {JwtAuthGuard} from 'src/auth/guard';
 import {EditUserDto} from './dto';
 import {UserService} from './user.service';

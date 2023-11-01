@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Post, Req, Res, UnauthorizedException, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Post, Req, UnauthorizedException, UseGuards} from '@nestjs/common';
 import {AuthService} from './auth.service';
 import {FortyTwoAuthGuard} from './guard';
 import {SignInDto, SignUpDto} from './dto';
@@ -16,6 +16,7 @@ import {
 @Controller(AuthEndPointBase)
 export class AuthController {
   constructor(private authService: AuthService) {}
+
   @Get(Auth42EndPoint)
   @UseGuards(FortyTwoAuthGuard)
   redirectTo42Auth(): never {
