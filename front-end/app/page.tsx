@@ -1,4 +1,5 @@
-import LoginPage  from './components/auth/LoginPage'
+import SignupPage from './components/auth/SignupPage';
+import LoginPage  from './components/auth/SignupPage'
 import UserEditProfile from './components/user/UserEditProfile';
 import UserProfile from './components/user/UserProfile';
 import { ChakraProvider } from "@chakra-ui/react";
@@ -16,7 +17,8 @@ export default function main() {
   return (
     <>
       <ChakraProvider>
-        <LoginPage />
+        {/*<LoginPage />*/}
+        <SignupPage />
         <UserEditProfile/>
         <UserProfile />
       </ChakraProvider>
