@@ -2,16 +2,14 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
-import { AuthSignUpData, AuthSignUpResponse } from '../../shared/HttpEndpoints/auth/SignUp';
+import { AuthSignInData, AuthSignInResponse } from '../../shared/HttpEndpoints/auth/SignIn';
 
-const SignupPage: React.FC = () => {
-    const [data, setData] = useState<AuthSignUpData>({
+const SigninPage: React.FC = () => {
+    const [data, setData] = useState<AuthSignInData>({
         nickname: '',
-        email: '',
-        password: '',
-        avatarUrl: ''
+        password: ''
     });
-    const [response, setResponse] = useState<AuthSignUpResponse | null>(null);
+    const [response, setResponse] = useState<AuthSignInResponse | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -21,13 +19,13 @@ const SignupPage: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            let body: Partial<AuthSignUpData> = {};
+            let body: Partial<AuthSignInData> = {};
             for (const key in data) {
-                if (data[key as keyof AuthSignUpData]) {
-                    body = { ...body, [key]: data[key as keyof AuthSignUpData] };
+                if (data[key as keyof AuthSignInData]) {
+                    body = { ...body, [key]: data[key as keyof AuthSignInData] };
                 }
             }
-            const result = await axios.post<AuthSignUpResponse>('http://localhost:3333/auth/signup', body);
+            const result = await axios.post<AuthSignInResponse>('http://localhost:3333/auth/signin', body);
             setResponse(result.data);
         } catch (err) {
             if (axios.isAxiosError(err))
@@ -44,29 +42,19 @@ const SignupPage: React.FC = () => {
                     <input type="text" name="nickname" value={data.nickname} onChange={handleChange} />
                 </div>
                 <div>
-                    <label>Email: </label>
-                    <input type="email" name="email" value={data.email} onChange={handleChange} />
-                </div>
-                <div>
                     <label>Password: </label>
                     <input type="password" name="password" value={data.password} onChange={handleChange} />
                 </div>
-                <div>
-                    <label>Avatar URL (optional): </label>
-                    <input type="url" name="avatarUrl" value={data.avatarUrl} onChange={handleChange} />
-                </div>
-                <button type="submit">Sign Up</button>
+                <button type="submit">Sign In</button>
             </form>
             {response && (
                 <div>
                     <h3>Response:</h3>
-                    <p>User ID: {response.userId}</p>
-                    <p>Nickname: {response.nickname}</p>
-                    <p>Avatar URL: {response.avatarUrl}</p>
+                    <p>Token: {response.authToken}</p>
                 </div>
             )}
         </div>
     );
 }
 
-export default SignupPage;
+export default SigninPage;

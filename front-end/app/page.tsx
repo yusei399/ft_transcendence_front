@@ -1,3 +1,4 @@
+import SigninPage from './components/auth/SigninPage';
 import SignupPage from './components/auth/SignupPage';
 import LoginPage  from './components/auth/SignupPage'
 import UserEditProfile from './components/user/UserEditProfile';
@@ -18,7 +19,10 @@ export default function main() {
     <>
       <ChakraProvider>
         {/*<LoginPage />*/}
+        <div>SignUp</div>
         <SignupPage />
+        <div>SignIn</div>
+        <SigninPage />
         <UserEditProfile/>
         <UserProfile />
       </ChakraProvider>
