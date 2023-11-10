@@ -7,7 +7,7 @@
   "useTabs": false,
   "tabWidth": 2,
   "semi": true,
-  "printWidth": 110,
+  "printWidth": 100,
   "quoteProps": "as-needed",
   "arrowParens": "avoid",
   "proseWrap": "never"

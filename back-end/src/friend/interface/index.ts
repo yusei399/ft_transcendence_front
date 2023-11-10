@@ -1,1 +1,1 @@
-export * from './CreateRelationship.interface';
+export * from './setUnsetRelationship.interface';

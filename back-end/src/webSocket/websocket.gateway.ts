@@ -12,7 +12,9 @@ import {SocketAuthMiddleware} from 'src/auth/middleware/ws.middleware';
 import {RoomMonitorService} from './room/roomMonitor.service';
 
 @WebSocketGateway()
-export class SocketMonitorGateway implements OnGatewayInit, OnGatewayDisconnect, OnGatewayConnection {
+export class SocketMonitorGateway
+  implements OnGatewayInit, OnGatewayDisconnect, OnGatewayConnection
+{
   constructor(
     private readonly roomMonitor: RoomMonitorService,
     private readonly connectionMonitor: ConnectionMonitorService,

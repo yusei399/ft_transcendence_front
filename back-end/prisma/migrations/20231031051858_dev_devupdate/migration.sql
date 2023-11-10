@@ -5,7 +5,7 @@ CREATE TYPE "InvitationStatus" AS ENUM ('PENDING', 'ACCEPTED', 'REFUSED', 'CANCE
 CREATE TYPE "InvitationKind" AS ENUM ('FRIEND', 'CHAT', 'GAME');
 
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('CREATOR', 'ADMIN', 'MEMBER');
+CREATE TYPE "Role" AS ENUM ('ADMIN', 'MEMBER');
 
 -- CreateEnum
 CREATE TYPE "GameStatus" AS ENUM ('WAITING_FOR_PLAYER', 'IN_PROGRESS', 'PAUSED', 'FINISHED', 'CANCELED');
@@ -22,12 +22,12 @@ CREATE TABLE "Users" (
 
 -- CreateTable
 CREATE TABLE "Profile" (
-    "profileId" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "userId" SERIAL NOT NULL,
     "nickname" TEXT,
     "avatarUrl" TEXT,
+    "friendUserIds" INTEGER[],
 
-    CONSTRAINT "Profile_pkey" PRIMARY KEY ("profileId")
+    CONSTRAINT "Profile_pkey" PRIMARY KEY ("userId")
 );
 
 -- CreateTable
@@ -46,7 +46,7 @@ CREATE TABLE "Invitations" (
 -- CreateTable
 CREATE TABLE "Chats" (
     "chatId" SERIAL NOT NULL,
-    "name" TEXT,
+    "name" TEXT NOT NULL,
     "chatAvatarUrl" TEXT,
     "password" TEXT,
 
@@ -57,7 +57,8 @@ CREATE TABLE "Chats" (
 CREATE TABLE "Messages" (
     "messageId" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "chatParticipationId" INTEGER NOT NULL,
+    "chatId" INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
     "messageContent" TEXT NOT NULL,
 
     CONSTRAINT "Messages_pkey" PRIMARY KEY ("messageId")
@@ -65,25 +66,22 @@ CREATE TABLE "Messages" (
 
 -- CreateTable
 CREATE TABLE "ChatParticipations" (
-    "chatParticipationId" SERIAL NOT NULL,
     "role" "Role" NOT NULL DEFAULT 'MEMBER',
     "mutedUntil" TIMESTAMP(3),
     "blockedUntil" TIMESTAMP(3),
+    "hasLeaved" BOOLEAN NOT NULL DEFAULT false,
     "chatId" INTEGER NOT NULL,
-    "userId" INTEGER NOT NULL,
-
-    CONSTRAINT "ChatParticipations_pkey" PRIMARY KEY ("chatParticipationId")
+    "userId" INTEGER NOT NULL
 );
 
 -- CreateTable
 CREATE TABLE "GameParticipations" (
-    "GameParticipationId" SERIAL NOT NULL,
     "Point" INTEGER NOT NULL DEFAULT 0,
     "isWinner" BOOLEAN,
     "gameId" INTEGER NOT NULL,
     "userId" INTEGER NOT NULL,
 
-    CONSTRAINT "GameParticipations_pkey" PRIMARY KEY ("GameParticipationId")
+    CONSTRAINT "GameParticipations_pkey" PRIMARY KEY ("gameId","userId")
 );
 
 -- CreateTable
@@ -108,9 +106,6 @@ CREATE TABLE "_friends" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Users_user42Id_key" ON "Users"("user42Id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Profile_userId_key" ON "Profile"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Profile_nickname_key" ON "Profile"("nickname");
@@ -140,25 +135,25 @@ ALTER TABLE "Invitations" ADD CONSTRAINT "Invitations_receiverId_fkey" FOREIGN K
 ALTER TABLE "Invitations" ADD CONSTRAINT "Invitations_targetChatId_fkey" FOREIGN KEY ("targetChatId") REFERENCES "Chats"("chatId") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Messages" ADD CONSTRAINT "Messages_chatParticipationId_fkey" FOREIGN KEY ("chatParticipationId") REFERENCES "ChatParticipations"("chatParticipationId") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Messages" ADD CONSTRAINT "Messages_chatId_userId_fkey" FOREIGN KEY ("chatId", "userId") REFERENCES "ChatParticipations"("chatId", "userId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ChatParticipations" ADD CONSTRAINT "ChatParticipations_chatId_fkey" FOREIGN KEY ("chatId") REFERENCES "Chats"("chatId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ChatParticipations" ADD CONSTRAINT "ChatParticipations_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ChatParticipations" ADD CONSTRAINT "ChatParticipations_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Profile"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "GameParticipations" ADD CONSTRAINT "GameParticipations_gameId_fkey" FOREIGN KEY ("gameId") REFERENCES "Games"("gameId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "GameParticipations" ADD CONSTRAINT "GameParticipations_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "GameParticipations" ADD CONSTRAINT "GameParticipations_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Profile"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Games" ADD CONSTRAINT "Games_invitationId_fkey" FOREIGN KEY ("invitationId") REFERENCES "Invitations"("invitationId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_friends" ADD CONSTRAINT "_friends_A_fkey" FOREIGN KEY ("A") REFERENCES "Profile"("profileId") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_friends" ADD CONSTRAINT "_friends_A_fkey" FOREIGN KEY ("A") REFERENCES "Profile"("userId") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_friends" ADD CONSTRAINT "_friends_B_fkey" FOREIGN KEY ("B") REFERENCES "Users"("userId") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_friends" ADD CONSTRAINT "_friends_B_fkey" FOREIGN KEY ("B") REFERENCES "Profile"("userId") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -1,5 +1,5 @@
 import {IsEmail, IsOptional, IsString, IsUrl} from 'class-validator';
-import { UserEditUserData } from 'src/shared/HttpEndpoints/user';
+import {UserEditUserData} from 'src/shared/HttpEndpoints/user';
 
 export class EditUserDto implements UserEditUserData {
   @IsEmail()

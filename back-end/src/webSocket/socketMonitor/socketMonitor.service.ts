@@ -5,15 +5,15 @@ import {Socket} from 'socket.io';
 export class SocketMonitorService {
   private socketsMap = new Map<number, Socket>();
 
-  getClientSocketByUserId(userId: number) {
+  getClientSocketByUserId(userId: number): Socket {
     return this.socketsMap.get(userId);
   }
 
-  addUserToSocketMap(client: Socket) {
+  addUserToSocketMap(client: Socket): void {
     this.socketsMap.set(client.data.userId, client);
   }
 
-  removeUserFromSocketsMap(userId: number) {
+  removeUserFromSocketsMap(userId: number): void {
     this.socketsMap.delete(userId);
   }
 }
