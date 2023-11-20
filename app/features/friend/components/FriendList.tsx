@@ -1,7 +1,7 @@
 
 
 
-const FriendList = (prop : any) => {
+const FriendList = (prop: any) => {
 	return (
 		<>
 			<div>
