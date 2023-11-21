@@ -1,12 +1,20 @@
-"use client"
-import React, { useState, useEffect, useCallback } from 'react';
-import io from 'socket.io-client';
+"use client";
 
-const socket = io('http://localhost:3333');
+import { useState, useEffect } from 'react';
+import {Socket, io} from 'socket.io-client';
 
-const Socket = () => {
+const SocketHandler = () => {
+  const [socket, setSocket] = useState<Socket | null>(null);
+  useEffect(() => {
+    const socket = io('ws://localhost:3333');
+    return () => {
+      socket.disconnect();
+    }
+  }, [])
+
   return <div>test</div>;
 }
+export default SocketHandler;
 
 // const Socket = () => {
 //   const [num, setNum] = useState(0);
@@ -93,4 +101,3 @@ const Socket = () => {
 //   );
 // };
 
-export default Socket;
