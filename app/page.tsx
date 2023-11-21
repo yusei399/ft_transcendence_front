@@ -18,14 +18,14 @@ export default function main() {
   return (
     <>
       <ChakraProvider>
-      <Socket />
-        {/*<LoginPage />*/}
-        {/* <div>SignUp</div>
-        <SignupPage />
-        <div>SignIn</div>
-        <SigninPage />
-        <UserEditProfile/>
-        <UserProfile /> */}
+      {/* <Socket /> */}
+      <LoginPage />
+      <div>SignUp</div>
+      <SignupPage />
+      <div>SignIn</div>
+      <SigninPage />
+      <UserEditProfile/>
+      <UserProfile />
       </ChakraProvider>
     </>
   );

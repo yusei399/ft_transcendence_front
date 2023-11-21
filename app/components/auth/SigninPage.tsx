@@ -1,36 +1,27 @@
 "use client";
 
 import React, { useState } from 'react';
-import axios from 'axios';
-import { AuthSignInData, AuthSignInResponse } from '../../shared/HttpEndpoints/auth/SignIn';
+import { HttpSignIn } from '../../shared/HttpEndpoints/auth/SignIn';
 
 const SigninPage: React.FC = () => {
-    const [data, setData] = useState<AuthSignInData>({
+    const [reqData, setReqData] = useState<HttpSignIn.reqTemplate>({
         nickname: '',
         password: ''
     });
-    const [response, setResponse] = useState<AuthSignInResponse | null>(null);
+    const [response, setResponse] = useState<HttpSignIn.resTemplate | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setData(prev => ({ ...prev, [name]: value }));
+        setReqData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            let body: Partial<AuthSignInData> = {};
-            for (const key in data) {
-                if (data[key as keyof AuthSignInData]) {
-                    body = { ...body, [key]: data[key as keyof AuthSignInData] };
-                }
-            }
-            const result = await axios.post<AuthSignInResponse>('http://localhost:3333/auth/signin', body);
-            setResponse(result.data);
+            const res = await new HttpSignIn.requestSender(reqData).sendRequest();
+            setResponse(res);
         } catch (err) {
-            if (axios.isAxiosError(err))
-                console.error('Axios Error during sign up:', err?.response?.data ?? err);
-            else console.error('Error during sign up:', err);
+            console.log(err);
         }
     };
 
@@ -39,11 +30,11 @@ const SigninPage: React.FC = () => {
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>Nickname: </label>
-                    <input type="text" name="nickname" value={data.nickname} onChange={handleChange} />
+                    <input type="text" name="nickname" value={reqData.nickname} onChange={handleChange} />
                 </div>
                 <div>
                     <label>Password: </label>
-                    <input type="password" name="password" value={data.password} onChange={handleChange} />
+                    <input type="password" name="password" value={reqData.password} onChange={handleChange} />
                 </div>
                 <button type="submit">Sign In</button>
             </form>
