@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 const Chat = () => {
     const [message, setMessage] = useState('');
 
-    const handleChange = (event) => {
+    const handleChange = (event : any) => {
         setMessage(event.target.value);
     };
 
