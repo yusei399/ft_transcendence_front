@@ -27,6 +27,8 @@ const SigninPage: React.FC = () => {
             }
             const result = await axios.post<AuthSignInResponse>('http://localhost:3333/auth/signin', body);
             setResponse(result.data);
+
+            localStorage.setItem('authToken', result.data.authToken);
         } catch (err) {
             if (axios.isAxiosError(err))
                 console.error('Axios Error during sign up:', err?.response?.data ?? err);
