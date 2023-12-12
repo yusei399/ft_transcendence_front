@@ -1,5 +1,6 @@
-
-
+"use client";
+import React from 'react';
+import Link from 'next/link';
 
 const FriendList = (prop: any) => {
 	return (
@@ -7,10 +8,14 @@ const FriendList = (prop: any) => {
 			<div>
 				<h1>Friend List</h1>
 				<div>
-					{prop.friendList.map((friend : any) => (
+					{prop?.friendList?.map((friend : any) => (
 						<div key={friend.id}>
 							<h1>{friend.name}</h1>
-							<button >chat</button>
+							<button >
+								<Link href={`/chat/${friend.id}`}>
+									chat
+								</Link>
+							</button>
 						</div>
 					))}
 				</div>

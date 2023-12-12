@@ -6,6 +6,7 @@ import UserProfile from './features/user/components/UserProfile';
 import UserEditProfile from './features/user/components/UserEditProfile';
 import Socket from './features/webSocket/Socket';
 import Chat from './features/chat/Chat';
+import FriendList from './features/friend/components/FriendList';
 
 export default function main() {
   // const User = [{
@@ -28,6 +29,7 @@ export default function main() {
         <SigninPage />
         <UserEditProfile/>
         <UserProfile /> */}
+        <FriendList />
       </ChakraProvider>
     </>
   );
