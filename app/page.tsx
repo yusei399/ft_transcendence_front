@@ -5,6 +5,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import UserProfile from './features/user/components/UserProfile';
 import UserEditProfile from './features/user/components/UserEditProfile';
 import SocketHandler  from './components/Socket';
+import UserList from './features/user/components/UserList';
 
 export default function main() {
   // const User = [{
@@ -20,12 +21,13 @@ export default function main() {
       <ChakraProvider>
       {/* <SocketHandler /> */}
       <LoginPage />
-      <div>SignUp</div>
-      <SignupPage />
-      <div>SignIn</div>
+      {/* <div>SignUp</div> */}
+      {/* <SignupPage /> */}
+      {/* <div>SignIn</div> */}
       <SigninPage />
-      <UserEditProfile/>
-      <UserProfile />
+      {/* <UserEditProfile/>
+      <UserProfile /> */}
+      <UserList />
       </ChakraProvider>
     </>
   );

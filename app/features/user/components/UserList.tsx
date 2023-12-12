@@ -7,29 +7,25 @@ import { Button } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 const UserList = () => {
+    const [users, setUsers] = useState<UserPublicProfile[]>([]);
+    const [response, setResponse] = useState<HttpSendInvitation.resTemplate | null>(null);
+
     useEffect(() => {
-              const authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5pY2tuYW1lIjoia29oZWkiLCJpYXQiOjE3MDA1NTQwMzEsImV4cCI6MTcwMDU1NzYzMX0.9kF1YxD0ZeYih3PNfP4qjpA8JABXrxIqhMR1IpaJOoE';
+        const authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5pY2tuYW1lIjoiaWtlY2hhbiIsImlhdCI6MTcwMjM4MTY1NiwiZXhwIjoxNzAyMzg1MjU2fQ.ERpfqyPagqnLaUUGbYZ2RYezVzyqEWQ-saukDOeG_7c';
         fetchUsers(authToken).then(data => {
-              setUsers(data);
-              });
-          }, []);
-      const [reqData, setReqData] = useState<HttpSendInvitation.reqTemplate>({
-          targetUserId: 2,
-      });
+            setUsers(data);
+            });
+        }, []);
+        const [reqData, setReqData] = useState<HttpSendInvitation.reqTemplate>({
+        targetUserId: 2,
+    });
 
     async function fetchUsers(authToken: string) {
         const requestSender = new HttpAllUsers.requestSender(authToken);
-        //console.log(requestSender);
         const response = await requestSender.sendRequest();
-        //console.log('fetchUsers');
-        //console.log(response);
-        //console.log(response.users);
         return response.users;
     }
     
-    const [users, setUsers] = useState<UserPublicProfile[]>([]);
-
-    const [response, setResponse] = useState<HttpSendInvitation.resTemplate | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -39,7 +35,7 @@ const UserList = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await new HttpSendInvitation.requestSender('friend', reqData, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5pY2tuYW1lIjoia29oZWkiLCJpYXQiOjE3MDA1NTQwMzEsImV4cCI6MTcwMDU1NzYzMX0.9kF1YxD0ZeYih3PNfP4qjpA8JABXrxIqhMR1IpaJOoE').sendRequest();
+            const res = await new HttpSendInvitation.requestSender('friend', reqData, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5pY2tuYW1lIjoiaWtlY2hhbiIsImlhdCI6MTcwMjM4MTY1NiwiZXhwIjoxNzAyMzg1MjU2fQ.ERpfqyPagqnLaUUGbYZ2RYezVzyqEWQ-saukDOeG_7c').sendRequest();
             setResponse(res);
         } catch (err) {
             console.log(err);
@@ -48,7 +44,7 @@ const UserList = () => {
     
     return (
         <div>
-            {users!.map((user: any) => (
+            {Array.isArray(users) && users?.map((user: any) => (
                 <div key={user.id}>
                     {user.name}
                     <div className="friend-button">
