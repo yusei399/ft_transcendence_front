@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import {HttpSignUp } from '../../shared/HttpEndpoints/auth/SignUp';
+import {HttpSignUp } from '../../../shared/HttpEndpoints/auth/SignUp';
 
 const SignupPage: React.FC = () => {
     const [reqData, setReqData] = useState<HttpSignUp.reqTemplate>({
