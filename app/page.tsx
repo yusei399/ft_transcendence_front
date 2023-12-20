@@ -4,11 +4,7 @@ import LoginPage  from './components/auth/SignupPage'
 import { ChakraProvider } from "@chakra-ui/react";
 import UserProfile from './features/user/components/UserProfile';
 import UserEditProfile from './features/user/components/UserEditProfile';
-import Socket from './features/webSocket/Socket';
-import Chat from './features/chat/Chat';
-import FriendList from './features/friend/components/FriendList';
-import CreateChat from './features/chat/createChat';
-import JoinChat from './features/chat/JoinChat';
+import SocketHandler  from './components/Socket';
 
 export default function main() {
   // const User = [{
@@ -22,18 +18,14 @@ export default function main() {
   return (
     <>
       <ChakraProvider>
-        {/* <CreateChat /> */}
-      {/* <Socket /> */}
-        {/*<LoginPage />*/}
-        {/* <div>SignUp</div> */}
-        {/* <SignupPage /> */}
-        {/* <div>SignIn</div> */}
-        {/* <SigninPage /> */}
-        {/* <UserEditProfile/>
-        <UserProfile /> */}
-        {/* <FriendList /> */}
-        {/* <JoinChat /> */}
-        <Chat />
+      {/* <SocketHandler /> */}
+      <LoginPage />
+      <div>SignUp</div>
+      <SignupPage />
+      <div>SignIn</div>
+      <SigninPage />
+      <UserEditProfile/>
+      <UserProfile />
       </ChakraProvider>
     </>
   );
