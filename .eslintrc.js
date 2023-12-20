@@ -6,7 +6,7 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint/eslint-plugin'],
-  extends: ['next/core-web-vitals', 'next','plugin:@typescript-eslint/recommended', 'prettier'],
+  extends: ['next/core-web-vitals', 'next', 'plugin:@typescript-eslint/recommended', 'prettier'],
   root: true,
   env: {
     node: true,

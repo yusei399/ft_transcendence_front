@@ -4,8 +4,10 @@ import {createMutation, createQuery} from './utils';
 
 const chatApi = backEndApiSlice.injectEndpoints({
   endpoints: build => ({
+    getAllChats: createQuery(build, HttpChat.getAll.requestSender),
     getChatInfo: createQuery(build, HttpChat.getInfo.requestSender),
     getChatMessages: createQuery(build, HttpChat.getMessages.requestSender),
+    createChat: createMutation(build, HttpChat.create.requestSender),
     joinChat: createMutation(build, HttpChat.join.requestSender),
     leaveChat: createMutation(build, HttpChat.leave.requestSender),
     updateChat: createMutation(build, HttpChat.update.requestSender),
@@ -15,8 +17,10 @@ const chatApi = backEndApiSlice.injectEndpoints({
 });
 
 export const {
+  useGetAllChatsQuery,
   useGetChatInfoQuery,
   useGetChatMessagesQuery,
+  useCreateChatMutation,
   useJoinChatMutation,
   useLeaveChatMutation,
   useUpdateChatMutation,

@@ -12,6 +12,7 @@ export const axiosBaseQuery =
       data: req,
       headers: {'Content-Type': 'application/json'},
     };
+
     if (authToken) options.headers = {...options.headers, Authorization: `Bearer ${authToken}`};
     try {
       const res = await axios(options);

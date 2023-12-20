@@ -5,7 +5,7 @@ import {jwtSelector} from '@/lib/redux';
 import {useRouter} from 'next/navigation';
 import {useEffect} from 'react';
 import {SocketService} from '@/services/websocket/socketService';
-import {MissingStaticPage} from 'next/dist/shared/lib/utils';
+import ChatList from './components/ChatList';
 
 export default function IndexPage() {
   const authToken = useAppSelector(jwtSelector);
@@ -17,17 +17,9 @@ export default function IndexPage() {
 
   if (!authToken) return <div>Redirecting...</div>;
 
-  const sendMessage = () => {
-    const msg = 'hello world';
-    SocketService.emit('sendMessage', {
-      chatId: 1,
-      messageContent: msg,
-    });
-  };
-
   return (
     <>
-      <button onClick={sendMessage}>send message</button>
+      <ChatList />
     </>
   );
 }
