@@ -7,6 +7,8 @@ import UserEditProfile from './features/user/components/UserEditProfile';
 import Socket from './features/webSocket/Socket';
 import Chat from './features/chat/Chat';
 import FriendList from './features/friend/components/FriendList';
+import CreateChat from './features/chat/createChat';
+import JoinChat from './features/chat/JoinChat';
 
 export default function main() {
   // const User = [{
@@ -20,16 +22,18 @@ export default function main() {
   return (
     <>
       <ChakraProvider>
-        <Chat />
+        {/* <CreateChat /> */}
       {/* <Socket /> */}
         {/*<LoginPage />*/}
-        {/* <div>SignUp</div>
-        <SignupPage />
-        <div>SignIn</div>
-        <SigninPage />
-        <UserEditProfile/>
+        {/* <div>SignUp</div> */}
+        {/* <SignupPage /> */}
+        {/* <div>SignIn</div> */}
+        {/* <SigninPage /> */}
+        {/* <UserEditProfile/>
         <UserProfile /> */}
-        <FriendList />
+        {/* <FriendList /> */}
+        {/* <JoinChat /> */}
+        <Chat />
       </ChakraProvider>
     </>
   );
