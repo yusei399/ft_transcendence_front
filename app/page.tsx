@@ -1,32 +1,24 @@
-import SigninPage from './components/auth/SigninPage';
-import SignupPage from './components/auth/SignupPage';
-import LoginPage  from './components/auth/SignupPage'
-import { ChakraProvider } from "@chakra-ui/react";
-import UserProfile from './features/user/components/UserProfile';
-import UserEditProfile from './features/user/components/UserEditProfile';
-import SocketHandler  from './components/Socket';
+'use client';
 
-export default function main() {
-  // const User = [{
-  //   name: "test",
-  //   email: "test.eamil.com",
-  // },
-  // {
-  //   name: "test2",
-  //   email: "test2.eamil.com",
-  // }]
+import {useAppSelector} from '@/lib/redux/hook';
+import {jwtSelector} from '@/lib/redux';
+import {useRouter} from 'next/navigation';
+import {useEffect} from 'react';
+
+export default function IndexPage() {
+  const authToken = useAppSelector(jwtSelector);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!authToken) router.push('/auth');
+  }, [authToken]);
+
+  if (!authToken) return <div>Redirecting...</div>;
+
   return (
     <>
-      <ChakraProvider>
-      {/* <SocketHandler /> */}
-      <LoginPage />
-      <div>SignUp</div>
-      <SignupPage />
-      <div>SignIn</div>
-      <SigninPage />
-      <UserEditProfile/>
-      <UserProfile />
-      </ChakraProvider>
+      <h1>Index Page</h1>
+      <p>Only logged in users can see this page</p>
     </>
   );
 }

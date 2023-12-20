@@ -4,6 +4,7 @@ import {createMutation, createQuery} from './utils';
 
 const chatApi = backEndApiSlice.injectEndpoints({
   endpoints: build => ({
+    getAllChats: createQuery(build, HttpChat.getAll.requestSender),
     getChatInfo: createQuery(build, HttpChat.getInfo.requestSender),
     getChatMessages: createQuery(build, HttpChat.getMessages.requestSender),
     joinChat: createMutation(build, HttpChat.join.requestSender),
@@ -15,6 +16,7 @@ const chatApi = backEndApiSlice.injectEndpoints({
 });
 
 export const {
+  useGetAllChatsQuery,
   useGetChatInfoQuery,
   useGetChatMessagesQuery,
   useJoinChatMutation,

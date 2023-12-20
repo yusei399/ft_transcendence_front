@@ -5,7 +5,7 @@ import {jwtSelector} from '@/lib/redux';
 import {useRouter} from 'next/navigation';
 import {useEffect} from 'react';
 import {SocketService} from '@/services/websocket/socketService';
-import {MissingStaticPage} from 'next/dist/shared/lib/utils';
+import ChatList from './components/ChatList';
 
 export default function IndexPage() {
   const authToken = useAppSelector(jwtSelector);
@@ -28,6 +28,7 @@ export default function IndexPage() {
   return (
     <>
       <button onClick={sendMessage}>send message</button>
+      <ChatList />
     </>
   );
 }
