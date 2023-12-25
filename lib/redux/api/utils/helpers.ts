@@ -1,10 +1,12 @@
 import {Http} from '@/shared/HttpEndpoints';
 import axios, {AxiosRequestConfig} from 'axios';
 import {AxiosBaseQuery, BuilderType, CstrArgs, ReqSenderCstr, TRes} from './types';
+import {RootState} from '../../store';
 
 export const axiosBaseQuery =
   ({baseUrl}: {baseUrl: string} = {baseUrl: ''}): AxiosBaseQuery =>
-  async ({endpoint, method, req, authToken, resCtr}: Http.requestSender) => {
+  async ({endpoint, method, req, resCtr}: Http.requestSender, api) => {
+    const {getState} = api;
     const options: AxiosRequestConfig = {
       method: method,
       baseURL: baseUrl,
@@ -12,8 +14,8 @@ export const axiosBaseQuery =
       data: req,
       headers: {'Content-Type': 'application/json'},
     };
-
-    if (authToken) options.headers = {...options.headers, Authorization: `Bearer ${authToken}`};
+    const {jwt} = (getState() as RootState).auth;
+    if (jwt) options.headers = {...options.headers, Authorization: `Bearer ${jwt}`};
     try {
       const res = await axios(options);
       const data = res.data as InstanceType<typeof resCtr>;

@@ -2,12 +2,9 @@
 import React, {useState} from 'react';
 import {HttpCreateChat} from '@/shared/HttpEndpoints/chat';
 import {useCreateChatMutation} from '@/lib/redux/api';
-import {useAppSelector} from '@/lib/redux/hook';
-import {jwtSelector} from '@/lib/redux';
 import Loading from '@/app/components/global/Loading';
 
 const CreateChat = () => {
-  const authToken = useAppSelector(jwtSelector) ?? '';
   const [createChat, {isLoading, error}] = useCreateChatMutation();
   const [chatInfo, setChatInfo] = useState<HttpCreateChat.reqTemplate>({
     name: '',
@@ -17,7 +14,7 @@ const CreateChat = () => {
 
   const handlecreate = async () => {
     try {
-      const res = createChat([chatInfo, authToken]).unwrap();
+      const res = createChat([chatInfo]).unwrap();
       console.log(res);
     } catch (error) {
       console.error('Error creating chat:', error);
@@ -50,3 +47,5 @@ const CreateChat = () => {
     </div>
   );
 };
+
+export default CreateChat;

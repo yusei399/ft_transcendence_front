@@ -11,10 +11,12 @@ export type CstrArgs<T extends new (...args: any[]) => Http.requestSender> = T e
 ) => any
   ? P
   : never;
+
 export type TRes<T extends new (...args: any[]) => ARequestSender<any, any>> = T extends new (
   ...args: any[]
 ) => ARequestSender<any, infer R>
   ? R
   : never;
+
 export type BuilderType = EndpointBuilder<AxiosBaseQuery, never, 'backEndApi'>;
 export type ReqSenderCstr = new (...args: any[]) => Http.requestSender;

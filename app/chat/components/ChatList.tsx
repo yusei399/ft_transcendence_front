@@ -1,11 +1,8 @@
 import Loading from '@/app/components/global/Loading';
-import {jwtSelector} from '@/lib/redux';
 import {useGetAllChatsQuery} from '@/lib/redux/api';
-import {useAppSelector} from '@/lib/redux/hook';
 
 function ChatList() {
-  const authToken = useAppSelector(jwtSelector) ?? '';
-  const {data, isLoading, error} = useGetAllChatsQuery([authToken]);
+  const {data, isLoading, error} = useGetAllChatsQuery([]);
 
   if (isLoading) return <Loading />;
   if (error) console.log(error);
