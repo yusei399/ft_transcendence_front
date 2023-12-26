@@ -4,8 +4,12 @@ import {createMutation} from './utils';
 
 const invitationApi = backEndApi.injectEndpoints({
   endpoints: build => ({
-    sendInvitation: createMutation(build, HttpInvitation.sendInvitation.requestSender),
-    updateInvitation: createMutation(build, HttpInvitation.updateInvitation.requestSender),
+    sendInvitation: createMutation(build, HttpInvitation.sendInvitation.requestSender, [
+      'Invitation',
+    ]),
+    updateInvitation: createMutation(build, HttpInvitation.updateInvitation.requestSender, [
+      'Invitation',
+    ]),
   }),
   // @ts-ignore
   overrideExisting: module.hot?.status() === 'apply',
