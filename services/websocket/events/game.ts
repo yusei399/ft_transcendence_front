@@ -1,4 +1,4 @@
-import {AppDispatch} from '@/lib/redux';
+import {AppDispatch, setNotification} from '@/lib/redux';
 import {WsBallPosition, WsGameJoin, WsGameLeave, WsNewPlayerMove} from '@/shared/WsEvents/game';
 import {Socket} from 'socket.io-client';
 
@@ -12,10 +12,24 @@ export function setUpGameEvents(socket: Socket, dispatch: AppDispatch): void {
   });
 
   socket.on(WsGameJoin.eventName, (message: WsGameJoin.eventMessageTemplate) => {
-    console.log(message);
+    const {userId, gameId} = message;
+    dispatch(
+      setNotification({
+        title: 'Game',
+        description: `User ${userId} joined game ${gameId}`,
+        status: 'info',
+      }),
+    );
   });
 
   socket.on(WsGameLeave.eventName, (message: WsGameLeave.eventMessageTemplate) => {
-    console.log(message);
+    const {userId, gameId} = message;
+    dispatch(
+      setNotification({
+        title: 'Game',
+        description: `User ${userId} left game ${gameId}`,
+        status: 'info',
+      }),
+    );
   });
 }

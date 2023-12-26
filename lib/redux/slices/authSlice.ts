@@ -5,7 +5,7 @@ import {RootState} from '../store';
 export type AuthErrorType = 'invalid_credentials' | 'user_already_exist' | 'enable_to_connect';
 
 interface AuthSliceState {
-  isSocketConnected?: boolean;
+  isSocketConnected: boolean;
   authError?: AuthErrorType;
   jwt?: string;
 }
@@ -25,6 +25,7 @@ const authSlice = createSlice({
     },
     logout: state => {
       state.jwt = undefined;
+      state.isSocketConnected = false;
     },
     connectSocket: state => {
       state.isSocketConnected = true;

@@ -3,7 +3,7 @@
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
-import {authErrorSelector, clearAuthError} from '@/lib/redux';
+import {authErrorSelector, clearAuthError, setNotification} from '@/lib/redux';
 import {
   Button,
   Divider,

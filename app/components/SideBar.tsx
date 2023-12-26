@@ -6,6 +6,7 @@ import Link from 'next/link';
 import {useAppSelector} from '@/lib/redux/hook';
 import {isLoginSelector, logout} from '@/lib/redux';
 import {useDispatch} from 'react-redux';
+import {SocketService} from '@/services/websocket/socketService';
 
 export default function Sidebar() {
   const dispatch = useDispatch();

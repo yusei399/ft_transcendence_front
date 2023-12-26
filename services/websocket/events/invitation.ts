@@ -1,4 +1,4 @@
-import {AppDispatch} from '@/lib/redux';
+import {AppDispatch, setNotification} from '@/lib/redux';
 import {
   WsInvitationAccepted,
   WsInvitationCanceled,
@@ -11,25 +11,53 @@ export function setUpInvitationEvents(socket: Socket, dispatch: AppDispatch): vo
   socket.on(
     WsInvitationAccepted.eventName,
     (message: WsInvitationAccepted.eventMessageTemplate) => {
-      console.log(message);
+      const {invitationId, receiverId, kind} = message;
+      dispatch(
+        setNotification({
+          title: 'Invitation',
+          description: `User ${receiverId} accepted invitation ${invitationId} of ${kind}`,
+          status: 'success',
+        }),
+      );
     },
   );
 
   socket.on(
     WsInvitationCanceled.eventName,
     (message: WsInvitationCanceled.eventMessageTemplate) => {
-      console.log(message);
+      const {invitationId, senderId, kind} = message;
+      dispatch(
+        setNotification({
+          title: 'Invitation',
+          description: `User ${senderId} canceled invitation ${invitationId} of ${kind}`,
+          status: 'error',
+        }),
+      );
     },
   );
 
   socket.on(
     WsInvitationDeclined.eventName,
     (message: WsInvitationDeclined.eventMessageTemplate) => {
-      console.log(message);
+      const {invitationId, receiverId, kind} = message;
+      dispatch(
+        setNotification({
+          title: 'Invitation',
+          description: `User ${receiverId} declined invitation ${invitationId} of ${kind}`,
+          status: 'error',
+        }),
+      );
     },
   );
 
   socket.on(WsNewInvitation.eventName, (message: WsNewInvitation.eventMessageTemplate) => {
-    console.log(message);
+    const {invitationId, senderId, kind} = message;
+    dispatch(
+      setNotification({
+        title: 'Invitation',
+        description: `User ${senderId} sent invitation ${invitationId} of ${kind}`,
+        status: 'info',
+      }),
+    );
   });
 }
