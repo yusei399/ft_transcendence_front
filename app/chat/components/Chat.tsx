@@ -1,18 +1,16 @@
 'use client';
 import Loading from '@/app/components/global/Loading';
-import {jwtSelector} from '@/lib/redux';
 import {useGetChatMessagesQuery} from '@/lib/redux/api';
-import {useAppSelector} from '@/lib/redux/hook';
 import {SocketService} from '@/services/websocket/socketService';
 import React, {useState} from 'react';
 
 const Chat = ({chatId}: {chatId: number}) => {
-  const authToken = useAppSelector(jwtSelector) ?? '';
   const [message, setMessage] = useState('');
-  const {data, isLoading, error} = useGetChatMessagesQuery([chatId, authToken]);
+  const {data, isLoading, error} = useGetChatMessagesQuery([chatId]);
 
   if (isLoading) return <Loading />;
   if (!data) return <div>no data</div>;
+  if (error) return console.log(error);
 
   const handleSubmit = () => {
     const toSend = message.trim();
