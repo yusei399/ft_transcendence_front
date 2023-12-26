@@ -1,8 +1,8 @@
 import {HttpChat} from '@/shared/HttpEndpoints/';
-import {backEndApiSlice} from './apiSlice';
+import {backEndApi} from './api';
 import {createMutation, createQuery} from './utils';
 
-const chatApi = backEndApiSlice.injectEndpoints({
+const chatApi = backEndApi.injectEndpoints({
   endpoints: build => ({
     getAllChats: createQuery(build, HttpChat.getAll.requestSender),
     getChatInfo: createQuery(build, HttpChat.getInfo.requestSender),

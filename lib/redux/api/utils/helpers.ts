@@ -6,7 +6,6 @@ import {RootState} from '../../store';
 export const axiosBaseQuery =
   ({baseUrl}: {baseUrl: string} = {baseUrl: ''}): AxiosBaseQuery =>
   async ({endpoint, method, req, resCtr}: Http.requestSender, api) => {
-    const {getState} = api;
     const options: AxiosRequestConfig = {
       method: method,
       baseURL: baseUrl,
@@ -14,8 +13,10 @@ export const axiosBaseQuery =
       data: req,
       headers: {'Content-Type': 'application/json'},
     };
-    const {jwt} = (getState() as RootState).auth;
+
+    const jwt = (api.getState() as RootState).auth.jwt;
     if (jwt) options.headers = {...options.headers, Authorization: `Bearer ${jwt}`};
+
     try {
       const res = await axios(options);
       const data = res.data as InstanceType<typeof resCtr>;

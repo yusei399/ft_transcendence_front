@@ -10,6 +10,7 @@ const Chat = ({chatId}: {chatId: number}) => {
 
   if (isLoading) return <Loading />;
   if (!data) return <div>no data</div>;
+  if (error) return console.log(error);
 
   const handleSubmit = () => {
     const toSend = message.trim();

@@ -1,4 +1,4 @@
-export * from './apiSlice';
+export * from './api';
 export * from './utils';
 export * from './authApi';
 export * from './invitationApi';
