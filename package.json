@@ -11,7 +11,7 @@
     "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.2",
     "@chakra-ui/system": "^2.6.2",
-    "@emotion/react": "^11.11.1",
+    "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@reduxjs/toolkit": "2.0.1",
     "axios": "^1.6.2",
@@ -22,6 +22,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-redux": "9.0.4",
+    "redux-persist": "^6.0.0",
     "socket.io-client": "^4.7.2"
   },
   "devDependencies": {

@@ -1,6 +1,4 @@
-// import Image from "next/image"
 import {Button, FormControl, FormLabel, Input} from '@chakra-ui/react';
-import {useState} from 'react';
 
 const UserEditProfile = () => {
   return (

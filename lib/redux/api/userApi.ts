@@ -1,8 +1,8 @@
 import {HttpUser} from '@/shared/HttpEndpoints/';
-import {backEndApiSlice} from './apiSlice';
+import {backEndApi} from './api';
 import {createMutation, createQuery} from './utils';
 
-const userApi = backEndApiSlice.injectEndpoints({
+const userApi = backEndApi.injectEndpoints({
   endpoints: build => ({
     allUsers: createQuery(build, HttpUser.allUsers.requestSender),
     getMe: createQuery(build, HttpUser.getMe.requestSender),

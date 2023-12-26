@@ -15,11 +15,8 @@ import {
 } from '@chakra-ui/react';
 import {Avatar} from '@chakra-ui/react';
 import {useSendInvitationMutation} from '@/lib/redux/api';
-import {useAppSelector} from '@/lib/redux/hook';
-import {jwtSelector} from '@/lib/redux';
 
 const UserProfile: React.FC = () => {
-  const authToken = useAppSelector(jwtSelector) ?? '';
   const [reqData, setReqData] = useState<HttpSendInvitation.reqTemplate>({
     targetUserId: 2,
   });
@@ -34,7 +31,7 @@ const UserProfile: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await sendInvitation(['friend', reqData, authToken]).unwrap();
+      await sendInvitation(['friend', reqData]).unwrap();
     } catch (err) {
       console.log(err);
     }

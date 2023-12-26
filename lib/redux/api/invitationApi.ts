@@ -1,8 +1,8 @@
 import {HttpInvitation} from '@/shared/HttpEndpoints/';
-import {backEndApiSlice} from './apiSlice';
+import {backEndApi} from './api';
 import {createMutation} from './utils';
 
-const invitationApi = backEndApiSlice.injectEndpoints({
+const invitationApi = backEndApi.injectEndpoints({
   endpoints: build => ({
     sendInvitation: createMutation(build, HttpInvitation.sendInvitation.requestSender),
     updateInvitation: createMutation(build, HttpInvitation.updateInvitation.requestSender),

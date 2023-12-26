@@ -1,6 +1,5 @@
 'use client';
 
-import {isLoginSelector} from '@/lib/redux';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
@@ -21,8 +20,6 @@ import {useEffect} from 'react';
 import React from 'react';
 
 export default function IndexPage() {
-  const isLogin = useAppSelector(isLoginSelector);
-
   const authError = useAppSelector(authErrorSelector);
   const {isOpen, onOpen, onClose} = useDisclosure();
   const dispatch = useAppDispatch();
