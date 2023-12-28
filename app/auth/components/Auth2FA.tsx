@@ -3,7 +3,7 @@
 import Loading from '@/app/components/global/Loading';
 import {ErrorType, useResend2FAMutation, useVerify2FAMutation} from '@/lib/redux/api';
 import {Http2FA, HttpResend2FA} from '@/shared/HttpEndpoints/auth';
-import {Button, FormControl, FormLabel, Input} from '@chakra-ui/react';
+import {Button, FormControl, FormLabel, HStack, Input} from '@chakra-ui/react';
 import {useEffect, useState} from 'react';
 import {auth2FAError, logUserIn} from './logUser';
 import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
@@ -47,16 +47,16 @@ function Auth2FA() {
       userId,
     };
     try {
-      const res = await resend2FA([reqBody]).unwrap();
+      await resend2FA([reqBody]).unwrap();
       setResentAfterError(true);
     } catch (error) {
       console.log(error);
     }
   };
-  if (isLoading || isResending) return <Loading />;
 
   return (
     <>
+      {(isLoading || isResending) && <Loading />}
       {(!isError || resentAfterError) && (
         <form onSubmit={e => submit2FA(e)}>
           <FormControl isRequired>
@@ -70,9 +70,14 @@ function Auth2FA() {
           <Button type="submit">Confirm</Button>
         </form>
       )}
-      <Button type="button" onClick={resendCode}>
-        resend code
-      </Button>
+      <HStack spacing="24px">
+        <Button type="button" onClick={resendCode}>
+          resend code
+        </Button>
+        <Button type="button" onClick={() => dispatch(clear2fa())}>
+          Abort
+        </Button>
+      </HStack>
     </>
   );
 }

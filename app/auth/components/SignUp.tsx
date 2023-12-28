@@ -27,37 +27,39 @@ function SignUp() {
       setLogInError(dispatch, error as ErrorType);
     }
   };
-  if (isLoading) return <Loading />;
 
   return (
-    <form onSubmit={e => signUpUser(e)}>
-      <FormControl isRequired>
-        <FormLabel>Nickname:</FormLabel>
-        <Input
-          type="text"
-          name="nickname"
-          value={signUpData.nickname}
-          onChange={e => setSignUpData({...signUpData, nickname: e.target.value})}></Input>
-      </FormControl>
-      <FormControl isRequired>
-        <FormLabel>Email:</FormLabel>
-        <Input
-          type="email"
-          name="email"
-          value={signUpData.email}
-          onChange={e => setSignUpData({...signUpData, email: e.target.value})}></Input>
-      </FormControl>
-      <FormControl isRequired>
-        <FormLabel>Password:</FormLabel>
-        <Input
-          autoComplete="on"
-          type="password"
-          name="password"
-          value={signUpData.password}
-          onChange={e => setSignUpData({...signUpData, password: e.target.value})}></Input>
-      </FormControl>
-      <Button type="submit">Sign Up</Button>
-    </form>
+    <>
+      {isLoading && <Loading />}
+      <form onSubmit={e => signUpUser(e)}>
+        <FormControl isRequired>
+          <FormLabel>Nickname:</FormLabel>
+          <Input
+            type="text"
+            name="nickname"
+            value={signUpData.nickname}
+            onChange={e => setSignUpData({...signUpData, nickname: e.target.value})}></Input>
+        </FormControl>
+        <FormControl isRequired>
+          <FormLabel>Email:</FormLabel>
+          <Input
+            type="email"
+            name="email"
+            value={signUpData.email}
+            onChange={e => setSignUpData({...signUpData, email: e.target.value})}></Input>
+        </FormControl>
+        <FormControl isRequired>
+          <FormLabel>Password:</FormLabel>
+          <Input
+            autoComplete="on"
+            type="password"
+            name="password"
+            value={signUpData.password}
+            onChange={e => setSignUpData({...signUpData, password: e.target.value})}></Input>
+        </FormControl>
+        <Button type="submit">Sign Up</Button>
+      </form>
+    </>
   );
 }
 
