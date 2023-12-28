@@ -1,16 +1,15 @@
 'use client';
 
 import {useAppDispatch} from '@/lib/redux/hook';
-import {HttpSignUp} from '@/shared/HttpEndpoints/auth';
 import React, {useState} from 'react';
 import {Button, FormControl, FormLabel, Input} from '@chakra-ui/react';
 import {ErrorType, useSignUpMutation} from '@/lib/redux/api';
-import {logUserIn, setLogInError} from './logUser';
+import {setLogInError} from './logUser';
 import Loading from '../../components/global/Loading';
-import {useRouter} from 'next/navigation';
+import {set2fa} from '@/lib/redux';
+import {HttpSignUp} from '@/shared/HttpEndpoints/auth';
 
 function SignUp() {
-  const router = useRouter();
   const [signUpData, setSignUpData] = useState<HttpSignUp.reqTemplate>({
     nickname: '',
     password: '',
@@ -22,9 +21,8 @@ function SignUp() {
   const signUpUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const {authToken} = await signUp([signUpData]).unwrap();
-      logUserIn(dispatch, authToken);
-      router.push('/');
+      const res = await signUp([signUpData]).unwrap();
+      dispatch(set2fa({...res, isSignUp: true}));
     } catch (error) {
       setLogInError(dispatch, error as ErrorType);
     }

@@ -1,5 +1,5 @@
 import {AppDispatch, setNotification} from '@/lib/redux';
-import {WsChatJoin, WsChatLeave, WsNewMessage} from '@/shared/WsEvents/chat';
+import {WsChatJoin, WsChatLeave, WsNewMessage} from '@/shared/WsEvents/chat/';
 import {Socket} from 'socket.io-client';
 
 export function setUpChatEvents(socket: Socket, dispatch: AppDispatch): void {

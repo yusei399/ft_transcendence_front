@@ -1,15 +1,19 @@
 /* Core */
-import {AlertStatus, ToastId} from '@chakra-ui/react';
+import {AlertStatus} from '@chakra-ui/react';
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
 import {RootState} from '../store';
 
 type Notification = {
   id: number;
-  chakraId?: ToastId;
+  isShown: boolean;
   title: string;
   description: string;
   status: AlertStatus;
 };
+
+type SetNotificationPayload = Omit<Notification, 'id' | 'isShown'>;
+type SetNotificationAsShownPayload = Notification['id'];
+type RemoveNotificationByIdPayload = Notification['id'];
 
 interface NotificationSliceState {
   nextId: number;
@@ -25,20 +29,17 @@ const notificationSlice = createSlice({
   name: 'notification',
   initialState,
   reducers: {
-    setNotification: (state, action: PayloadAction<Omit<Notification, 'id' | 'chakraId'>>) => {
-      state.notifications.push({...action.payload, id: state.nextId, chakraId: undefined});
+    setNotification: (state, action: PayloadAction<SetNotificationPayload>) => {
+      state.notifications.push({...action.payload, id: state.nextId, isShown: false});
       state.nextId++;
     },
-    setChakraId: (
-      state,
-      action: PayloadAction<{id: Notification['id']; chakraId: Notification['chakraId']}>,
-    ) => {
+    setNotificationAsShown: (state, action: PayloadAction<SetNotificationAsShownPayload>) => {
       const notification = state.notifications.find(
-        notification => notification.id === action.payload.id,
+        notification => notification.id === action.payload,
       );
-      if (notification) notification.chakraId = action.payload.chakraId;
+      if (notification) notification.isShown = true;
     },
-    removeNotificationById: (state, action: PayloadAction<Notification['id']>) => {
+    removeNotificationById: (state, action: PayloadAction<RemoveNotificationByIdPayload>) => {
       state.notifications = state.notifications.filter(
         notification => notification.id !== action.payload,
       );
@@ -46,6 +47,7 @@ const notificationSlice = createSlice({
   },
 });
 
-export const {setNotification, setChakraId, removeNotificationById} = notificationSlice.actions;
+export const {setNotification, setNotificationAsShown, removeNotificationById} =
+  notificationSlice.actions;
 export const notificationSelector = (state: RootState) => state.notification.notifications;
 export default notificationSlice.reducer;

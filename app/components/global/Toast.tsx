@@ -1,11 +1,11 @@
 'use client';
 
-import {notificationSelector, removeNotificationById, setChakraId} from '@/lib/redux';
+import {notificationSelector, removeNotificationById, setNotificationAsShown} from '@/lib/redux';
 import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
 import {Wrap, useToast} from '@chakra-ui/react';
 import {useEffect} from 'react';
 
-const toastDuration = 20000;
+const toastDuration = 6000;
 const titleMaxLength = 20;
 const descriptionMaxLength = 40;
 
@@ -16,17 +16,17 @@ function Toast() {
 
   useEffect(() => {
     notifications.forEach(notif => {
-      if (notif.chakraId) return;
+      if (notif.isShown) return;
       const toastId = toast({
-        title: notif.title.trim().substring(0, titleMaxLength),
-        description: notif.description.trim().substring(0, descriptionMaxLength),
+        title: notif.title?.trim().substring(0, titleMaxLength),
+        description: notif.description?.trim().substring(0, descriptionMaxLength),
         status: notif.status,
         duration: toastDuration,
         isClosable: true,
         position: 'bottom',
         onCloseComplete: () => dispatch(removeNotificationById(notif.id)),
       });
-      dispatch(setChakraId({id: notif.id, chakraId: toastId}));
+      dispatch(setNotificationAsShown(notif.id));
       setTimeout(() => {
         dispatch(removeNotificationById(notif.id));
         toast.close(toastId);

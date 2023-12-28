@@ -1,4 +1,4 @@
-import {HttpChat} from '@/shared/HttpEndpoints/';
+import {HttpChat} from '@/shared/HttpEndpoints';
 import {backEndApi} from './api';
 import {createMutation, createQuery} from './utils';
 

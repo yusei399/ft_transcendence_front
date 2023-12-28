@@ -9,6 +9,7 @@ import Toast from './components/global/Toast';
 export const metadata: Metadata = {
   title: 'Transcendence',
   description: 'Last project of 42 school',
+  icons: './assets/favicon.ico',
 };
 
 export default function RootLayout(props: React.PropsWithChildren) {

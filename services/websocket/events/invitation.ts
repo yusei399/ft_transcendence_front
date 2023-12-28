@@ -4,7 +4,7 @@ import {
   WsInvitationCanceled,
   WsInvitationDeclined,
   WsNewInvitation,
-} from '@/shared/WsEvents/invitation';
+} from '@/shared/WsEvents/invitation/';
 import {Socket} from 'socket.io-client';
 
 export function setUpInvitationEvents(socket: Socket, dispatch: AppDispatch): void {

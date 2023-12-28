@@ -1,4 +1,4 @@
-import {HttpUser} from '@/shared/HttpEndpoints/';
+import {HttpUser} from '@/shared/HttpEndpoints';
 import {backEndApi} from './api';
 import {createMutation, createQuery} from './utils';
 

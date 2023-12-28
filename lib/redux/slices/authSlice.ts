@@ -2,18 +2,25 @@
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
 import {RootState} from '../store';
 
-export type AuthErrorType = 'invalid_credentials' | 'user_already_exist' | 'enable_to_connect';
-
 interface AuthSliceState {
   isSocketConnected: boolean;
-  authError?: AuthErrorType;
   jwt?: string;
+  auth2FACode?: string;
+  isSignUp?: boolean;
+  userId?: number;
 }
 
 const initialState: AuthSliceState = {
   isSocketConnected: false,
-  authError: undefined,
   jwt: undefined,
+  isSignUp: undefined,
+  auth2FACode: undefined,
+};
+
+type set2FAPayload = {
+  auth2FACode: string;
+  userId: number;
+  isSignUp: boolean;
 };
 
 const authSlice = createSlice({
@@ -27,25 +34,28 @@ const authSlice = createSlice({
       state.jwt = undefined;
       state.isSocketConnected = false;
     },
+    set2fa: (state, action: PayloadAction<set2FAPayload>) => {
+      state.auth2FACode = action.payload.auth2FACode;
+      state.userId = action.payload.userId;
+      state.isSignUp = action.payload.isSignUp;
+    },
+    clear2fa: state => {
+      state.auth2FACode = undefined;
+      state.isSignUp = undefined;
+    },
     connectSocket: state => {
       state.isSocketConnected = true;
     },
     disconnectSocket: state => {
       state.isSocketConnected = false;
     },
-    setAuthError: (state, action: PayloadAction<AuthErrorType>) => {
-      state.authError = action.payload;
-    },
-    clearAuthError: state => {
-      state.authError = undefined;
-    },
   },
 });
 
-export const {login, logout, connectSocket, disconnectSocket, setAuthError, clearAuthError} =
-  authSlice.actions;
+export const {login, logout, set2fa, clear2fa, connectSocket, disconnectSocket} = authSlice.actions;
 export const authSelector = (state: RootState) => state.auth;
 export const jwtSelector = (state: RootState) => state.auth.jwt;
-export const authErrorSelector = (state: RootState) => state.auth.authError;
+export const is2FANeededSelector = (state: RootState) =>
+  state.auth.jwt === undefined && state.auth.auth2FACode !== undefined;
 export const isLoginSelector = (state: RootState) => state.auth.jwt !== undefined;
 export default authSlice.reducer;

@@ -3,14 +3,13 @@
 import React, {useState} from 'react';
 import {useAppDispatch} from '@/lib/redux/hook';
 import {ErrorType, useSignInMutation} from '@/lib/redux/api/';
-import {HttpSignIn} from '@/shared/HttpEndpoints/auth';
-import {logUserIn, setLogInError} from './logUser';
+import {setLogInError} from './logUser';
 import Loading from '../../components/global/Loading';
 import {Button, FormControl, FormLabel, Input} from '@chakra-ui/react';
-import {useRouter} from 'next/navigation';
+import {set2fa} from '@/lib/redux';
+import {HttpSignIn} from '@/shared/HttpEndpoints/auth';
 
 function SignIn() {
-  const router = useRouter();
   const dispatch = useAppDispatch();
   const [signInData, setSignInData] = useState<HttpSignIn.reqTemplate>({
     nickname: '',
@@ -22,9 +21,8 @@ function SignIn() {
   const signInUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const {authToken} = await signIn([signInData]).unwrap();
-      logUserIn(dispatch, authToken);
-      router.push('/');
+      const res = await signIn([signInData]).unwrap();
+      dispatch(set2fa({...res, isSignUp: false}));
     } catch (error) {
       setLogInError(dispatch, error as ErrorType);
     }

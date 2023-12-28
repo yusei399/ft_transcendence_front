@@ -1,5 +1,5 @@
 import {AppDispatch, setNotification} from '@/lib/redux';
-import {WsBallPosition, WsGameJoin, WsGameLeave, WsNewPlayerMove} from '@/shared/WsEvents/game';
+import {WsBallPosition, WsGameJoin, WsGameLeave, WsNewPlayerMove} from '@/shared/WsEvents/game/';
 import {Socket} from 'socket.io-client';
 
 export function setUpGameEvents(socket: Socket, dispatch: AppDispatch): void {
