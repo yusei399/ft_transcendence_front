@@ -3,8 +3,8 @@ import {FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE, persistReducer} from 
 import {combineReducers} from 'redux';
 import authReducer from './slices/authSlice';
 import gameReducer from './slices/gameSlice';
-import userReducer from './slices/userSlice';
 import chatReducer from './slices/chatSlice';
+import notificationReducer from './slices/notificationSlice';
 import {backEndApi} from './api/api';
 import storage from './localStorage';
 import {setupListeners} from '@reduxjs/toolkit/query/react';
@@ -12,14 +12,14 @@ import {setupListeners} from '@reduxjs/toolkit/query/react';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'game', 'user', 'chat', backEndApi.reducerPath],
+  whitelist: ['auth', 'game', 'chat', 'notification', backEndApi.reducerPath],
 };
 
 const reducers = combineReducers({
   auth: authReducer,
   game: gameReducer,
-  user: userReducer,
   chat: chatReducer,
+  notification: notificationReducer,
   [backEndApi.reducerPath]: backEndApi.reducer,
 });
 

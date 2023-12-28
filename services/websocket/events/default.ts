@@ -1,5 +1,5 @@
 import {AppDispatch, connectSocket, disconnectSocket} from '@/lib/redux';
-import {WsConnection, WsDisconnection} from '@/shared/WsEvents/default';
+import {WsConnection, WsDisconnection} from '@/shared/WsEvents/default/';
 import {Socket} from 'socket.io-client';
 
 export function setUpDefaultEvents(socket: Socket, dispatch: AppDispatch): void {

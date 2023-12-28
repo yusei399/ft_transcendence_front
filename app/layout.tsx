@@ -4,10 +4,12 @@ import {Providers} from '@/lib/providers';
 import {Metadata} from 'next';
 import {Grid, GridItem} from '@chakra-ui/react';
 import Sidebar from './components/SideBar';
+import Toast from './components/global/Toast';
 
 export const metadata: Metadata = {
   title: 'Transcendence',
   description: 'Last project of 42 school',
+  icons: './assets/favicon.ico',
 };
 
 export default function RootLayout(props: React.PropsWithChildren) {
@@ -27,6 +29,7 @@ export default function RootLayout(props: React.PropsWithChildren) {
               </GridItem>
               <GridItem as="main" colSpan={{base: 8, lg: 6, xl: 7}} p="40px">
                 {props.children}
+                <Toast />
               </GridItem>
             </Grid>
           </Providers>

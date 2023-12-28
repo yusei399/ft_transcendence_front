@@ -2,6 +2,7 @@ import {Http} from '@/shared/HttpEndpoints';
 import {ARequestSender} from '@/shared/HttpEndpoints/interfaces/ARequestSender';
 import {BaseQueryFn} from '@reduxjs/toolkit/dist/query';
 import {EndpointBuilder} from '@reduxjs/toolkit/dist/query/endpointDefinitions';
+import {TagType} from '../api';
 
 export type ErrorType = {status: number; data: string};
 export type AxiosBaseQuery = BaseQueryFn<Http.requestSender, Http.resTemplate, ErrorType>;
@@ -18,5 +19,5 @@ export type TRes<T extends new (...args: any[]) => ARequestSender<any, any>> = T
   ? R
   : never;
 
-export type BuilderType = EndpointBuilder<AxiosBaseQuery, never, 'backEndApi'>;
+export type BuilderType = EndpointBuilder<AxiosBaseQuery, TagType, 'backEndApi'>;
 export type ReqSenderCstr = new (...args: any[]) => Http.requestSender;
