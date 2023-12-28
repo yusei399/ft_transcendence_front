@@ -4,6 +4,13 @@ import {AxiosBaseQuery, BuilderType, CstrArgs, ReqSenderCstr, TRes} from './type
 import {RootState} from '../../store';
 import {TagType} from '../api';
 
+const hasFile = (obj: Object): boolean => {
+  for (const value of Object.values(obj)) {
+    if (value instanceof File) return true;
+  }
+  return false;
+};
+
 export const axiosBaseQuery =
   ({baseUrl}: {baseUrl: string} = {baseUrl: ''}): AxiosBaseQuery =>
   async ({endpoint, method, req, resCtr}: Http.requestSender, api) => {
@@ -14,6 +21,14 @@ export const axiosBaseQuery =
       data: req,
       headers: {'Content-Type': 'application/json'},
     };
+    if (hasFile(req)) {
+      options.headers = {'Content-Type': 'multipart/form-data'};
+      const formData = new FormData();
+      for (const [key, value] of Object.entries(req)) {
+        formData.append(key, value);
+      }
+      options.data = formData;
+    }
 
     const jwt = (api.getState() as RootState).auth.jwt;
     if (jwt) options.headers = {...options.headers, Authorization: `Bearer ${jwt}`};

@@ -14,6 +14,7 @@ function SignUp() {
     nickname: '',
     password: '',
     email: '',
+    avatar: undefined,
   });
   const dispatch = useAppDispatch();
   const [signUp, {isLoading}] = useSignUpMutation();
@@ -38,7 +39,8 @@ function SignUp() {
             type="text"
             name="nickname"
             value={signUpData.nickname}
-            onChange={e => setSignUpData({...signUpData, nickname: e.target.value})}></Input>
+            onChange={e => setSignUpData({...signUpData, nickname: e.target.value})}
+          />
         </FormControl>
         <FormControl isRequired>
           <FormLabel>Email:</FormLabel>
@@ -46,7 +48,8 @@ function SignUp() {
             type="email"
             name="email"
             value={signUpData.email}
-            onChange={e => setSignUpData({...signUpData, email: e.target.value})}></Input>
+            onChange={e => setSignUpData({...signUpData, email: e.target.value})}
+          />
         </FormControl>
         <FormControl isRequired>
           <FormLabel>Password:</FormLabel>
@@ -55,7 +58,17 @@ function SignUp() {
             type="password"
             name="password"
             value={signUpData.password}
-            onChange={e => setSignUpData({...signUpData, password: e.target.value})}></Input>
+            onChange={e => setSignUpData({...signUpData, password: e.target.value})}
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel>Avatar</FormLabel>
+          <Input
+            type="file"
+            name="avatar"
+            max={1}
+            accept="image/*"
+            onChange={e => setSignUpData({...signUpData, avatar: e.target.files?.[0]})}></Input>
         </FormControl>
         <Button type="submit">Sign Up</Button>
       </form>

@@ -38,7 +38,8 @@ function SignIn() {
             type="text"
             name="nickname"
             value={signInData.nickname}
-            onChange={e => setSignInData({...signInData, nickname: e.target.value})}></Input>
+            onChange={e => setSignInData({...signInData, nickname: e.target.value})}
+          />
         </FormControl>
         <FormControl isRequired>
           <FormLabel>Password:</FormLabel>
@@ -47,7 +48,8 @@ function SignIn() {
             type="password"
             name="password"
             value={signInData.password}
-            onChange={e => setSignInData({...signInData, password: e.target.value})}></Input>
+            onChange={e => setSignInData({...signInData, password: e.target.value})}
+          />
         </FormControl>
         <Button type="submit">Sign In</Button>
       </form>

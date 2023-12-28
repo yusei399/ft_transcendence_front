@@ -65,9 +65,12 @@ function Auth2FA() {
               type="text"
               name="code"
               value={confirmCode}
-              onChange={e => setConfirmCode(e.target.value)}></Input>
+              onChange={e => setConfirmCode(e.target.value)}
+            />
           </FormControl>
-          <Button type="submit">Confirm</Button>
+          <Button type="submit" isDisabled={confirmCode.length !== 6}>
+            Confirm
+          </Button>
         </form>
       )}
       <HStack spacing="24px">
