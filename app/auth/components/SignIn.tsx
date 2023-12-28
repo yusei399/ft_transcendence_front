@@ -28,29 +28,30 @@ function SignIn() {
     }
   };
 
-  if (isLoading) return <Loading />;
-
   return (
-    <form onSubmit={e => signInUser(e)}>
-      <FormControl isRequired>
-        <FormLabel>Nickname:</FormLabel>
-        <Input
-          type="text"
-          name="nickname"
-          value={signInData.nickname}
-          onChange={e => setSignInData({...signInData, nickname: e.target.value})}></Input>
-      </FormControl>
-      <FormControl isRequired>
-        <FormLabel>Password:</FormLabel>
-        <Input
-          autoComplete="on"
-          type="password"
-          name="password"
-          value={signInData.password}
-          onChange={e => setSignInData({...signInData, password: e.target.value})}></Input>
-      </FormControl>
-      <Button type="submit">Sign In</Button>
-    </form>
+    <>
+      {isLoading && <Loading />}
+      <form onSubmit={e => signInUser(e)}>
+        <FormControl isRequired>
+          <FormLabel>Nickname:</FormLabel>
+          <Input
+            type="text"
+            name="nickname"
+            value={signInData.nickname}
+            onChange={e => setSignInData({...signInData, nickname: e.target.value})}></Input>
+        </FormControl>
+        <FormControl isRequired>
+          <FormLabel>Password:</FormLabel>
+          <Input
+            autoComplete="on"
+            type="password"
+            name="password"
+            value={signInData.password}
+            onChange={e => setSignInData({...signInData, password: e.target.value})}></Input>
+        </FormControl>
+        <Button type="submit">Sign In</Button>
+      </form>
+    </>
   );
 }
 

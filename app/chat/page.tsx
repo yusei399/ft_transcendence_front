@@ -5,6 +5,7 @@ import {jwtSelector} from '@/lib/redux';
 import {useRouter} from 'next/navigation';
 import {useEffect} from 'react';
 import ChatList from './components/ChatList';
+import Loading from '../components/global/Loading';
 
 export default function IndexPage() {
   const authToken = useAppSelector(jwtSelector);
@@ -14,7 +15,7 @@ export default function IndexPage() {
     if (!authToken) router.push('/auth');
   }, [authToken]);
 
-  if (!authToken) return <div>Redirecting...</div>;
+  if (!authToken) return <Loading />;
 
   return (
     <>
