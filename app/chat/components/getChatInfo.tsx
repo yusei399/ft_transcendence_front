@@ -1,12 +1,10 @@
-"use client";
-import React, { useState } from 'react';
+import { useGetChatInfoQuery } from '@/lib/redux/api';
 
+const useGetChatInfo = ({chatId}: {chatId: number}) => {
+	const queryResult = useGetChatInfoQuery([chatId]);
+	console.log(queryResult);
 
-const getChatInfo = () => {
-	
-}
+	return queryResult;
+};
 
-
-
-
-export default getChatInfo;
+export default useGetChatInfo;
