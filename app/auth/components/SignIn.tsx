@@ -38,6 +38,7 @@ function SignIn() {
         <FormControl isRequired>
           <FormLabel>Nickname:</FormLabel>
           <Input
+            autoComplete="on"
             type="text"
             name="nickname"
             value={signInData.nickname}

@@ -65,6 +65,7 @@ function Auth2FA() {
           <FormControl isRequired>
             <FormLabel>Confirmation Code:</FormLabel>
             <Input
+              autoComplete="off"
               type="text"
               name="code"
               value={confirmCode}

@@ -39,6 +39,7 @@ function SignUp() {
         <FormControl isRequired>
           <FormLabel>Nickname:</FormLabel>
           <Input
+            autoComplete="on"
             type="text"
             name="nickname"
             value={signUpData.nickname}
@@ -48,6 +49,7 @@ function SignUp() {
         <FormControl isRequired>
           <FormLabel>Email:</FormLabel>
           <Input
+            autoComplete="on"
             type="email"
             name="email"
             value={signUpData.email}

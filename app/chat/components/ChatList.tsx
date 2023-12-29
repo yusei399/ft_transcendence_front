@@ -1,3 +1,5 @@
+'use client';
+
 import Loading from '@/app/components/global/Loading';
 import {useGetAllChatsQuery} from '@/lib/redux/api';
 
