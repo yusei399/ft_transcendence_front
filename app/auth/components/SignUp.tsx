@@ -25,7 +25,10 @@ function SignUp() {
       const res = await signUp([signUpData]).unwrap();
       dispatch(set2fa({...res, isSignUp: true}));
     } catch (error) {
-      setLogInError(dispatch, error as ErrorType);
+      setLogInError(
+        dispatch,
+        (error as ErrorType).status === 409 ? 'Nickname already taken' : 'Something went wrong',
+      );
     }
   };
 

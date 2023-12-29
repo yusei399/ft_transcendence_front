@@ -5,7 +5,7 @@ import {ErrorType, useResend2FAMutation, useVerify2FAMutation} from '@/lib/redux
 import {Http2FA, HttpResend2FA} from '@/shared/HttpEndpoints/auth';
 import {Button, FormControl, FormLabel, HStack, Input} from '@chakra-ui/react';
 import {useEffect, useState} from 'react';
-import {auth2FAError, logUserIn} from './logUser';
+import {logUserIn, setLogInError} from './logUser';
 import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
 import {authSelector, clear2fa} from '@/lib/redux';
 
@@ -37,7 +37,10 @@ function Auth2FA() {
       const res = await verify2FA([reqBody]).unwrap();
       logUserIn(dispatch, res.authToken, isSignUp);
     } catch (error) {
-      auth2FAError(dispatch, error as ErrorType);
+      setLogInError(
+        dispatch,
+        (error as ErrorType).status === 403 ? 'Invalid 2FA code' : 'Something went wrong',
+      );
     }
   };
 

@@ -24,7 +24,10 @@ function SignIn() {
       const res = await signIn([signInData]).unwrap();
       dispatch(set2fa({...res, isSignUp: false}));
     } catch (error) {
-      setLogInError(dispatch, error as ErrorType);
+      setLogInError(
+        dispatch,
+        (error as ErrorType).status === 401 ? 'Invalid credential' : 'Something went wrong',
+      );
     }
   };
 

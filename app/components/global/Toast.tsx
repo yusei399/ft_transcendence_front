@@ -17,6 +17,7 @@ function Toast() {
   useEffect(() => {
     notifications.forEach(notif => {
       if (notif.isShown) return;
+
       const toastId = toast({
         title: notif.title?.trim().substring(0, titleMaxLength),
         description: notif.description?.trim().substring(0, descriptionMaxLength),

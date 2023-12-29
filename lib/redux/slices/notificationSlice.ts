@@ -30,7 +30,18 @@ const notificationSlice = createSlice({
   initialState,
   reducers: {
     setNotification: (state, action: PayloadAction<SetNotificationPayload>) => {
-      state.notifications.push({...action.payload, id: state.nextId, isShown: false});
+      const hasSameNotif = state.notifications.some(
+        notification =>
+          notification.title === action.payload.title &&
+          notification.description === action.payload.description &&
+          notification.status === action.payload.status,
+      );
+      if (hasSameNotif) return;
+      state.notifications.push({
+        ...action.payload,
+        id: state.nextId,
+        isShown: false,
+      });
       state.nextId++;
     },
     setNotificationAsShown: (state, action: PayloadAction<SetNotificationAsShownPayload>) => {
