@@ -20,8 +20,8 @@ const reducers = combineReducers({
   auth: authReducer,
   game: gameReducer,
   chat: chatReducer,
-  notification: notificationReducer,
   navigation: navigationReducer,
+  notification: notificationReducer,
   [backEndApi.reducerPath]: backEndApi.reducer,
 });
 

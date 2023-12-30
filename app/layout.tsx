@@ -4,8 +4,8 @@ import {Providers} from '@/lib/providers';
 import {Metadata} from 'next';
 import {Grid, GridItem} from '@chakra-ui/react';
 import Sidebar from './components/SideBar';
-import Toast from './components/global/Toast';
 import Navigation from './components/global/Navigation';
+import {Toast} from './components/global/Toast';
 
 export const metadata: Metadata = {
   title: 'Transcendence',
@@ -28,12 +28,12 @@ export default function RootLayout(props: React.PropsWithChildren) {
                 p={{base: '20px', lg: '30px'}}>
                 <Sidebar />
               </GridItem>
-              <Navigation>
-                <GridItem as="main" colSpan={{base: 8, lg: 6, xl: 7}} p="40px">
+              <GridItem as="main" colSpan={{base: 8, lg: 6, xl: 7}} p="40px">
+                <Navigation>
                   {props.children}
                   <Toast />
-                </GridItem>
-              </Navigation>
+                </Navigation>
+              </GridItem>
             </Grid>
           </Providers>
         </body>

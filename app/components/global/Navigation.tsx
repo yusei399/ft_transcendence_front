@@ -4,10 +4,11 @@ import {setLogInError} from '@/app/auth/components/logUser';
 import {isLoginSelector, set2fa} from '@/lib/redux';
 import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
 import {Nav, clearRedirectTo, selectRedirectTo} from '@/lib/redux/slices/navigationSlice';
-import {AppRouterInstance} from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import {useRouter, usePathname, useSearchParams} from 'next/navigation';
-import {useEffect} from 'react';
 import Loading from './Loading';
+import {useEffect, useState} from 'react';
+
+type NavigationState = {url: string; replace: boolean};
 
 function Navigation({children}: {children: React.ReactNode}) {
   const dispatch = useAppDispatch();
@@ -19,44 +20,46 @@ function Navigation({children}: {children: React.ReactNode}) {
   const isLogin = useAppSelector(isLoginSelector);
   const navigation = useAppSelector(selectRedirectTo);
 
-  let isRedirecting = false;
+  const auth2FACode = searchParams.get('auth2FACode');
+  const userIdString = searchParams.get('userId');
+  const userId = userIdString ? parseInt(userIdString) : undefined;
 
-  useEffect(() => {
-    if (!isLogin && pathname !== '/auth') isRedirecting = redirect({route: '/auth'}, router);
-    else if (isLogin && pathname === '/auth') isRedirecting = redirect({route: '/auth'}, router);
-  }, [isLogin, pathname]);
+  const [isRedirecting, setIsRedirecting] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (pathname !== '/auth') return;
+  let redirection: NavigationState | undefined;
+  let sideEffect: (() => void) | undefined;
 
+  if (pathname === '/auth') {
     if (searchParams.has('OAuth42Error')) {
-      setLogInError(dispatch, '42 OAuth error: Unauthorized');
-      isRedirecting = redirect({route: '/auth', isReplace: true}, router);
-    } else {
-      const auth2FACode = searchParams.get('auth2FACode');
-      const userIdString = searchParams.get('userId');
-      const userId = userIdString ? parseInt(userIdString) : undefined;
-      if (auth2FACode && userId) {
-        dispatch(set2fa({auth2FACode, userId, isSignUp: false}));
-        isRedirecting = redirect({route: '/auth', isReplace: true}, router);
-      }
-    }
-  }, [searchParams]);
+      sideEffect = () => setLogInError(dispatch, '42 OAuth error: Unauthorized');
+      redirection = redirect({route: '/auth', isReplace: true});
+    } else if (auth2FACode && userId) {
+      sideEffect = () => dispatch(set2fa({auth2FACode, userId, isSignUp: false}));
+      redirection = redirect({route: '/auth', isReplace: true});
+    } else if (isLogin) redirection = redirect({route: '/'});
+  } else if (!isLogin) redirection = redirect({route: '/auth'});
+  else if (navigation) {
+    redirection = redirect(navigation);
+    sideEffect = () => dispatch(clearRedirectTo());
+  }
 
   useEffect(() => {
-    if (navigation) {
-      isRedirecting = redirect(navigation, router);
-      dispatch(clearRedirectTo());
-    }
-  }, [navigation]);
+    if (redirection && !isRedirecting) {
+      setIsRedirecting(true);
 
-  if (isRedirecting) return <Loading />;
+      if (sideEffect) sideEffect();
 
-  return <>{children}</>;
+      if (redirection.replace) router.replace(redirection.url, {scroll: false});
+      else router.push(redirection.url, {scroll: false});
+    } else if (!redirection && isRedirecting) setIsRedirecting(false);
+  }, [redirection]);
+
+  if (redirection || isRedirecting) return <Loading />;
+  else return <>{children}</>;
 }
 
-const redirect = (navigation: Nav, router: AppRouterInstance): boolean => {
-  let url = navigation.route as string;
+const redirect = (navigation: Nav): NavigationState => {
+  let url: string = navigation.route;
 
   if (navigation.params) {
     url += '?';
@@ -67,10 +70,7 @@ const redirect = (navigation: Nav, router: AppRouterInstance): boolean => {
   }
   if (navigation.hash) url += `#${navigation.hash}`;
 
-  if (navigation.isReplace) router.replace(url, {scroll: false});
-  else router.push(url, {scroll: false});
-
-  return true;
+  return {url, replace: navigation.isReplace ?? false};
 };
 
 export default Navigation;
