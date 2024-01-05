@@ -1,51 +1,68 @@
 'use client';
-import React, {useState} from 'react';
-import {HttpCreateChat} from '@/shared/HttpEndpoints/chat';
-import {useCreateChatMutation} from '@/lib/redux/api';
+
+import React, { useState } from 'react';
+import { FormControl, FormLabel, Input, Button } from '@chakra-ui/react';
+import { useCreateChatMutation } from '@/lib/redux/api';
 import Loading from '@/app/components/global/Loading';
 
 const CreateChat = () => {
-  const [createChat, {isLoading, error}] = useCreateChatMutation();
-  const [chatInfo, setChatInfo] = useState<HttpCreateChat.reqTemplate>({
+  const [createChat, { isLoading, error }] = useCreateChatMutation();
+  const [chatInfo, setChatInfo] = useState({
     name: '',
-    chatAvatarUrl: undefined,
+    chatAvatar: undefined,
     password: undefined,
   });
 
-  const handlecreate = async () => {
+  const handleCreate = async () => {
     try {
-      const res = createChat([chatInfo]).unwrap();
+      // Prepare the form data for file upload
+      const formData = new FormData();
+      formData.append('name', chatInfo.name);
+      if (chatInfo.chatAvatar) {
+        formData.append('chatAvatar', chatInfo.chatAvatar);
+      }
+      formData.append('password', chatInfo.password || '');
+      const res = await createChat([formData]).unwrap();
       console.log(res);
     } catch (error) {
       console.error('Error creating chat:', error);
     }
   };
+
   if (isLoading) return <Loading />;
   if (error) console.log(error);
 
   return (
     <div>
-      <input
-        type="text"
-        placeholder="Chat Name"
-        value={chatInfo.name}
-        onChange={e => setChatInfo({...chatInfo, name: e.target.value})}
-      />
-      <input
-        type="text"
-        placeholder="Avatar URL"
-        value={chatInfo.chatAvatarUrl}
-        onChange={e => setChatInfo({...chatInfo, chatAvatarUrl: e.target.value})}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={chatInfo.password}
-        onChange={e => setChatInfo({...chatInfo, password: e.target.value})}
-      />
-      <button onClick={handlecreate}>Create Chat</button>
+      <FormControl isRequired>
+        <FormLabel>Chat Name:</FormLabel>
+        <Input
+          type="text"
+          value={chatInfo.name}
+          onChange={e => setChatInfo({ ...chatInfo, name: e.target.value })}
+        />
+      </FormControl>
+      <FormControl>
+        <FormLabel>Avatar:</FormLabel>
+        <Input
+          type="file"
+          accept="image/*"
+          onChange={e => setChatInfo({ ...chatInfo, chatAvatar: e.target.files?.[0] })}
+        />
+      </FormControl>
+      <FormControl isRequired>
+        <FormLabel>Password:</FormLabel>
+        <Input
+          type="password"
+          value={chatInfo.password}
+          onChange={e => setChatInfo({ ...chatInfo, password: e.target.value })}
+        />
+      </FormControl>
+      <Button onClick={handleCreate}>Create Chat</Button>
     </div>
   );
 };
 
 export default CreateChat;
+
+

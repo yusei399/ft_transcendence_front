@@ -3,19 +3,27 @@ import React, { useState } from 'react';
 import { useUpdateChatMutation } from '@/lib/redux/api';
 import { HttpUpdateChat } from '@/shared/HttpEndpoints/chat';
 
-const UpdateChat = ({chatId}: {chatId: number}) => {
+const UpdateChat = ({ chatId }: { chatId: number }) => {
   const [updateChat, { isLoading, isError }] = useUpdateChatMutation();
   const [chatInfo, setChatInfo] = useState<HttpUpdateChat.reqTemplate>({
     name: '',
     password: '',
-    chatAvatarUrl: '',
+    chatAvatar: undefined,  // Changed to handle file
     participants: []
   });
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-	  const response = await updateChat([chatId, chatInfo]).unwrap();
+      // Creating FormData to handle file upload
+      const formData = new FormData();
+      formData.append('name', chatInfo.name);
+      formData.append('password', chatInfo.password);
+      if (chatInfo.chatAvatar) {
+        formData.append('chatAvatar', chatInfo.chatAvatar);
+      }
+
+      const response = await updateChat([chatId, formData]).unwrap();  // Updated to send FormData
       console.log('Chat updated:', response);
     } catch (error) {
       console.error('Error updating chat:', error);
@@ -39,10 +47,9 @@ const UpdateChat = ({chatId}: {chatId: number}) => {
           placeholder="Password (optional)"
         />
         <input
-          type="text"
-          value={chatInfo.chatAvatarUrl}
-          onChange={(e) => setChatInfo({ ...chatInfo, chatAvatarUrl: e.target.value })}
-          placeholder="Avatar URL (optional)"
+          type="file"
+          onChange={(e) => setChatInfo({ ...chatInfo, chatAvatar: e.target.files?.[0] })}
+          placeholder="Avatar (optional)"
         />
         <button type="submit" disabled={isLoading}>
           Update Chat
@@ -54,5 +61,6 @@ const UpdateChat = ({chatId}: {chatId: number}) => {
 };
 
 export default UpdateChat;
+
 
 
