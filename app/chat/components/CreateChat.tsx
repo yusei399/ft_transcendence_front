@@ -14,7 +14,8 @@ const CreateChat = () => {
     password: undefined,
   });
 
-  const handleCreate = async () => {
+  const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
       await createChat([chatInfo]).unwrap();
     } catch (error) {
@@ -26,7 +27,7 @@ const CreateChat = () => {
   if (error) console.log(error);
 
   return (
-    <div>
+    <form onSubmit={e => handleCreate(e)}>
       <FormControl isRequired>
         <FormLabel>Chat Name:</FormLabel>
         <Input
@@ -48,11 +49,12 @@ const CreateChat = () => {
         <Input
           type="file"
           accept="image/*"
+          max={1}
           onChange={e => setChatInfo({...chatInfo, chatAvatar: e.target.files?.[0]})}
         />
       </FormControl>
-      <Button onClick={handleCreate}>Create Chat</Button>
-    </div>
+      <Button type="submit">Create Chat</Button>
+    </form>
   );
 };
 

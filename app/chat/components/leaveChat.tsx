@@ -6,20 +6,21 @@ import {Button} from '@chakra-ui/react';
 
 type LeaveChatProps = {
   chatId: number;
-  leaveCb: (chatId: number) => void;
 };
 
-const LeaveChat = ({chatId, leaveCb}: LeaveChatProps) => {
-  const [leaveChat, {isLoading}] = useLeaveChatMutation();
+const LeaveChat = ({chatId}: LeaveChatProps) => {
+  const [leaveChat, {isLoading, error}] = useLeaveChatMutation();
 
   const handleLeaveChat = async () => {
     try {
-      leaveCb(chatId);
       const res = await leaveChat([chatId]).unwrap();
-    } catch (error) {}
+    } catch (error) {
+      console.error('Error leaving chat:', error);
+    }
   };
 
   if (isLoading) return <Loading />;
+  if (error) console.log(error);
 
   return <Button onClick={handleLeaveChat}>Leave Chat</Button>;
 };

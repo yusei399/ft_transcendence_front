@@ -1,8 +1,7 @@
 'use client';
 import Loading from '@/app/components/global/Loading';
 import {userIdSelector} from '@/lib/redux';
-import {useAllUsersQuery} from '@/lib/redux/api';
-import {useGetFriendQuery} from '@/lib/redux/api/friendApi';
+import {useAllUsersQuery, useGetFriendQuery} from '@/lib/redux/api';
 import {useAppSelector} from '@/lib/redux/hook';
 import {Avatar, Card, CardBody, CardHeader, HStack, Heading, Text} from '@chakra-ui/react';
 
@@ -19,7 +18,8 @@ function FriendList() {
 
   if (isLoading || isFetching || friendIsLoading || FriendIsFetching) return <Loading />;
   if (error) console.log(error);
-  if (!data) return <div>You even doesn't exist</div>;
+  if (friendError) console.log(friendError);
+  if (!data) return <div>You doesn't even exist</div>;
 
   return (
     <HStack spacing="8px">

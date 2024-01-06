@@ -16,45 +16,40 @@ import {
   Grid,
   GridItem,
 } from '@chakra-ui/react';
-import LeaveChat from './leaveChat';
-import JoinChat from './JoinChat';
 import {useState} from 'react';
-import Chat from './Chat';
+import Chat, {OpenedChat} from './Chat';
 import CreateChat from './CreateChat';
 
 function ChatList() {
   const {data, isLoading, error, isFetching} = useGetAllChatsQuery([]);
   const userId = useAppSelector(userIdSelector);
-  const [openedChatId, setOpenedChatId] = useState<number | undefined>(undefined);
+  const [openedChat, setOpenedChat] = useState<OpenedChat | undefined>(undefined);
 
   if (isLoading || isFetching) return <Loading />;
   if (error) console.log(error);
   if (!data) return <CreateChat />;
 
-  function openChat(chatId: number, hasJoined: boolean) {
-    if (openedChatId === chatId) setOpenedChatId(undefined);
-    else if (hasJoined) setOpenedChatId(chatId);
-  }
-
-  function getOutLeavedChat(chatId: number) {
-    if (openedChatId === chatId) setOpenedChatId(undefined);
+  function openChat(chat: OpenedChat) {
+    if (openedChat === undefined || openedChat.chatId !== chat.chatId) setOpenedChat(chat);
+    else setOpenedChat(undefined);
   }
 
   return (
-    <Grid templateColumns="repeat(6, 1fr)">
-      <GridItem colSpan={4} height={{lg: '100vh'}}>
-        {openedChatId ? <Chat chatId={openedChatId} /> : <CreateChat />}
-      </GridItem>
-      <GridItem colSpan={2} minHeight={{lg: '100vh'}}>
-        <VStack spacing="8px">
+    <Grid templateColumns="repeat(6, 1fr)" h="80vh">
+      <GridItem colSpan={4}>{openedChat ? <Chat chat={openedChat} /> : <CreateChat />}</GridItem>
+      <GridItem colSpan={2} overflowY="auto" flex="1" width="100%">
+        <VStack spacing={6}>
           {data.chats.map(chat => {
             const {chatId, name, chatAvatarUrl, hasPassword, participants} = chat;
-            const nbParticipants = participants.length;
+            const nbParticipants = participants.reduce(
+              (acc, p) => (p.hasLeaved ? acc : acc + 1),
+              0,
+            );
             const hasJoined = participants.some(
               p => p.userProfile.userId === userId && !p.hasLeaved,
             );
             return (
-              <Card key={chatId} onClick={() => openChat(chatId, hasJoined)}>
+              <Card key={chatId} onClick={() => openChat({chatId, hasJoined, hasPassword})}>
                 <CardHeader>
                   <Heading size="md">
                     {hasPassword && <LockIcon boxSize={6} />}
@@ -62,13 +57,8 @@ function ChatList() {
                   </Heading>
                 </CardHeader>
                 <CardBody>
-                  <Avatar boxSize="100px" src={chatAvatarUrl ?? './assets/sample_chat.png'} />
+                  <Avatar boxSize="60px" src={chatAvatarUrl ?? './assets/sample_chat.png'} />
                   <Text>{`${nbParticipants} participant${nbParticipants > 1 ? 's' : ''}`}</Text>
-                  {hasJoined ? (
-                    <LeaveChat chatId={chatId} leaveCb={getOutLeavedChat} />
-                  ) : (
-                    <JoinChat chatId={chatId} hasPassword={hasPassword} />
-                  )}
                 </CardBody>
               </Card>
             );

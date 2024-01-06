@@ -42,7 +42,7 @@ export const axiosBaseQuery =
       return {data};
     } catch (err) {
       if (!axios.isAxiosError(err)) return {error: {data: 'Unknown error', status: 400}};
-      if (authToken && err.status === 401) {
+      if (authToken && err.response?.status === 401) {
         const refreshConfig = {
           method: HttpRefresh.method,
           baseURL: baseUrl,
@@ -54,7 +54,12 @@ export const axiosBaseQuery =
           const res = await axios<HttpRefresh.reqTemplate, AxiosResponse<HttpRefresh.resTemplate>>(
             refreshConfig,
           );
-          const data = res.data;
+          api.dispatch({type: 'auth/login', payload: res.data});
+          const resRetry = await axios<
+            Http.reqTemplate,
+            AxiosResponse<InstanceType<typeof resCtr>>
+          >(options);
+          const data = resRetry.data;
           return {data};
         } catch (err) {
           if (!axios.isAxiosError(err)) return {error: {data: 'Unknown error', status: 400}};

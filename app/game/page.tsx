@@ -2,7 +2,7 @@
 
 import {useEffect, useRef, useState} from 'react';
 import {Game} from './components/game';
-import {Button, Heading} from '@chakra-ui/react';
+import {Button, VStack, Heading} from '@chakra-ui/react';
 
 export default function IndexPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -11,8 +11,6 @@ export default function IndexPage() {
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
-      canvas.width = 800;
-      canvas.height = 600;
       const newGame = new Game(canvas);
       setGame(newGame);
     }
@@ -23,12 +21,21 @@ export default function IndexPage() {
   };
 
   return (
-    <>
-      <Heading as="h1" size="xl">
+    <VStack padding={6} height="100%">
+      <Heading as="h1" size="lg">
         Game Page
       </Heading>
-      <canvas ref={canvasRef} />
+      <canvas
+        ref={canvasRef}
+        style={{
+          border: '1px solid gray',
+          padding: '10px',
+          margin: '10px',
+          width: '80%',
+          height: '80%',
+        }}
+      />
       <Button onClick={handleStart}>Start Game</Button>
-    </>
+    </VStack>
   );
 }

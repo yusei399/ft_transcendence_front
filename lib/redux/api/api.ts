@@ -15,6 +15,8 @@ export const backEndApi = createApi({
   reducerPath: 'backEndApi',
   baseQuery: axiosBaseQuery({baseUrl: 'http://localhost:3333'}),
   tagTypes,
+  keepUnusedDataFor: 30,
+  refetchOnReconnect: true,
   extractRehydrationInfo(action, {reducerPath}): any {
     if (isHydrateAction(action)) {
       return action.payload[reducerPath];
