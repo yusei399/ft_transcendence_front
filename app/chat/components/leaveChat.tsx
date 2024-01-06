@@ -1,34 +1,27 @@
-"use client";
-import React, { useState }from 'react';
-import { useLeaveChatMutation } from '@/lib/redux/api';
+'use client';
+import React from 'react';
+import {useLeaveChatMutation} from '@/lib/redux/api';
 import Loading from '@/app/components/global/Loading';
-import { HttpLeaveChat } from '@/shared/HttpEndpoints/chat';
+import {Button} from '@chakra-ui/react';
 
-const LeaveChat = ({ chatId }: { chatId: number }) => {
-  const [leaveChat, { isLoading, error }] = useLeaveChatMutation();
-  const [chatInfo, setChatInfo] = useState<HttpLeaveChat.reqTemplate>({
-	chatId: chatId,
-  });
+type LeaveChatProps = {
+  chatId: number;
+  leaveCb: (chatId: number) => void;
+};
+
+const LeaveChat = ({chatId, leaveCb}: LeaveChatProps) => {
+  const [leaveChat, {isLoading}] = useLeaveChatMutation();
 
   const handleLeaveChat = async () => {
     try {
-      const res = await leaveChat([chatId, chatInfo]).unwrap();
-      console.log(res);
-    } catch (error) {
-      console.error('Error leaving chat:', error);
-    }
+      leaveCb(chatId);
+      const res = await leaveChat([chatId]).unwrap();
+    } catch (error) {}
   };
 
   if (isLoading) return <Loading />;
-  if (error) console.log(error);
 
-  return (
-    <div>
-      <h1>Leave Chat</h1>
-      <button onClick={handleLeaveChat}>Leave Chat</button>
-    </div>
-  );
+  return <Button onClick={handleLeaveChat}>Leave Chat</Button>;
 };
 
 export default LeaveChat;
-

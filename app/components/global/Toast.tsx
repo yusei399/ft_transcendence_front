@@ -9,7 +9,7 @@ const toastDuration = 6000;
 const titleMaxLength = 20;
 const descriptionMaxLength = 40;
 
-export function Toast() {
+function Toast() {
   const toast = useToast();
   const dispatch = useAppDispatch();
   const notifications = useAppSelector(notificationSelector);
@@ -35,3 +35,5 @@ export function Toast() {
 
   return null;
 }
+
+export default Toast;

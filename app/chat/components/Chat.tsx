@@ -1,31 +1,43 @@
 'use client';
 import Loading from '@/app/components/global/Loading';
+import {setNotification} from '@/lib/redux';
 import {useGetChatMessagesQuery} from '@/lib/redux/api';
+import {useAppDispatch} from '@/lib/redux/hook';
 import {SocketService} from '@/services/websocket/socketService';
+import {Button, FormControl, Input} from '@chakra-ui/react';
 import React, {useState} from 'react';
 
 const Chat = ({chatId}: {chatId: number}) => {
   const [message, setMessage] = useState('');
-  const {data, isLoading, error} = useGetChatMessagesQuery([chatId]);
+  const dispatch = useAppDispatch();
+  const {data, isLoading, refetch} = useGetChatMessagesQuery([chatId]);
 
   if (isLoading) return <Loading />;
   if (!data) return <div>no data</div>;
-  if (error) return console.log(error);
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const toSend = message.trim();
     if (toSend) {
       SocketService.emit('sendMessage', {
         chatId: chatId,
         messageContent: toSend,
       });
+      setTimeout(() => refetch(), 200);
     } else {
-      console.log('No message to submit');
+      dispatch(
+        setNotification({
+          title: 'Invalid message',
+          description: 'Message cannot be empty',
+          status: 'error',
+        }),
+      );
     }
+    setMessage('');
   };
 
   return (
-    <div>
+    <section>
       {data.messages.map(message => {
         const participant = data.participants.find(
           participant => participant.userProfile.userId === message.userId,
@@ -47,16 +59,20 @@ const Chat = ({chatId}: {chatId: number}) => {
           </div>
         );
       })}
-      <input
-        type="text"
-        className="chat_message"
-        value={message}
-        onChange={e => setMessage(e.target.value)}
-      />
-      <button onClick={handleSubmit} style={{margin: '20px'}}>
-        送信
-      </button>
-    </div>
+      <form onSubmit={e => handleSubmit(e)}>
+        <FormControl isRequired>
+          <Input
+            type="text"
+            name="chat_message"
+            value={message}
+            onChange={e => setMessage(e.target.value)}
+          />
+        </FormControl>
+        <Button type="submit" isDisabled={!message} style={{margin: '20px'}}>
+          送信
+        </Button>
+      </form>
+    </section>
   );
 };
 

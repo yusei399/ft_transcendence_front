@@ -5,7 +5,8 @@ import {Metadata} from 'next';
 import {Grid, GridItem} from '@chakra-ui/react';
 import Sidebar from './components/SideBar';
 import Navigation from './components/global/Navigation';
-import {Toast} from './components/global/Toast';
+import Toast from './components/global/Toast';
+import WebSocket from './components/global/WebSocket';
 
 export const metadata: Metadata = {
   title: 'Transcendence',
@@ -32,6 +33,7 @@ export default function RootLayout(props: React.PropsWithChildren) {
                 <Navigation>
                   {props.children}
                   <Toast />
+                  <WebSocket />
                 </Navigation>
               </GridItem>
             </Grid>
