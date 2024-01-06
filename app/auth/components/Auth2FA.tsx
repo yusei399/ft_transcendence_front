@@ -32,7 +32,7 @@ function Auth2FA() {
     setResentAfterError(false);
     try {
       const res = await verify2FA([reqBody]).unwrap();
-      logUserIn(dispatch, res.authToken, isSignUp);
+      logUserIn(dispatch, res, isSignUp);
     } catch (error) {
       setLogInError(
         dispatch,
@@ -63,7 +63,6 @@ function Auth2FA() {
           <FormControl isRequired>
             <FormLabel>Confirmation Code:</FormLabel>
             <Input
-              autoComplete="off"
               type="text"
               name="code"
               value={confirmCode}

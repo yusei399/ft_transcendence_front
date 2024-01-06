@@ -3,6 +3,7 @@ import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {AxiosBaseQuery, BuilderType, CstrArgs, ReqSenderCstr, TRes} from './types';
 import {RootState} from '../../store';
 import {TagType} from '../api';
+import {HttpRefresh} from '@/shared/HttpEndpoints/auth';
 
 const hasFile = (obj: Object): boolean => {
   for (const value of Object.values(obj)) {
@@ -30,8 +31,8 @@ export const axiosBaseQuery =
       options.data = formData;
     }
 
-    const jwt = (api.getState() as RootState).auth.jwt;
-    if (jwt) options.headers = {...options.headers, Authorization: `Bearer ${jwt}`};
+    const authToken = (api.getState() as RootState).auth.authToken;
+    if (authToken) options.headers = {...options.headers, Authorization: `Bearer ${authToken}`};
 
     try {
       const res = await axios<Http.reqTemplate, AxiosResponse<InstanceType<typeof resCtr>>>(
@@ -41,6 +42,30 @@ export const axiosBaseQuery =
       return {data};
     } catch (err) {
       if (!axios.isAxiosError(err)) return {error: {data: 'Unknown error', status: 400}};
+      if (authToken && err.status === 401) {
+        const refreshConfig = {
+          method: HttpRefresh.method,
+          baseURL: baseUrl,
+          url: HttpRefresh.endPointFull,
+          data: {refreshToken: (api.getState() as RootState).auth.refreshToken, authToken},
+          headers: {'Content-Type': 'application/json'},
+        };
+        try {
+          const res = await axios<HttpRefresh.reqTemplate, AxiosResponse<HttpRefresh.resTemplate>>(
+            refreshConfig,
+          );
+          const data = res.data;
+          return {data};
+        } catch (err) {
+          if (!axios.isAxiosError(err)) return {error: {data: 'Unknown error', status: 400}};
+          return {
+            error: {
+              status: err.response?.status ?? 400,
+              data: JSON.stringify(err.response?.data),
+            },
+          };
+        }
+      }
       return {
         error: {
           status: err.response?.status ?? 400,

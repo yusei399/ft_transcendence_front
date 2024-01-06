@@ -1,7 +1,9 @@
+import FriendList from './components/FriendList';
+
 export default function IndexPage() {
   return (
     <>
-      <h1>Friend Page</h1>
+      <FriendList />
     </>
   );
 }

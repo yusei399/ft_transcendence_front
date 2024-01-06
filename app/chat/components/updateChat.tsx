@@ -1,34 +1,34 @@
-"use client";
-import React, { useState } from 'react';
-import { useUpdateChatMutation } from '@/lib/redux/api';
-import { HttpUpdateChat } from '@/shared/HttpEndpoints/chat';
+'use client';
+import React, {useState} from 'react';
+import {useUpdateChatMutation, useGetChatInfoQuery} from '@/lib/redux/api';
+import {HttpUpdateChat} from '@/shared/HttpEndpoints/chat';
+import Loading from '@/app/components/global/Loading';
 
-const UpdateChat = ({ chatId }: { chatId: number }) => {
-  const [updateChat, { isLoading, isError }] = useUpdateChatMutation();
-  const [chatInfo, setChatInfo] = useState<HttpUpdateChat.reqTemplate>({
-    name: '',
-    password: '',
-    chatAvatar: undefined,  // Changed to handle file
-    participants: []
+const UpdateChat = ({chatId}: {chatId: number}) => {
+  const {data, isLoading: queryLoading, error} = useGetChatInfoQuery([chatId]);
+  const [updateChat, {isLoading, isError}] = useUpdateChatMutation();
+  const [updateInfo, setUpdateInfo] = useState<HttpUpdateChat.reqTemplate>({
+    name: undefined,
+    password: undefined,
+    chatAvatar: undefined,
+    participants: [],
   });
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      // Creating FormData to handle file upload
-      const formData = new FormData();
-      formData.append('name', chatInfo.name);
-      formData.append('password', chatInfo.password);
-      if (chatInfo.chatAvatar) {
-        formData.append('chatAvatar', chatInfo.chatAvatar);
-      }
+  if (queryLoading || isLoading) return <Loading />;
+  if (error) console.log(error);
+  if (!data) return <div>no data</div>;
 
-      const response = await updateChat([chatId, formData]).unwrap();  // Updated to send FormData
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await updateChat([chatId, updateInfo]).unwrap();
       console.log('Chat updated:', response);
     } catch (error) {
       console.error('Error updating chat:', error);
     }
   };
+
+  const {name, chatAvatarUrl, hasPassword, participants} = data;
 
   return (
     <div>
@@ -36,19 +36,19 @@ const UpdateChat = ({ chatId }: { chatId: number }) => {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          value={chatInfo.name}
-          onChange={(e) => setChatInfo({ ...chatInfo, name: e.target.value })}
-          placeholder="Chat Name"
+          value={updateInfo.name}
+          //placeholder={name}
+          onChange={e => setUpdateInfo({...updateInfo, name: e.target.value})}
         />
         <input
           type="password"
-          value={chatInfo.password}
-          onChange={(e) => setChatInfo({ ...chatInfo, password: e.target.value })}
+          value={updateInfo.password}
+          onChange={e => setUpdateInfo({...updateInfo, password: e.target.value})}
           placeholder="Password (optional)"
         />
         <input
           type="file"
-          onChange={(e) => setChatInfo({ ...chatInfo, chatAvatar: e.target.files?.[0] })}
+          onChange={e => setUpdateInfo({...updateInfo, chatAvatar: e.target.files?.[0]})}
           placeholder="Avatar (optional)"
         />
         <button type="submit" disabled={isLoading}>
@@ -61,6 +61,3 @@ const UpdateChat = ({ chatId }: { chatId: number }) => {
 };
 
 export default UpdateChat;
-
-
-

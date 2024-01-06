@@ -1,10 +1,12 @@
-import {AppDispatch, clear2fa, login} from '@/lib/redux';
+import {AppDispatch, SetTokensPayload, clear2fa, login} from '@/lib/redux';
 import {setNotification, Notification} from '@/lib/redux/slices/notificationSlice';
-import {SocketService} from '@/services/websocket/socketService';
 
-export const logUserIn = (dispatch: AppDispatch, authToken: string, withSignUp: boolean) => {
-  dispatch(login(authToken));
-  SocketService.initializeSocket(dispatch, authToken);
+export const logUserIn = (
+  dispatch: AppDispatch,
+  payload: SetTokensPayload,
+  withSignUp: boolean,
+) => {
+  dispatch(login(payload));
   dispatch(clear2fa());
 
   let title: Notification['title'];
