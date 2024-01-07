@@ -3,7 +3,7 @@ import Loading from '@/app/components/global/Loading';
 import {userIdSelector} from '@/lib/redux';
 import {useAllUsersQuery, useGetFriendQuery} from '@/lib/redux/api';
 import {useAppSelector} from '@/lib/redux/hook';
-import {Avatar, Card, CardBody, CardHeader, HStack, Heading} from '@chakra-ui/react';
+import {Avatar, Button, Card, CardBody, CardHeader, HStack, Heading} from '@chakra-ui/react';
 
 function FriendList() {
   const {data, isLoading, error, isFetching} = useAllUsersQuery([]);
@@ -39,6 +39,7 @@ function FriendList() {
               <Avatar boxSize="100px" src={avatarUrl ?? './assets/sample_chat.png'} />
               <p>{isFriend ? 'Friend' : 'Not friend'}</p>
             </CardBody>
+            <Button colorScheme="green">フレンド申請</Button>
           </Card>
         );
       })}
