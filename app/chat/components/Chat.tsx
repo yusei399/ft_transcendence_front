@@ -1,29 +1,72 @@
 'use client';
 import Loading from '@/app/components/global/Loading';
-import {setNotification} from '@/lib/redux';
-import {useGetChatMessagesQuery} from '@/lib/redux/api';
-import {useAppDispatch} from '@/lib/redux/hook';
+import {chatToRefreshSelector, clearChatToRefresh, setNotification} from '@/lib/redux';
+import {useGetChatInfoQuery} from '@/lib/redux/api';
+import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
 import {SocketService} from '@/services/websocket/socketService';
-import {Button, FormControl, Input} from '@chakra-ui/react';
-import React, {useState} from 'react';
+import {
+  Button,
+  FormControl,
+  Input,
+  ListItem,
+  List,
+  Text,
+  VStack,
+  HStack,
+  Center,
+} from '@chakra-ui/react';
+import React, {useEffect, useState} from 'react';
+import LeaveChat from './leaveChat';
 
 const Chat = ({chatId}: {chatId: number}) => {
-  const [message, setMessage] = useState('');
+  const [toSend, setToSend] = useState('');
   const dispatch = useAppDispatch();
-  const {data, isLoading, refetch} = useGetChatMessagesQuery([chatId]);
+  const chatToRefresh = useAppSelector(chatToRefreshSelector);
 
-  if (isLoading) return <Loading />;
-  if (!data) return <div>no data</div>;
+  const {currentData, isFetching, refetch} = useGetChatInfoQuery([chatId]);
+
+  useEffect(() => {
+    if (!currentData || chatToRefresh?.reason !== 'newMessage' || chatToRefresh?.chatId !== chatId)
+      return;
+    refetch();
+    dispatch(clearChatToRefresh());
+  }, [chatToRefresh, currentData]);
+
+  if (isFetching || !currentData) return <Loading />;
+
+  const participation = currentData.chatOverview.participation;
+  if (!participation) return <Loading />;
+
+  const blockedUntil = new Date(participation.blockedUntil ?? 0).getTime();
+  const mutedUntil = new Date(participation.mutedUntil ?? 0).getTime();
+
+  if (blockedUntil > Date.now())
+    return (
+      <Center>
+        You are blocked
+        <LeaveChat chatId={chatId} />
+      </Center>
+    );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const toSend = message.trim();
-    if (toSend) {
+    if (mutedUntil > Date.now()) {
+      dispatch(
+        setNotification({
+          title: 'Cannot send message',
+          description: 'You are muted',
+          status: 'error',
+        }),
+      );
+      return;
+    }
+
+    const toSendTrimmed = toSend.trim();
+    if (toSendTrimmed) {
       SocketService.emit('sendMessage', {
         chatId: chatId,
-        messageContent: toSend,
+        messageContent: toSendTrimmed,
       });
-      setTimeout(() => refetch(), 200);
     } else {
       dispatch(
         setNotification({
@@ -33,46 +76,55 @@ const Chat = ({chatId}: {chatId: number}) => {
         }),
       );
     }
-    setMessage('');
+    setToSend('');
   };
 
   return (
-    <section>
-      {data.messages.map(message => {
-        const participant = data.participants.find(
-          participant => participant.userProfile.userId === message.userId,
-        );
-        if (!participant) return <></>;
-        const {nickname, avatarUrl, userId} = participant.userProfile;
-        const {blockedUntil, mutedUntil, hasLeaved} = participant;
-        const {messageId, messageContent, createdAt} = message;
-        return (
-          <div key={messageId}>
-            <img
-              src={avatarUrl ?? './assets/sample.png'}
-              alt={nickname}
-              style={{width: '30px', height: '30px'}}
-            />
-            <strong>{nickname}</strong>
-            <p>{message.messageContent}</p>
-            <p>sent at: {message.createdAt.toLocaleString()}</p>
-          </div>
-        );
-      })}
+    <VStack h="75vh">
+      <List spacing={2} overflowY="auto" flex="1" width="100%">
+        {currentData.chatMessages.map(message => {
+          const {messageId, avatarUrl, nickname, senderId, createdAt, messageContent} = message;
+          const isSender = senderId === participation.userId;
+          return (
+            <ListItem
+              key={messageId}
+              maxW="sm"
+              borderWidth="1px"
+              borderRadius="lg"
+              bgColor={isSender ? 'teal' : 'azure'}
+              overflow="hidden"
+              padding="10px">
+              <HStack>
+                <img
+                  src={avatarUrl ?? './assets/sample.png'}
+                  alt={`${isSender ? 'your' : `${nickname}'s`} avatar`}
+                  style={{width: '30px', height: '30px'}}
+                />
+                <Text fontWeight={800}>{isSender ? 'You' : nickname}:</Text>
+                <small>{new Date(createdAt).toLocaleString()}</small>
+              </HStack>
+              <Text>{messageContent}</Text>
+            </ListItem>
+          );
+        })}
+      </List>
       <form onSubmit={e => handleSubmit(e)}>
-        <FormControl isRequired>
-          <Input
-            type="text"
-            name="chat_message"
-            value={message}
-            onChange={e => setMessage(e.target.value)}
-          />
-        </FormControl>
-        <Button type="submit" isDisabled={!message} style={{margin: '20px'}}>
-          送信
-        </Button>
+        <HStack>
+          <FormControl isRequired>
+            <Input
+              type="text"
+              name="chat_message"
+              value={toSend}
+              onChange={e => setToSend(e.target.value)}
+              autoFocus={true}
+            />
+          </FormControl>
+          <Button type="submit" isDisabled={!toSend}>
+            送信
+          </Button>
+        </HStack>
       </form>
-    </section>
+    </VStack>
   );
 };
 

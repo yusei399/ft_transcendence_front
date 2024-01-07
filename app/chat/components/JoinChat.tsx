@@ -1,21 +1,33 @@
 'use client';
 import React, {useState} from 'react';
 import {useJoinChatMutation} from '@/lib/redux/api';
-import Loading from '@/app/components/global/Loading';
 import {Button, FormControl, FormLabel, Input} from '@chakra-ui/react';
+import {useAppDispatch} from '@/lib/redux/hook';
+import {refreshChat, setNotification} from '@/lib/redux';
+import {type ErrorType} from '@/lib/redux/api/';
 
-const JoinChat = ({chatId, hasPassword}: {chatId: number; hasPassword: boolean}) => {
-  const [joinChat, {isLoading}] = useJoinChatMutation();
+type JoinChatProps = {
+  chatId: number;
+  hasPassword: boolean;
+};
+
+const JoinChat = ({chatId, hasPassword}: JoinChatProps) => {
+  const [joinChat] = useJoinChatMutation();
   const [password, setPassword] = useState<string | undefined>();
+  const dispatch = useAppDispatch();
 
   const handleJoinChat = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = joinChat([chatId, {password}]).unwrap();
-    } catch (error) {}
+      await joinChat([chatId, {password}]).unwrap();
+      dispatch(refreshChat({chatId, reason: 'join'}));
+    } catch (err) {
+      let message = 'Error at joining chat';
+      if ((err as ErrorType).status === 403) message = 'Wrong password';
+
+      dispatch(setNotification({status: 'error', title: 'Error', description: message}));
+    }
   };
-  if (isLoading) return <Loading />;
-  //if (error) console.log(error);
 
   return (
     <form onSubmit={e => handleJoinChat(e)}>
@@ -30,7 +42,9 @@ const JoinChat = ({chatId, hasPassword}: {chatId: number; hasPassword: boolean})
           />
         </FormControl>
       )}
-      <Button type="submit">Join Chat</Button>
+      <Button type="submit" size="lg" colorScheme="teal">
+        Join Chat
+      </Button>
     </form>
   );
 };

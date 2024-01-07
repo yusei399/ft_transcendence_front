@@ -2,7 +2,7 @@
 import {StrictMode} from 'react';
 import {Providers} from '@/lib/providers';
 import {Metadata} from 'next';
-import {Grid, GridItem} from '@chakra-ui/react';
+import {Box, Stack} from '@chakra-ui/react';
 import Sidebar from './components/SideBar';
 import Navigation from './components/global/Navigation';
 import Toast from './components/global/Toast';
@@ -20,20 +20,23 @@ export default function RootLayout(props: React.PropsWithChildren) {
       <html lang="en">
         <body>
           <Providers>
-            <Grid templateColumns="repeat(8, 1fr)" bg="blue.700">
-              <GridItem
+            <Stack bg="blue.700" h="100vh" w="100vw" direction={{base: 'column', lg: 'row'}}>
+              <Box
                 as="aside"
-                colSpan={{base: 8, lg: 2, xl: 1}}
                 bg="blue.400"
-                minHeight={{lg: '100vh'}}
+                h={{base: 'fit-content', lg: '100vh'}}
+                w={{base: '100vw', lg: 'fit-content'}}
                 p={{base: '20px', lg: '30px'}}>
                 <Sidebar />
-              </GridItem>
-              <GridItem as="main" colSpan={{base: 8, lg: 6, xl: 7}} minHeight='100vh' p="40px">
-                {props.children}
-                <Toast />
-              </GridItem>
-            </Grid>
+              </Box>
+              <Box as="main" p="40px" width="100%" justifyContent="center" padding={'12px'}>
+                <Navigation>
+                  {props.children}
+                  <Toast />
+                  <WebSocket />
+                </Navigation>
+              </Box>
+            </Stack>
           </Providers>
         </body>
       </html>
