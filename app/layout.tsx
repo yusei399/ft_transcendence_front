@@ -4,7 +4,9 @@ import {Providers} from '@/lib/providers';
 import {Metadata} from 'next';
 import {Grid, GridItem} from '@chakra-ui/react';
 import Sidebar from './components/SideBar';
+import Navigation from './components/global/Navigation';
 import Toast from './components/global/Toast';
+import WebSocket from './components/global/WebSocket';
 
 export const metadata: Metadata = {
   title: 'Transcendence',

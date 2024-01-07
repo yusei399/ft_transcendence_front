@@ -1,19 +1,49 @@
-const FriendList = (prop: any) => {
+'use client';
+import Loading from '@/app/components/global/Loading';
+import {userIdSelector} from '@/lib/redux';
+import {useAllUsersQuery} from '@/lib/redux/api';
+import {useGetFriendQuery} from '@/lib/redux/api/friendApi';
+import {useAppSelector} from '@/lib/redux/hook';
+import {Avatar, Button, Card, CardBody, CardHeader, HStack, Heading, Text} from '@chakra-ui/react';
+
+function FriendList() {
+  const {data, isLoading, error, isFetching} = useAllUsersQuery([]);
+  const {
+    data: friendData,
+    isLoading: friendIsLoading,
+    error: friendError,
+    isFetching: FriendIsFetching,
+  } = useGetFriendQuery([]);
+
+  const current_userId = useAppSelector(userIdSelector);
+
+  if (isLoading || isFetching || friendIsLoading || FriendIsFetching) return <Loading />;
+  if (error) console.log(error);
+  if (!data) return <div>You even doesn't exist</div>;
+
   return (
-    <>
-      <div>
-        <h1>Friend List</h1>
-        <div>
-          {prop.friendList.map((friend: any) => (
-            <div key={friend.id}>
-              <h1>{friend.name}</h1>
-              <button>chat</button>
-            </div>
-          ))}
-        </div>
-      </div>
-    </>
+    <HStack spacing="8px">
+      {data.users.map(user => {
+        const {userId, nickname, avatarUrl} = user;
+        const isFriend = friendData
+          ? friendData.friendsProfiles.some(p => p.userId === userId)
+          : false;
+        if (userId === current_userId) return <Text>No other user</Text>;
+        return (
+          <Card key={userId}>
+            <CardHeader>
+              <Heading size="md">{nickname}</Heading>
+            </CardHeader>
+            <CardBody>
+              <Avatar boxSize="100px" src={avatarUrl ?? './assets/sample_chat.png'} />
+              <p>{isFriend ? 'Friend' : 'Not friend'}</p>
+            </CardBody>
+            <Button colorScheme="green">フレンド申請</Button>
+          </Card>
+        );
+      })}
+    </HStack>
   );
-};
+}
 
 export default FriendList;

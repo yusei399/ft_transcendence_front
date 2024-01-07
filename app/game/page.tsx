@@ -1,24 +1,34 @@
 'use client';
 
-import {useAppSelector} from '@/lib/redux/hook';
-import {jwtSelector} from '@/lib/redux';
-import {useRouter} from 'next/navigation';
-import {useEffect} from 'react';
-import Loading from '../components/global/Loading';
+import {useEffect, useRef, useState} from 'react';
+import {Game} from './components/game';
+import {Button, Heading} from '@chakra-ui/react';
 
 export default function IndexPage() {
-  const authToken = useAppSelector(jwtSelector);
-  const router = useRouter();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [game, setGame] = useState<Game | null>(null);
 
   useEffect(() => {
-    if (!authToken) router.push('/auth');
-  }, [authToken]);
+    if (canvasRef.current) {
+      const canvas = canvasRef.current;
+      canvas.width = 800;
+      canvas.height = 600;
+      const newGame = new Game(canvas);
+      setGame(newGame);
+    }
+  }, []);
 
-  if (!authToken) return <Loading />;
+  const handleStart = () => {
+    game?.startGame();
+  };
 
   return (
     <>
-      <h1>Game Page</h1>
+      <Heading as="h1" size="xl">
+        Game Page
+      </Heading>
+      <canvas ref={canvasRef} />
+      <Button onClick={handleStart}>Start Game</Button>
     </>
   );
 }

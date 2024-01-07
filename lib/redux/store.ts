@@ -4,6 +4,7 @@ import {combineReducers} from 'redux';
 import authReducer from './slices/authSlice';
 import gameReducer from './slices/gameSlice';
 import chatReducer from './slices/chatSlice';
+import navigationReducer from './slices/navigationSlice';
 import notificationReducer from './slices/notificationSlice';
 import {backEndApi} from './api/api';
 import storage from './localStorage';
@@ -12,13 +13,14 @@ import {setupListeners} from '@reduxjs/toolkit/query/react';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'game', 'chat', 'notification', backEndApi.reducerPath],
+  whitelist: ['auth', 'game', 'chat', backEndApi.reducerPath],
 };
 
 const reducers = combineReducers({
   auth: authReducer,
   game: gameReducer,
   chat: chatReducer,
+  navigation: navigationReducer,
   notification: notificationReducer,
   [backEndApi.reducerPath]: backEndApi.reducer,
 });

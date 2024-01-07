@@ -8,8 +8,8 @@ function isHydrateAction(action: Action): action is PayloadAction<RootState> {
   return action.type === HYDRATE;
 }
 
+export type TagType = 'User' | 'Friend' | 'Chat' | 'Invitation';
 const tagTypes = ['User', 'Friend', 'Chat', 'Invitation'] as const;
-export type TagType = (typeof tagTypes)[number];
 
 export const backEndApi = createApi({
   reducerPath: 'backEndApi',

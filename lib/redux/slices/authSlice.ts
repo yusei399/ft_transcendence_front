@@ -3,18 +3,24 @@ import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
 import {RootState} from '../store';
 
 interface AuthSliceState {
-  isSocketConnected: boolean;
-  jwt?: string;
+  authToken?: string;
+  refreshToken?: string;
   auth2FACode?: string;
   isSignUp?: boolean;
   userId?: number;
 }
 
+export type SetTokensPayload = {
+  authToken: string;
+  refreshToken: string;
+};
+
 const initialState: AuthSliceState = {
-  isSocketConnected: false,
-  jwt: undefined,
-  isSignUp: undefined,
+  authToken: undefined,
+  refreshToken: undefined,
   auth2FACode: undefined,
+  isSignUp: undefined,
+  userId: undefined,
 };
 
 type set2FAPayload = {
@@ -27,12 +33,13 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<string>) => {
-      state.jwt = action.payload;
+    login: (state, action: PayloadAction<SetTokensPayload>) => {
+      state.authToken = action.payload.authToken;
+      state.refreshToken = action.payload.refreshToken;
     },
     logout: state => {
-      state.jwt = undefined;
-      state.isSocketConnected = false;
+      state.authToken = undefined;
+      state.refreshToken = undefined;
     },
     set2fa: (state, action: PayloadAction<set2FAPayload>) => {
       state.auth2FACode = action.payload.auth2FACode;
@@ -43,19 +50,15 @@ const authSlice = createSlice({
       state.auth2FACode = undefined;
       state.isSignUp = undefined;
     },
-    connectSocket: state => {
-      state.isSocketConnected = true;
-    },
-    disconnectSocket: state => {
-      state.isSocketConnected = false;
-    },
   },
 });
 
-export const {login, logout, set2fa, clear2fa, connectSocket, disconnectSocket} = authSlice.actions;
+export const {login, logout, set2fa, clear2fa} = authSlice.actions;
 export const authSelector = (state: RootState) => state.auth;
-export const jwtSelector = (state: RootState) => state.auth.jwt;
+export const authTokenSelector = (state: RootState) => state.auth.authToken;
+export const refreshTokenSelector = (state: RootState) => state.auth.refreshToken;
 export const is2FANeededSelector = (state: RootState) =>
-  state.auth.jwt === undefined && state.auth.auth2FACode !== undefined;
-export const isLoginSelector = (state: RootState) => state.auth.jwt !== undefined;
+  state.auth.authToken === undefined && state.auth.auth2FACode !== undefined;
+export const isLoginSelector = (state: RootState) => state.auth.authToken !== undefined;
+export const userIdSelector = (state: RootState) => state.auth.userId;
 export default authSlice.reducer;

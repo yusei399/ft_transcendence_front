@@ -47,7 +47,6 @@ function SignIn() {
         <FormControl isRequired>
           <FormLabel>Password:</FormLabel>
           <Input
-            autoComplete="on"
             type="password"
             name="password"
             value={signInData.password}

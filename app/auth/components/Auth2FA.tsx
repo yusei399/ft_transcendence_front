@@ -4,7 +4,7 @@ import Loading from '@/app/components/global/Loading';
 import {ErrorType, useResend2FAMutation, useVerify2FAMutation} from '@/lib/redux/api';
 import {Http2FA, HttpResend2FA} from '@/shared/HttpEndpoints/auth';
 import {Button, FormControl, FormLabel, HStack, Input} from '@chakra-ui/react';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {logUserIn, setLogInError} from './logUser';
 import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
 import {authSelector, clear2fa} from '@/lib/redux';
@@ -17,13 +17,10 @@ function Auth2FA() {
   const [verify2FA, {isLoading, isError}] = useVerify2FAMutation();
   const [resend2FA, {isLoading: isResending}] = useResend2FAMutation();
 
-  useEffect(() => {
-    if (auth2FACode === undefined || userId === undefined || isSignUp === undefined)
-      dispatch(clear2fa());
-  }, [auth2FACode, userId, isSignUp]);
-
-  if (auth2FACode === undefined || userId === undefined || isSignUp === undefined)
+  if (auth2FACode === undefined || userId === undefined || isSignUp === undefined) {
+    dispatch(clear2fa());
     return <Loading />;
+  }
 
   const submit2FA = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,13 +32,14 @@ function Auth2FA() {
     setResentAfterError(false);
     try {
       const res = await verify2FA([reqBody]).unwrap();
-      logUserIn(dispatch, res.authToken, isSignUp);
+      logUserIn(dispatch, res, isSignUp);
     } catch (error) {
       setLogInError(
         dispatch,
         (error as ErrorType).status === 403 ? 'Invalid 2FA code' : 'Something went wrong',
       );
     }
+    setConfirmCode('');
   };
 
   const resendCode = async () => {
