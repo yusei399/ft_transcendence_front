@@ -3,7 +3,7 @@ import Loading from '@/app/components/global/Loading';
 import {userIdSelector} from '@/lib/redux';
 import {useAllUsersQuery, useGetFriendQuery} from '@/lib/redux/api';
 import {useAppSelector} from '@/lib/redux/hook';
-import {Avatar, Card, CardBody, CardHeader, HStack, Heading, Text} from '@chakra-ui/react';
+import {Avatar, Card, CardBody, CardHeader, HStack, Heading} from '@chakra-ui/react';
 
 function FriendList() {
   const {data, isLoading, error, isFetching} = useAllUsersQuery([]);
@@ -21,14 +21,15 @@ function FriendList() {
   if (friendError) console.log(friendError);
   if (!data) return <div>You doesn't even exist</div>;
 
+  const users = data.users.filter(user => user.userId !== current_userId);
+
   return (
     <HStack spacing="8px">
-      {data.users.map(user => {
+      {users.map(user => {
         const {userId, nickname, avatarUrl} = user;
         const isFriend = friendData
           ? friendData.friendsProfiles.some(p => p.userId === userId)
           : false;
-        if (userId === current_userId) return <Text>No other user</Text>;
         return (
           <Card key={userId}>
             <CardHeader>

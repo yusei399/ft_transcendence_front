@@ -4,33 +4,38 @@ import {Socket} from 'socket.io-client';
 
 export function setUpChatEvents(socket: Socket, dispatch: AppDispatch): void {
   socket.on(WsChatJoin.eventName, (message: WsChatJoin.eventMessageTemplate) => {
-    const {userId, chatId} = message;
+    const {chat, user} = message;
     dispatch(
       setNotification({
         title: 'Chat',
-        description: `User ${userId} joined chat ${chatId}`,
+        description: `User ${user.nickname} joined chat ${chat.chatName}`,
         status: 'info',
       }),
     );
   });
 
   socket.on(WsChatLeave.eventName, (message: WsChatLeave.eventMessageTemplate) => {
-    const {userId, chatId} = message;
+    const {chat, user} = message;
     dispatch(
       setNotification({
         title: 'Chat',
-        description: `User ${userId} left chat ${chatId}`,
+        description: `User ${user.nickname} left chat ${chat.chatName}`,
         status: 'warning',
       }),
     );
   });
 
   socket.on(WsNewMessage.eventName, (message: WsNewMessage.eventMessageTemplate) => {
-    const {messageId, senderId, chatId, messageContent} = message;
+    const {
+      chat: {chatId},
+      message: {messageId, messageContent},
+      sender: {userId},
+    } = message;
     dispatch(
       setNotification({
         title: 'Chat',
-        description: `User ${senderId} sent message ${messageId} to chat ${chatId}: ${messageContent}`,
+        description: `User ${userId} sent message ${messageId} to chat ${chatId}:
+         ${messageContent}`,
         status: 'success',
       }),
     );

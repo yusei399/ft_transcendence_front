@@ -29,7 +29,7 @@ export default function RootLayout(props: React.PropsWithChildren) {
                 p={{base: '20px', lg: '30px'}}>
                 <Sidebar />
               </Box>
-              <Box as="main" p="40px" width="100%" justifyContent="center">
+              <Box as="main" p="40px" width="100%" justifyContent="center" padding={'12px'}>
                 <Navigation>
                   {props.children}
                   <Toast />

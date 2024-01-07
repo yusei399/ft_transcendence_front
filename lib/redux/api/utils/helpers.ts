@@ -55,6 +55,7 @@ export const axiosBaseQuery =
             refreshConfig,
           );
           api.dispatch({type: 'auth/login', payload: res.data});
+          options.headers = {...options.headers, Authorization: `Bearer ${res.data.authToken}`};
           const resRetry = await axios<
             Http.reqTemplate,
             AxiosResponse<InstanceType<typeof resCtr>>

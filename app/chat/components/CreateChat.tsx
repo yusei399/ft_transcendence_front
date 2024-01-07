@@ -9,7 +9,7 @@ import {HttpCreateChat} from '@/shared/HttpEndpoints/chat';
 const CreateChat = () => {
   const [createChat, {isLoading, error}] = useCreateChatMutation();
   const [chatInfo, setChatInfo] = useState<HttpCreateChat.reqTemplate>({
-    name: '',
+    chatName: '',
     chatAvatar: undefined,
     password: undefined,
   });
@@ -32,8 +32,8 @@ const CreateChat = () => {
         <FormLabel>Chat Name:</FormLabel>
         <Input
           type="text"
-          value={chatInfo.name}
-          onChange={e => setChatInfo({...chatInfo, name: e.target.value})}
+          value={chatInfo.chatName}
+          onChange={e => setChatInfo({...chatInfo, chatName: e.target.value})}
         />
       </FormControl>
       <FormControl>

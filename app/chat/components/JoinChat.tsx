@@ -3,6 +3,8 @@ import React, {useState} from 'react';
 import {useJoinChatMutation} from '@/lib/redux/api';
 import Loading from '@/app/components/global/Loading';
 import {Button, FormControl, FormLabel, Input} from '@chakra-ui/react';
+import {useAppDispatch} from '@/lib/redux/hook';
+import {refreshChat} from '@/lib/redux';
 
 type JoinChatProps = {
   chatId: number;
@@ -10,19 +12,19 @@ type JoinChatProps = {
 };
 
 const JoinChat = ({chatId, hasPassword}: JoinChatProps) => {
-  const [joinChat, {isLoading, error}] = useJoinChatMutation();
+  const [joinChat] = useJoinChatMutation();
   const [password, setPassword] = useState<string | undefined>();
+  const dispatch = useAppDispatch();
 
   const handleJoinChat = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = joinChat([chatId, {password}]).unwrap();
+      joinChat([chatId, {password}]).unwrap();
+      dispatch(refreshChat({chatId, reason: 'join'}));
     } catch (error) {
       console.error('Error joining chat:', error);
     }
   };
-  if (isLoading) return <Loading />;
-  if (error) console.log(error);
 
   return (
     <form onSubmit={e => handleJoinChat(e)}>
@@ -37,7 +39,7 @@ const JoinChat = ({chatId, hasPassword}: JoinChatProps) => {
           />
         </FormControl>
       )}
-      <Button type="submit" size="lg">
+      <Button type="submit" size="lg" colorScheme="teal">
         Join Chat
       </Button>
     </form>
