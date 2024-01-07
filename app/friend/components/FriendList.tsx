@@ -12,7 +12,6 @@ import { useState } from 'react';
 
 function FriendList() {
   const {data, isLoading, error, isFetching} = useAllUsersQuery([]);
-  console.log(data);
   const [sendInvitation, {data: otherUserdata , isError: invitationerror, isSuccess}] = useSendInvitationMutation();
   const [reqData, setReqData] = useState<HttpSendInvitation.reqTemplate>({
     targetUserId: undefined,
@@ -23,6 +22,7 @@ function FriendList() {
     error: friendError,
     isFetching: FriendIsFetching,
   } = useGetFriendQuery([]);
+
 
   const current_userId = useAppSelector(userIdSelector);
   const handleInvitation = async (userId: number, e: React.FormEvent) => {
@@ -36,7 +36,7 @@ function FriendList() {
 
   if (isLoading || isFetching || friendIsLoading || FriendIsFetching) return <Loading />;
   if (error) console.log(error);
-  if (!data) return <div>You even doesn't exist</div>;
+  if (!data) return <p>You even doesn't exist</p>;
 
   return (
     <HStack spacing="8px">
