@@ -27,7 +27,7 @@ export default function RootLayout(props: React.PropsWithChildren) {
                 p={{base: '20px', lg: '30px'}}>
                 <Sidebar />
               </GridItem>
-              <GridItem as="main" colSpan={{base: 8, lg: 6, xl: 7}} p="40px">
+              <GridItem as="main" colSpan={{base: 8, lg: 6, xl: 7}} minHeight='100vh' p="40px">
                 {props.children}
                 <Toast />
               </GridItem>
