@@ -1,13 +1,22 @@
 'use client';
 import Loading from '@/app/components/global/Loading';
 import {userIdSelector} from '@/lib/redux';
-import {useAllUsersQuery} from '@/lib/redux/api';
+import {useAllUsersQuery, useSendInvitationMutation} from '@/lib/redux/api';
 import {useGetFriendQuery} from '@/lib/redux/api/friendApi';
 import {useAppSelector} from '@/lib/redux/hook';
+import { HttpSendInvitation } from '@/shared/HttpEndpoints/invitation';
 import {Avatar, Button, Card, CardBody, CardHeader, HStack, Heading, Text} from '@chakra-ui/react';
+import { useState } from 'react';
+
+
 
 function FriendList() {
   const {data, isLoading, error, isFetching} = useAllUsersQuery([]);
+  console.log(data);
+  const [sendInvitation, {data: otherUserdata , isError: invitationerror, isSuccess}] = useSendInvitationMutation();
+  const [reqData, setReqData] = useState<HttpSendInvitation.reqTemplate>({
+    targetUserId: undefined,
+  });
   const {
     data: friendData,
     isLoading: friendIsLoading,
@@ -16,6 +25,14 @@ function FriendList() {
   } = useGetFriendQuery([]);
 
   const current_userId = useAppSelector(userIdSelector);
+  const handleInvitation = async (userId: number, e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await sendInvitation(['friend', { targetUserId: userId }]).unwrap();
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   if (isLoading || isFetching || friendIsLoading || FriendIsFetching) return <Loading />;
   if (error) console.log(error);
@@ -28,7 +45,7 @@ function FriendList() {
         const isFriend = friendData
           ? friendData.friendsProfiles.some(p => p.userId === userId)
           : false;
-        if (userId === current_userId) return <Text>No other user</Text>;
+        if (userId === current_userId) return ;
         return (
           <Card key={userId}>
             <CardHeader>
@@ -38,7 +55,7 @@ function FriendList() {
               <Avatar boxSize="100px" src={avatarUrl ?? './assets/sample_chat.png'} />
               <p>{isFriend ? 'Friend' : 'Not friend'}</p>
             </CardBody>
-            <Button colorScheme="green">フレンド申請</Button>
+              <Button colorScheme="green" onClick={(e) => handleInvitation(userId, e)}>フレンド申請</Button>
           </Card>
         );
       })}
