@@ -26,7 +26,7 @@ const UserProfile: React.FC = () => {
     setReqData(prev => ({...prev, [name]: value}));
   };
 
-  const [sendInvitation, {isLoading, data, isError, isSuccess}] = useSendInvitationMutation();
+  const [sendInvitation] = useSendInvitationMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

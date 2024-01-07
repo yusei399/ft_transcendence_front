@@ -1,8 +1,8 @@
 'use client';
 import Loading from '@/app/components/global/Loading';
-import {setNotification} from '@/lib/redux';
+import {chatToRefreshSelector, clearChatToRefresh, setNotification} from '@/lib/redux';
 import {useGetChatInfoQuery} from '@/lib/redux/api';
-import {useAppDispatch} from '@/lib/redux/hook';
+import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
 import {SocketService} from '@/services/websocket/socketService';
 import {
   Button,
@@ -15,18 +15,26 @@ import {
   HStack,
   Center,
 } from '@chakra-ui/react';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import LeaveChat from './leaveChat';
 
 const Chat = ({chatId}: {chatId: number}) => {
   const [toSend, setToSend] = useState('');
   const dispatch = useAppDispatch();
-  const {data, isLoading, refetch} = useGetChatInfoQuery([chatId]);
+  const chatToRefresh = useAppSelector(chatToRefreshSelector);
 
-  if (isLoading) return <Loading />;
-  if (!data) return <div>no data</div>;
+  const {currentData, isFetching, refetch} = useGetChatInfoQuery([chatId]);
 
-  const participation = data.chatOverview.participation;
+  useEffect(() => {
+    if (!currentData || chatToRefresh?.reason !== 'newMessage' || chatToRefresh?.chatId !== chatId)
+      return;
+    refetch();
+    dispatch(clearChatToRefresh());
+  }, [chatToRefresh, currentData]);
+
+  if (isFetching || !currentData) return <Loading />;
+
+  const participation = currentData.chatOverview.participation;
   if (!participation) return <Loading />;
 
   const blockedUntil = new Date(participation.blockedUntil ?? 0).getTime();
@@ -59,7 +67,6 @@ const Chat = ({chatId}: {chatId: number}) => {
         chatId: chatId,
         messageContent: toSendTrimmed,
       });
-      setTimeout(() => refetch(), 200);
     } else {
       dispatch(
         setNotification({
@@ -74,26 +81,26 @@ const Chat = ({chatId}: {chatId: number}) => {
 
   return (
     <VStack h="75vh">
-      <LeaveChat chatId={chatId} />
-      <List spacing={6} overflowY="auto" flex="1" width="100%">
-        {data.chatMessages.map(message => {
+      <List spacing={2} overflowY="auto" flex="1" width="100%">
+        {currentData.chatMessages.map(message => {
           const {messageId, avatarUrl, nickname, senderId, createdAt, messageContent} = message;
+          const isSender = senderId === participation.userId;
           return (
             <ListItem
               key={messageId}
               maxW="sm"
               borderWidth="1px"
               borderRadius="lg"
-              bgColor="ivory"
+              bgColor={isSender ? 'teal' : 'azure'}
               overflow="hidden"
               padding="10px">
               <HStack>
                 <img
                   src={avatarUrl ?? './assets/sample.png'}
-                  alt={nickname}
+                  alt={`${isSender ? 'your' : `${nickname}'s`} avatar`}
                   style={{width: '30px', height: '30px'}}
                 />
-                <Text fontWeight={800}>{nickname}:</Text>
+                <Text fontWeight={800}>{isSender ? 'You' : nickname}:</Text>
                 <small>{new Date(createdAt).toLocaleString()}</small>
               </HStack>
               <Text>{messageContent}</Text>
@@ -109,6 +116,7 @@ const Chat = ({chatId}: {chatId: number}) => {
               name="chat_message"
               value={toSend}
               onChange={e => setToSend(e.target.value)}
+              autoFocus={true}
             />
           </FormControl>
           <Button type="submit" isDisabled={!toSend}>

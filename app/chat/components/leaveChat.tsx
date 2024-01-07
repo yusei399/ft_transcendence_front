@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import {useLeaveChatMutation} from '@/lib/redux/api';
-import Loading from '@/app/components/global/Loading';
 import {Button} from '@chakra-ui/react';
 import {useAppDispatch} from '@/lib/redux/hook';
 import {refreshChat} from '@/lib/redux';

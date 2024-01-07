@@ -1,6 +1,6 @@
 import {HttpInvitation} from '@/shared/HttpEndpoints/';
 import {backEndApi} from './api';
-import {createMutation} from './utils';
+import {createMutation, createQuery} from './utils';
 
 const invitationApi = backEndApi.injectEndpoints({
   endpoints: build => ({
@@ -10,12 +10,11 @@ const invitationApi = backEndApi.injectEndpoints({
     updateInvitation: createMutation(build, HttpInvitation.updateInvitation.requestSender, [
       'Invitation',
     ]),
-    getInvitations: createMutation(build, HttpInvitation.getInvitations.requestSender, [
-      'Invitation',
-    ]),
+    getInvitations: createQuery(build, HttpInvitation.getInvitations.requestSender, ['Invitation']),
   }),
   // @ts-ignore
   overrideExisting: module.hot?.status() === 'apply',
 });
 
-export const {useSendInvitationMutation, useUpdateInvitationMutation} = invitationApi;
+export const {useSendInvitationMutation, useUpdateInvitationMutation, useGetInvitationsQuery} =
+  invitationApi;
