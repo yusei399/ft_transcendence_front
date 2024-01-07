@@ -1,74 +1,111 @@
 'use client';
 
 import Loading from '@/app/components/global/Loading';
-import {userIdSelector} from '@/lib/redux';
 import {useGetAllChatsQuery} from '@/lib/redux/api';
-import {useAppSelector} from '@/lib/redux/hook';
-import {LockIcon} from '@chakra-ui/icons';
+import {CheckCircleIcon, LockIcon} from '@chakra-ui/icons';
 import {
   Card,
   CardBody,
   CardHeader,
   Heading,
-  Text,
   VStack,
   Avatar,
   Grid,
   GridItem,
+  Text,
+  HStack,
 } from '@chakra-ui/react';
-import LeaveChat from './leaveChat';
-import JoinChat from './JoinChat';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import Chat from './Chat';
 import CreateChat from './CreateChat';
+import JoinChat from './JoinChat';
+import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
+import {chatToRefreshSelector, clearChatToRefresh} from '@/lib/redux';
+import LeaveChat from './leaveChat';
+
+type OpenedChat = {
+  chatId: number;
+  chatName: string;
+  chatAvatarUrl?: string;
+  hasJoined: boolean;
+  hasPassword: boolean;
+};
 
 function ChatList() {
-  const {data, isLoading, error, isFetching} = useGetAllChatsQuery([]);
-  const userId = useAppSelector(userIdSelector);
-  const [openedChatId, setOpenedChatId] = useState<number | undefined>(undefined);
+  const {currentData, isLoading, error, isFetching} = useGetAllChatsQuery([]);
+  const [openedChat, setOpenedChat] = useState<OpenedChat | undefined>(undefined);
+  const dispatch = useAppDispatch();
+  const chatToRefresh = useAppSelector(chatToRefreshSelector);
+
+  useEffect(() => {
+    if (!chatToRefresh || !currentData) return;
+
+    const chat = currentData.chats.find(c => c.chatId === chatToRefresh.chatId);
+    if (!chat || chatToRefresh.reason == 'leave') setOpenedChat(undefined);
+    else if (chatToRefresh.reason === 'join') {
+      const {chatId, hasPassword, chatName} = chat;
+      setOpenedChat({chatId, hasJoined: true, hasPassword, chatName});
+    }
+
+    dispatch(clearChatToRefresh());
+  }, [chatToRefresh, currentData]);
 
   if (isLoading || isFetching) return <Loading />;
   if (error) console.log(error);
-  if (!data) return <CreateChat />;
+  if (!currentData) return <CreateChat />;
 
-  function openChat(chatId: number, hasJoined: boolean) {
-    if (openedChatId === chatId) setOpenedChatId(undefined);
-    else if (hasJoined) setOpenedChatId(chatId);
-  }
-
-  function getOutLeavedChat(chatId: number) {
-    if (openedChatId === chatId) setOpenedChatId(undefined);
+  function openChat(chat: OpenedChat) {
+    if (openedChat === undefined || chat.chatId !== openedChat.chatId) setOpenedChat(chat);
+    else setOpenedChat(undefined);
   }
 
   return (
-    <Grid templateColumns="repeat(6, 1fr)">
-      <GridItem colSpan={4} height={{lg: '100vh'}}>
-        {openedChatId ? <Chat chatId={openedChatId} /> : <CreateChat />}
+    <Grid templateColumns="repeat(6, 1fr)" h="80vh">
+      <GridItem colSpan={4}>
+        {!openedChat && <CreateChat />}
+        {openedChat && (
+          <VStack>
+            <HStack justifyContent="space-between">
+              <Avatar
+                size="md"
+                name={openedChat.chatName}
+                src={openedChat.chatAvatarUrl ?? './assets/sample_chat.png'}
+              />
+              <Heading>{openedChat.chatName}</Heading>
+              {openedChat.hasJoined ? (
+                <LeaveChat chatId={openedChat.chatId} />
+              ) : (
+                <JoinChat chatId={openedChat.chatId} hasPassword={openedChat.hasPassword} />
+              )}
+            </HStack>
+            {openedChat.hasJoined && <Chat chatId={openedChat.chatId} />}
+          </VStack>
+        )}
       </GridItem>
-      <GridItem colSpan={2} minHeight={{lg: '100vh'}}>
-        <VStack spacing="8px">
-          {data.chats.map(chat => {
-            const {chatId, name, chatAvatarUrl, hasPassword, participants} = chat;
-            const nbParticipants = participants.length;
-            const hasJoined = participants.some(
-              p => p.userProfile.userId === userId && !p.hasLeaved,
-            );
+      <GridItem colSpan={2} overflowY="auto" flex="1" width="100%">
+        <VStack spacing={2}>
+          {currentData.chats.map(chat => {
+            const {chatId, chatName, chatAvatarUrl, hasPassword, participation} = chat;
+            const hasJoined = !!participation;
+            const isOpened = openedChat?.chatId === chatId;
             return (
-              <Card key={chatId} onClick={() => openChat(chatId, hasJoined)}>
-                <CardHeader>
-                  <Heading size="md">
-                    {hasPassword && <LockIcon boxSize={6} />}
-                    {name}
-                  </Heading>
+              <Card
+                key={chatId}
+                bg={isOpened ? 'blue.500' : undefined}
+                width={'75%'}
+                padding={'6px'}
+                onClick={() => openChat({chatId, hasJoined, hasPassword, chatName})}>
+                <CardHeader paddingBottom={0}>
+                  <HStack justifyContent={'space-between'}>
+                    {hasPassword ? <LockIcon boxSize={4} /> : <div></div>}
+                    <Heading size="md" wordBreak={'break-word'}>
+                      {chatName}
+                    </Heading>
+                    {hasJoined ? <CheckCircleIcon boxSize={4} /> : <div></div>}
+                  </HStack>
                 </CardHeader>
-                <CardBody>
-                  <Avatar boxSize="100px" src={chatAvatarUrl ?? './assets/sample_chat.png'} />
-                  <Text>{`${nbParticipants} participant${nbParticipants > 1 ? 's' : ''}`}</Text>
-                  {hasJoined ? (
-                    <LeaveChat chatId={chatId} leaveCb={getOutLeavedChat} />
-                  ) : (
-                    <JoinChat chatId={chatId} hasPassword={hasPassword} />
-                  )}
+                <CardBody alignSelf={'center'}>
+                  <Avatar boxSize="60px" src={chatAvatarUrl ?? './assets/sample_chat.png'} />
                 </CardBody>
               </Card>
             );

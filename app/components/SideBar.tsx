@@ -25,24 +25,24 @@ export default function Sidebar() {
           Sign Out
         </Button>
       ) : (
-        <Link href="/auth">
+        <Link href="/auth" scroll={false}>
           <ArrowForwardIcon color="white" />
           Sign In / Sign Up
         </Link>
       )}
-      <Link href="/">
+      <Link href="/" scroll={false}>
         <TriangleUpIcon color="white" />
         Home
       </Link>
-      <Link href="/game">
+      <Link href="/game" scroll={false}>
         <ArrowForwardIcon color="white" />
         Game
       </Link>
-      <Link href="/chat">
+      <Link href="/chat" scroll={false}>
         <ChatIcon color="white" />
         Chat
       </Link>
-      <Link href="/friend">
+      <Link href="/friend" scroll={false}>
         <AtSignIcon color="white" />
         Friend
       </Link>

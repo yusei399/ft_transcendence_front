@@ -2,8 +2,7 @@
 
 import {useEffect, useRef, useState} from 'react';
 import {Game} from './components/game';
-import {Button, Heading} from '@chakra-ui/react';
-import Ball from './components/Ball';
+import {Button, VStack, Heading} from '@chakra-ui/react';
 
 export default function IndexPage() {
   const screenWidth = window.innerWidth / 2;
@@ -17,8 +16,6 @@ export default function IndexPage() {
   // useEffect(() => {
   //   if (canvasRef.current) {
   //     const canvas = canvasRef.current;
-  //     canvas.width = 800;
-  //     canvas.height = 600;
   //     const newGame = new Game(canvas);
   //     setGame(newGame);
   //   }
@@ -29,20 +26,21 @@ export default function IndexPage() {
   // };
 
   return (
-    <>
-      <Heading as="h1" size="xl">
+    <VStack padding={6} height="100%">
+      <Heading as="h1" size="lg">
         Game Page
       </Heading>
-      <svg width={screenWidth} height={screenHeight} style={{ border: '1px solid black' }}>
-      <Ball 
-        x={ballPosition.x} 
-        y={ballPosition.y} 
-        radius={10}
-        speedX={ballPosition.speedX}
-        speedY={ballPosition.speedY}
-        // onMove={handleBallMove} 
+      <canvas
+        ref={canvasRef}
+        style={{
+          border: '1px solid gray',
+          padding: '10px',
+          margin: '10px',
+          width: '80%',
+          height: '80%',
+        }}
       />
-      </svg>
-    </>
+      <Button onClick={handleStart}>Start Game</Button>
+    </VStack>
   );
 }

@@ -19,7 +19,7 @@ export class SocketService {
     return SocketService.socket;
   }
 
-  private static setUpWsEvents(dispatch: AppDispatch) {
+  private static setUpWsEvents(dispatch: AppDispatch, userId: number) {
     const socket = SocketService.getSocket();
     socket.on(WsConnection.eventName, (message: WsConnection.eventMessageTemplate) => {
       SocketService.isConnected = true;
@@ -30,7 +30,7 @@ export class SocketService {
     });
 
     setUpInvitationEvents(socket, dispatch);
-    setUpChatEvents(socket, dispatch);
+    setUpChatEvents(socket, dispatch, userId);
     setUpGameEvents(socket, dispatch);
   }
 
@@ -56,10 +56,10 @@ export class SocketService {
     return SocketService.isConnected;
   }
 
-  public static initializeSocket(dispatch: AppDispatch, authToken: string) {
+  public static initializeSocket(dispatch: AppDispatch, authToken: string, userId: number) {
     SocketService.closeSocket();
     const socket = io('ws://localhost:3333/', {auth: {token: authToken}});
     SocketService.setSocket(socket);
-    SocketService.setUpWsEvents(dispatch);
+    SocketService.setUpWsEvents(dispatch, userId);
   }
 }

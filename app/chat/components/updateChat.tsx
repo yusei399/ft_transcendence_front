@@ -8,7 +8,7 @@ const UpdateChat = ({chatId}: {chatId: number}) => {
   const {data, isLoading: queryLoading, error} = useGetChatInfoQuery([chatId]);
   const [updateChat, {isLoading, isError}] = useUpdateChatMutation();
   const [updateInfo, setUpdateInfo] = useState<HttpUpdateChat.reqTemplate>({
-    name: undefined,
+    chatName: undefined,
     password: undefined,
     chatAvatar: undefined,
     participants: [],
@@ -28,7 +28,7 @@ const UpdateChat = ({chatId}: {chatId: number}) => {
     }
   };
 
-  const {name, chatAvatarUrl, hasPassword, participants} = data;
+  const {chatName, chatAvatarUrl, hasPassword} = data.chatOverview;
 
   return (
     <div>
@@ -36,20 +36,19 @@ const UpdateChat = ({chatId}: {chatId: number}) => {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          value={updateInfo.name}
-          //placeholder={name}
-          onChange={e => setUpdateInfo({...updateInfo, name: e.target.value})}
+          value={updateInfo.chatName}
+          onChange={e => setUpdateInfo({...updateInfo, chatName: e.target.value})}
+          placeholder={chatName}
         />
         <input
           type="password"
           value={updateInfo.password}
           onChange={e => setUpdateInfo({...updateInfo, password: e.target.value})}
-          placeholder="Password (optional)"
+          placeholder={hasPassword ? 'update password' : 'define a password'}
         />
         <input
           type="file"
           onChange={e => setUpdateInfo({...updateInfo, chatAvatar: e.target.files?.[0]})}
-          placeholder="Avatar (optional)"
         />
         <button type="submit" disabled={isLoading}>
           Update Chat

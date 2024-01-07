@@ -9,12 +9,13 @@ import {HttpCreateChat} from '@/shared/HttpEndpoints/chat';
 const CreateChat = () => {
   const [createChat, {isLoading, error}] = useCreateChatMutation();
   const [chatInfo, setChatInfo] = useState<HttpCreateChat.reqTemplate>({
-    name: '',
+    chatName: '',
     chatAvatar: undefined,
     password: undefined,
   });
 
-  const handleCreate = async () => {
+  const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
       await createChat([chatInfo]).unwrap();
     } catch (error) {
@@ -26,13 +27,13 @@ const CreateChat = () => {
   if (error) console.log(error);
 
   return (
-    <div>
+    <form onSubmit={e => handleCreate(e)}>
       <FormControl isRequired>
         <FormLabel>Chat Name:</FormLabel>
         <Input
           type="text"
-          value={chatInfo.name}
-          onChange={e => setChatInfo({...chatInfo, name: e.target.value})}
+          value={chatInfo.chatName}
+          onChange={e => setChatInfo({...chatInfo, chatName: e.target.value})}
         />
       </FormControl>
       <FormControl>
@@ -48,11 +49,12 @@ const CreateChat = () => {
         <Input
           type="file"
           accept="image/*"
+          max={1}
           onChange={e => setChatInfo({...chatInfo, chatAvatar: e.target.files?.[0]})}
         />
       </FormControl>
-      <Button onClick={handleCreate}>Create Chat</Button>
-    </div>
+      <Button type="submit">Create Chat</Button>
+    </form>
   );
 };
 
