@@ -28,7 +28,7 @@ const UpdateChat = ({chatId}: {chatId: number}) => {
     }
   };
 
-  const {chatName, chatAvatarUrl, hasPassword} = data.chatOverview;
+  const {chatName, hasPassword} = data.chatOverview;
 
   return (
     <div>

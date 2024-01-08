@@ -12,7 +12,6 @@ import {
   Avatar,
   Grid,
   GridItem,
-  Text,
   HStack,
 } from '@chakra-ui/react';
 import {useEffect, useState} from 'react';
@@ -32,15 +31,15 @@ type OpenedChat = {
 };
 
 function ChatList() {
-  const {currentData, isLoading, error, isFetching} = useGetAllChatsQuery([]);
+  const {data, isLoading, error} = useGetAllChatsQuery([]);
   const [openedChat, setOpenedChat] = useState<OpenedChat | undefined>(undefined);
   const dispatch = useAppDispatch();
   const chatToRefresh = useAppSelector(chatToRefreshSelector);
 
   useEffect(() => {
-    if (!chatToRefresh || !currentData) return;
+    if (!chatToRefresh || !data) return;
 
-    const chat = currentData.chats.find(c => c.chatId === chatToRefresh.chatId);
+    const chat = data.chats.find(c => c.chatId === chatToRefresh.chatId);
     if (!chat || chatToRefresh.reason == 'leave') setOpenedChat(undefined);
     else if (chatToRefresh.reason === 'join') {
       const {chatId, hasPassword, chatName} = chat;
@@ -48,11 +47,11 @@ function ChatList() {
     }
 
     dispatch(clearChatToRefresh());
-  }, [chatToRefresh, currentData]);
+  }, [chatToRefresh, data]);
 
-  if (isLoading || isFetching) return <Loading />;
+  if (isLoading) return <Loading />;
   if (error) console.log(error);
-  if (!currentData) return <CreateChat />;
+  if (!data) return <CreateChat />;
 
   function openChat(chat: OpenedChat) {
     if (openedChat === undefined || chat.chatId !== openedChat.chatId) setOpenedChat(chat);
@@ -84,7 +83,7 @@ function ChatList() {
       </GridItem>
       <GridItem colSpan={2} overflowY="auto" flex="1" width="100%">
         <VStack spacing={2}>
-          {currentData.chats.map(chat => {
+          {data.chats.map(chat => {
             const {chatId, chatName, chatAvatarUrl, hasPassword, participation} = chat;
             const hasJoined = !!participation;
             const isOpened = openedChat?.chatId === chatId;

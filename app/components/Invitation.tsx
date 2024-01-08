@@ -8,12 +8,12 @@ import {setNotification, userIdSelector} from '@/lib/redux';
 import {useDispatch} from 'react-redux';
 
 function Invitation({kind}: {kind: InvitationKind_Url}) {
-  const {currentData, isFetching, refetch} = useGetInvitationsQuery([kind]);
+  const {data, isLoading} = useGetInvitationsQuery([kind]);
   const [updateInvitation] = useUpdateInvitationMutation();
   const dispatch = useDispatch();
   const userId = useAppSelector(userIdSelector);
 
-  if (isFetching || !currentData) return <Loading />;
+  if (isLoading || !data) return <Loading />;
 
   const handleUpdateInvitation = async (invitationId: number, action: InvitationAction_Url) => {
     try {
@@ -22,7 +22,7 @@ function Invitation({kind}: {kind: InvitationKind_Url}) {
         action === 'cancel' ? 'canceled' : action === 'accept' ? 'accepted' : 'refused';
       dispatch(
         setNotification({
-          status: 'success',
+          status: 'info',
           title: `Invitation - ${action}`,
           description: `The invitation has been ${actionMessage}.`,
         }),
@@ -34,12 +34,12 @@ function Invitation({kind}: {kind: InvitationKind_Url}) {
           title: `Invitation - ${action}`,
           description: JSON.stringify(error),
         }),
-      );
+      ); 
     }
   };
   return (
     <HStack spacing="8px">
-      {currentData.invitations.map(invitation => {
+      {data.invitations.map(invitation => {
         const {sender, receiver, invitationId} = invitation as Invitation & {
           kind: 'FRIEND';
         };

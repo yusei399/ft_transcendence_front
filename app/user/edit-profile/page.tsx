@@ -42,7 +42,7 @@ const EditProfile = () => {
       return;
     }
     try {
-      const response = await editMe([toUpdate]).unwrap();
+      await editMe([toUpdate]).unwrap();
       dispatch(
         setNotification({
           status: 'success',

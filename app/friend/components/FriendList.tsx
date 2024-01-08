@@ -10,21 +10,23 @@ import {
 } from '@/lib/redux/api';
 import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
 import {
+  clearEventToHandle,
   clearInvitationToRefresh,
+  friendEventToHandleSelector,
   needFriendInvitationRefreshSelector,
 } from '@/lib/redux/slices/invitationSlice';
 import {Avatar, Button, Card, CardBody, CardHeader, HStack, Heading} from '@chakra-ui/react';
 import {useEffect} from 'react';
 
 function FriendList() {
-  const {currentData, error, isFetching, refetch} = useAllUsersQuery([]);
+  const {data, error, isLoading} = useAllUsersQuery([]);
   const {
-    currentData: friendData,
+    data: friendData,
     error: friendError,
-    isFetching: FriendIsFetching,
+    isLoading: FriendIsLoading,
     refetch: friendRefetch,
   } = useGetFriendQuery([]);
-  const {currentData: invitationData, isFetching: invitationIsFetching} = useGetInvitationsQuery([
+  const {data: invitationData, isLoading: invitationIsLoading, refetch: invitationRefetch} = useGetInvitationsQuery([
     'friend',
   ]);
   const [sendInvitation] = useSendInvitationMutation();
@@ -32,22 +34,26 @@ function FriendList() {
 
   const current_userId = useAppSelector(userIdSelector);
   const needRefresh = useAppSelector(needFriendInvitationRefreshSelector);
+  const eventToHandle = useAppSelector(friendEventToHandleSelector)
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (needRefresh) {
-      refetch();
-      friendRefetch();
+      invitationRefetch();
       dispatch(clearInvitationToRefresh());
     }
-  }, [needRefresh]);
+    if (eventToHandle) {
+      friendRefetch();
+      dispatch(clearEventToHandle());
+    }
+  }, [needRefresh, eventToHandle]);
 
-  if (isFetching || FriendIsFetching || invitationIsFetching) return <Loading />;
+  if (isLoading || FriendIsLoading || invitationIsLoading) return <Loading />;
   if (error) console.log(error);
   if (friendError) console.log(friendError);
-  if (!currentData) return <div>You doesn't even exist</div>;
+  if (!data) return <div>You doesn't even exist</div>;
 
-  const users = currentData.users.filter(user => user.userId !== current_userId);
+  const users = data.users.filter(user => user.userId !== current_userId);
   const invitationAlreadySent =
     invitationData?.invitations.map(invitation => {
       if (invitation.sender.userId === current_userId) return invitation.receiver.userId;
@@ -62,7 +68,7 @@ function FriendList() {
       await sendInvitation(['friend', {targetUserId}]).unwrap();
       dispatch(
         setNotification({
-          status: 'success',
+          status: 'info',
           title: 'Friend invitation sent!',
           description: 'Friend invitation sent successfully',
         }),
@@ -84,7 +90,7 @@ function FriendList() {
       await removeFriend([{friendId}]).unwrap();
       dispatch(
         setNotification({
-          status: 'success',
+          status: 'warning',
           title: 'Friend removed!',
           description: 'Friend removed successfully',
         }),

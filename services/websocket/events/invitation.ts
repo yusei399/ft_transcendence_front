@@ -36,7 +36,7 @@ export function setUpInvitationEvents(socket: Socket, dispatch: AppDispatch): vo
         setNotification({
           title: 'Invitation',
           description: `User ${senderId} canceled invitation ${invitationId} of ${kind}`,
-          status: 'error',
+          status: 'warning',
         }),
       );
     },

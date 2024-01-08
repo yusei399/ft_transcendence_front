@@ -23,18 +23,18 @@ const Chat = ({chatId}: {chatId: number}) => {
   const dispatch = useAppDispatch();
   const chatToRefresh = useAppSelector(chatToRefreshSelector);
 
-  const {currentData, isFetching, refetch} = useGetChatInfoQuery([chatId]);
+  const {data, isLoading, refetch} = useGetChatInfoQuery([chatId]);
 
   useEffect(() => {
-    if (!currentData || chatToRefresh?.reason !== 'newMessage' || chatToRefresh?.chatId !== chatId)
+    if (!data || chatToRefresh?.reason !== 'newMessage' || chatToRefresh?.chatId !== chatId)
       return;
     refetch();
     dispatch(clearChatToRefresh());
-  }, [chatToRefresh, currentData]);
+  }, [chatToRefresh, data]);
 
-  if (isFetching || !currentData) return <Loading />;
+  if (isLoading || !data) return <Loading />;
 
-  const participation = currentData.chatOverview.participation;
+  const participation = data.chatOverview.participation;
   if (!participation) return <Loading />;
 
   const blockedUntil = new Date(participation.blockedUntil ?? 0).getTime();
@@ -82,7 +82,7 @@ const Chat = ({chatId}: {chatId: number}) => {
   return (
     <VStack h="75vh">
       <List spacing={2} overflowY="auto" flex="1" width="100%">
-        {currentData.chatMessages.map(message => {
+        {data.chatMessages.map(message => {
           const {messageId, avatarUrl, nickname, senderId, createdAt, messageContent} = message;
           const isSender = senderId === participation.userId;
           return (
