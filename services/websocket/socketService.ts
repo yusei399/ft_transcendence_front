@@ -3,7 +3,7 @@ import {io, Socket} from 'socket.io-client';
 import {WsEvents_FromClient} from '@/shared/WsEvents';
 import {setUpChatEvents, setUpGameEvents, setUpInvitationEvents} from './events';
 import {WsConnection, WsDisconnection} from '@/shared/WsEvents/default';
-import { setUpFriendEvents } from './events/friend';
+import {setUpFriendEvents} from './events/friend';
 
 export class SocketService {
   private static socket: Socket | null = null;

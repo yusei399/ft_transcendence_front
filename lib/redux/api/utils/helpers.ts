@@ -4,6 +4,7 @@ import {AxiosBaseQuery, BuilderType, CstrArgs, ReqSenderCstr, TRes} from './type
 import {RootState} from '../../store';
 import {TagType} from '../api';
 import {HttpRefresh} from '@/shared/HttpEndpoints/auth';
+import {filterDefinedProperties} from '@/shared/sharedUtilities/utils.functions.';
 
 const hasFile = (obj: Object): boolean => {
   for (const value of Object.values(obj)) {
@@ -19,13 +20,13 @@ export const axiosBaseQuery =
       method: method,
       baseURL: baseUrl,
       url: endpoint,
-      data: req,
+      data: filterDefinedProperties(req),
       headers: {'Content-Type': 'application/json'},
     };
     if (hasFile(req)) {
       options.headers = {'Content-Type': 'multipart/form-data'};
       const formData = new FormData();
-      for (const [key, value] of Object.entries(req)) {
+      for (const [key, value] of Object.entries(filterDefinedProperties(req))) {
         formData.append(key, value);
       }
       options.data = formData;

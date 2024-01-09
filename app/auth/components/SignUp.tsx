@@ -41,6 +41,7 @@ function SignUp() {
           <Input
             type="text"
             name="nickname"
+            autoComplete="username"
             value={signUpData.nickname}
             onChange={e => setSignUpData({...signUpData, nickname: e.target.value})}
           />
@@ -50,6 +51,7 @@ function SignUp() {
           <Input
             type="email"
             name="email"
+            autoComplete="email"
             value={signUpData.email}
             onChange={e => setSignUpData({...signUpData, email: e.target.value})}
           />
@@ -59,6 +61,7 @@ function SignUp() {
           <Input
             type="password"
             name="password"
+            autoComplete="new-password"
             value={signUpData.password}
             onChange={e => setSignUpData({...signUpData, password: e.target.value})}
           />

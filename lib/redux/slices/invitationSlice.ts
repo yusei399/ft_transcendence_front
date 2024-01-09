@@ -10,7 +10,7 @@ interface InvitationSliceState {
 
 const initialState: InvitationSliceState = {
   invitationKindToRefresh: undefined,
-  eventToHandle: undefined
+  eventToHandle: undefined,
 };
 
 const invitationSlice = createSlice({
@@ -33,7 +33,8 @@ const invitationSlice = createSlice({
   },
 });
 
-export const {refreshInvitation, clearInvitationToRefresh, clearEventToHandle} = invitationSlice.actions;
+export const {refreshInvitation, clearInvitationToRefresh, clearEventToHandle} =
+  invitationSlice.actions;
 export const invitationSelector = (state: RootState) => state.invitation;
 export const invitationToRefreshSelector = (state: RootState) =>
   state.invitation.invitationKindToRefresh;

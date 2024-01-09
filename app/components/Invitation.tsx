@@ -34,11 +34,11 @@ function Invitation({kind}: {kind: InvitationKind_Url}) {
           title: `Invitation - ${action}`,
           description: JSON.stringify(error),
         }),
-      ); 
+      );
     }
   };
   return (
-    <HStack spacing="8px">
+    <HStack spacing="8px" wrap="wrap">
       {data.invitations.map(invitation => {
         const {sender, receiver, invitationId} = invitation as Invitation & {
           kind: 'FRIEND';

@@ -1,17 +1,9 @@
 'use client';
 import React, {useState} from 'react';
-import {useEditMeMutation, useGetMeQuery} from '@/lib/redux/api';
+import {ErrorType, useEditMeMutation, useGetMeQuery} from '@/lib/redux/api';
 import Loading from '@/app/components/global/Loading';
 import {HttpEditMe} from '@/shared/HttpEndpoints/user';
-import {
-  Box,
-  VStack,
-  FormControl,
-  FormLabel,
-  Input,
-  Button,
-  FormErrorMessage,
-} from '@chakra-ui/react';
+import {Box, VStack, FormControl, FormLabel, Input, Button} from '@chakra-ui/react';
 import {useAppDispatch} from '@/lib/redux/hook';
 import {setNotification} from '@/lib/redux';
 import {filterDefinedProperties} from '@/shared/sharedUtilities/utils.functions.';
@@ -19,7 +11,7 @@ import Link from 'next/link';
 
 const EditProfile = () => {
   const {data, isLoading: queryLoading, error} = useGetMeQuery([]);
-  const [editMe, {isLoading, isError}] = useEditMeMutation();
+  const [editMe, {isLoading, error: editError}] = useEditMeMutation();
   const dispatch = useAppDispatch();
   const [updateInfo, setUpdateInfo] = useState<HttpEditMe.reqTemplate>({
     email: undefined,
@@ -50,8 +42,16 @@ const EditProfile = () => {
           description: 'Profile updated successfully',
         }),
       );
-    } catch (error) {
-      console.error('Error updating profile:', error);
+    } catch (error: any) {
+      if (error?.status === 409) {
+        dispatch(
+          setNotification({
+            status: 'error',
+            title: 'Profile update error',
+            description: 'Nickname already taken',
+          }),
+        );
+      }
     }
     setUpdateInfo({
       email: undefined,
@@ -63,7 +63,7 @@ const EditProfile = () => {
 
   return (
     <VStack as="form" action="submit" onSubmit={e => handleSubmit(e)} spacing={4} p={5}>
-      <FormControl isInvalid={isError}>
+      <FormControl isInvalid={(editError as ErrorType)?.status === 409}>
         <FormLabel htmlFor="nickname">Nickname</FormLabel>
         <Input
           id="nickname"
@@ -73,7 +73,7 @@ const EditProfile = () => {
           placeholder={data.nickname}
         />
       </FormControl>
-      <FormControl isInvalid={isError}>
+      <FormControl>
         <FormLabel htmlFor="email">Email</FormLabel>
         <Input
           id="email"
@@ -83,7 +83,7 @@ const EditProfile = () => {
           placeholder={data.email}
         />
       </FormControl>
-      <FormControl isInvalid={isError}>
+      <FormControl>
         <FormLabel htmlFor="avatar">Avatar</FormLabel>
         <Input
           id="avatar"
@@ -92,7 +92,7 @@ const EditProfile = () => {
           onChange={e => setUpdateInfo({...updateInfo, avatar: e.target.files?.[0]})}
         />
       </FormControl>
-      <FormControl isInvalid={isError}>
+      <FormControl>
         <FormLabel htmlFor="password">Password</FormLabel>
         <Input
           id="password"
@@ -101,7 +101,6 @@ const EditProfile = () => {
           onChange={e => setUpdateInfo({...updateInfo, password: e.target.value})}
           placeholder="your secret password"
         />
-        {isError && <FormErrorMessage>Error updating the profile.</FormErrorMessage>}
       </FormControl>
       <Button type="submit" isLoading={isLoading} colorScheme="blue">
         Update Profile

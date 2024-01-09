@@ -4,17 +4,7 @@ import {chatToRefreshSelector, clearChatToRefresh, setNotification} from '@/lib/
 import {useGetChatInfoQuery} from '@/lib/redux/api';
 import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
 import {SocketService} from '@/services/websocket/socketService';
-import {
-  Button,
-  FormControl,
-  Input,
-  ListItem,
-  List,
-  Text,
-  VStack,
-  HStack,
-  Center,
-} from '@chakra-ui/react';
+import {Button, FormControl, Input, ListItem, List, Text, HStack, Center} from '@chakra-ui/react';
 import React, {useEffect, useState} from 'react';
 import LeaveChat from './leaveChat';
 
@@ -26,8 +16,7 @@ const Chat = ({chatId}: {chatId: number}) => {
   const {data, isLoading, refetch} = useGetChatInfoQuery([chatId]);
 
   useEffect(() => {
-    if (!data || chatToRefresh?.reason !== 'newMessage' || chatToRefresh?.chatId !== chatId)
-      return;
+    if (!data || chatToRefresh?.reason !== 'newMessage' || chatToRefresh?.chatId !== chatId) return;
     refetch();
     dispatch(clearChatToRefresh());
   }, [chatToRefresh, data]);
@@ -80,30 +69,34 @@ const Chat = ({chatId}: {chatId: number}) => {
   };
 
   return (
-    <VStack h="75vh">
-      <List spacing={2} overflowY="auto" flex="1" width="100%">
+    <>
+      <List spacing={2} overflowY="auto" height="100%">
         {data.chatMessages.map(message => {
           const {messageId, avatarUrl, nickname, senderId, createdAt, messageContent} = message;
           const isSender = senderId === participation.userId;
           return (
             <ListItem
               key={messageId}
-              maxW="sm"
+              minW="50%"
+              w="fit-content"
+              maxW="80%"
               borderWidth="1px"
               borderRadius="lg"
               bgColor={isSender ? 'teal' : 'azure'}
+              textAlign={isSender ? 'right' : 'left'}
+              marginLeft={isSender ? 'auto' : 'initial'}
               overflow="hidden"
-              padding="10px">
-              <HStack>
+              padding="12px">
+              <HStack flexDir={isSender ? 'row-reverse' : 'row'}>
                 <img
                   src={avatarUrl ?? './assets/sample.png'}
                   alt={`${isSender ? 'your' : `${nickname}'s`} avatar`}
                   style={{width: '30px', height: '30px'}}
                 />
                 <Text fontWeight={800}>{isSender ? 'You' : nickname}:</Text>
-                <small>{new Date(createdAt).toLocaleString()}</small>
               </HStack>
               <Text>{messageContent}</Text>
+              <small>{new Date(createdAt).toLocaleString()}</small>
             </ListItem>
           );
         })}
@@ -124,7 +117,7 @@ const Chat = ({chatId}: {chatId: number}) => {
           </Button>
         </HStack>
       </form>
-    </VStack>
+    </>
   );
 };
 

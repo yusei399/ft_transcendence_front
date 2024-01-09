@@ -1,7 +1,7 @@
 'use client';
 import React, {useState} from 'react';
 import {useJoinChatMutation} from '@/lib/redux/api';
-import {Button, FormControl, FormLabel, Input} from '@chakra-ui/react';
+import {Button, Flex, FormControl, FormLabel, Input} from '@chakra-ui/react';
 import {useAppDispatch} from '@/lib/redux/hook';
 import {refreshChat, setNotification} from '@/lib/redux';
 import {type ErrorType} from '@/lib/redux/api/';
@@ -31,20 +31,22 @@ const JoinChat = ({chatId, hasPassword}: JoinChatProps) => {
 
   return (
     <form onSubmit={e => handleJoinChat(e)}>
-      {hasPassword && (
-        <FormControl isRequired={hasPassword}>
-          <FormLabel>Password:</FormLabel>
-          <Input
-            type="password"
-            name="password"
-            value={password ?? ''}
-            onChange={e => setPassword(e.target.value)}
-          />
-        </FormControl>
-      )}
-      <Button type="submit" size="lg" colorScheme="teal">
-        Join Chat
-      </Button>
+      <Flex align="end" gap="5px">
+        {hasPassword && (
+          <FormControl isRequired={hasPassword} maxW="50%">
+            <FormLabel>Password:</FormLabel>
+            <Input
+              type="password"
+              name="password"
+              value={password ?? ''}
+              onChange={e => setPassword(e.target.value)}
+            />
+          </FormControl>
+        )}
+        <Button type="submit" size="lg" colorScheme="teal">
+          Join Chat
+        </Button>
+      </Flex>
     </form>
   );
 };

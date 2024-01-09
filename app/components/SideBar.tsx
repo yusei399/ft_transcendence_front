@@ -15,10 +15,13 @@ export default function Sidebar() {
     <Stack
       direction={{base: 'row', lg: 'column'}}
       divider={<StackDivider borderColor="gray.200" />}
+      width="100%"
       color="white"
-      fontSize={{base: '1em', md: '1.2em'}}
-      wrap="wrap"
-      spacing={{base: '10', lg: '20px'}}>
+      align="center"
+      justifyContent="space-between"
+      fontSize={{base: '1.2em', lg: '1.4em'}}
+      spacing="25px"
+      wrap="wrap">
       {isLogin ? (
         <Button onClick={() => dispatch(logout())}>
           <ArrowForwardIcon color="white" />

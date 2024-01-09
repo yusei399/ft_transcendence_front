@@ -15,7 +15,18 @@ import {
   friendEventToHandleSelector,
   needFriendInvitationRefreshSelector,
 } from '@/lib/redux/slices/invitationSlice';
-import {Avatar, Button, Card, CardBody, CardHeader, HStack, Heading} from '@chakra-ui/react';
+import {RepeatIcon, StarIcon} from '@chakra-ui/icons';
+import {
+  Avatar,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Flex,
+  HStack,
+  Heading,
+  Text,
+} from '@chakra-ui/react';
 import {useEffect} from 'react';
 
 function FriendList() {
@@ -26,15 +37,17 @@ function FriendList() {
     isLoading: FriendIsLoading,
     refetch: friendRefetch,
   } = useGetFriendQuery([]);
-  const {data: invitationData, isLoading: invitationIsLoading, refetch: invitationRefetch} = useGetInvitationsQuery([
-    'friend',
-  ]);
+  const {
+    data: invitationData,
+    isLoading: invitationIsLoading,
+    refetch: invitationRefetch,
+  } = useGetInvitationsQuery(['friend']);
   const [sendInvitation] = useSendInvitationMutation();
   const [removeFriend] = useRemoveFriendMutation();
 
   const current_userId = useAppSelector(userIdSelector);
   const needRefresh = useAppSelector(needFriendInvitationRefreshSelector);
-  const eventToHandle = useAppSelector(friendEventToHandleSelector)
+  const eventToHandle = useAppSelector(friendEventToHandleSelector);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -51,7 +64,7 @@ function FriendList() {
   if (isLoading || FriendIsLoading || invitationIsLoading) return <Loading />;
   if (error) console.log(error);
   if (friendError) console.log(friendError);
-  if (!data) return <div>You doesn't even exist</div>;
+  if (data === undefined || friendData === undefined) return <Loading />;
 
   const users = data.users.filter(user => user.userId !== current_userId);
   const invitationAlreadySent =
@@ -108,22 +121,32 @@ function FriendList() {
   };
 
   return (
-    <HStack spacing="8px">
+    <HStack spacing="8px" wrap="wrap">
       {users.map(user => {
         const {userId, nickname, avatarUrl} = user;
-        const isFriend = friendData
-          ? friendData.friendsProfiles.some(p => p.userId === userId)
-          : false;
-        console.log('friendData', friendData);
-        console.log('user', user);
+        const isFriend = friendData.friendsProfiles.some(p => p.userId === userId) ?? false;
+        const isOnline = isFriend
+          ? friendData.friendsProfiles.find(p => p.userId === userId)?.isOnline
+          : user.isOnline;
         return (
-          <Card key={userId} padding="8px">
-            <CardHeader>
-              <Heading size="md">{nickname}</Heading>
+          <Card key={userId} padding="8px" alignItems={'center'} rowGap="6px">
+            <CardHeader padding={0}>
+              <Flex alignItems="center" justifyContent="space-around" gap="8px">
+                <RepeatIcon
+                  color={isOnline ? 'green.500' : 'red.500'}
+                  fontSize={isOnline ? '1.4em' : '1.2em'}
+                />
+                <Heading size="md" maxWidth={'80px'}>
+                  {nickname}
+                </Heading>
+                <StarIcon
+                  color={isFriend ? 'yellow.500' : 'gray.500'}
+                  fontSize={isFriend ? '1.4em' : '1.2em'}
+                />
+              </Flex>
             </CardHeader>
-            <CardBody>
-              <Avatar boxSize="100px" src={avatarUrl ?? './assets/sample_chat.png'} />
-              <p>{isFriend ? 'Friend' : 'Not friend'}</p>
+            <CardBody padding="6px">
+              <Avatar boxSize="80px" src={avatarUrl ?? './assets/sample.png'} />
             </CardBody>
             {isFriend ? (
               <Button colorScheme="red" onClick={() => handleRemoveFriend(userId)}>
