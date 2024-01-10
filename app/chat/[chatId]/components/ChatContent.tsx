@@ -8,7 +8,7 @@ import {Button, FormControl, Input, ListItem, List, Text, HStack, Center} from '
 import React, {useEffect, useState} from 'react';
 import LeaveChat from './leaveChat';
 
-const Chat = ({chatId}: {chatId: number}) => {
+const ChatContent = ({chatId}: {chatId: number}) => {
   const [toSend, setToSend] = useState('');
   const dispatch = useAppDispatch();
   const chatToRefresh = useAppSelector(chatToRefreshSelector);
@@ -89,7 +89,7 @@ const Chat = ({chatId}: {chatId: number}) => {
               padding="12px">
               <HStack flexDir={isSender ? 'row-reverse' : 'row'}>
                 <img
-                  src={avatarUrl ?? './assets/sample.png'}
+                  src={avatarUrl ?? '/assets/sample.png'}
                   alt={`${isSender ? 'your' : `${nickname}'s`} avatar`}
                   style={{width: '30px', height: '30px'}}
                 />
@@ -121,4 +121,4 @@ const Chat = ({chatId}: {chatId: number}) => {
   );
 };
 
-export default Chat;
+export default ChatContent;

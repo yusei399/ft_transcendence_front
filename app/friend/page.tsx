@@ -7,6 +7,7 @@ export default function IndexPage() {
   return (
     <HStack
       justifyContent="space-between"
+      width="100%"
       align="stretch"
       divider={<StackDivider borderColor="gray.400" />}>
       <VStack as="section" alignItems="center" spacing="12px" flex="3">

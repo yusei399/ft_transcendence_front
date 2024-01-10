@@ -5,6 +5,7 @@ import {Socket} from 'socket.io-client';
 export function setUpChatEvents(socket: Socket, dispatch: AppDispatch, userId: number): void {
   socket.on(WsChatJoin.eventName, (message: WsChatJoin.eventMessageTemplate) => {
     const {chat, user} = message;
+    if (userId === user.userId) dispatch(refreshChat({chatId: chat.chatId, reason: 'join'}));
     dispatch(
       setNotification({
         title: 'Chat - User joined',
@@ -16,6 +17,7 @@ export function setUpChatEvents(socket: Socket, dispatch: AppDispatch, userId: n
 
   socket.on(WsChatLeave.eventName, (message: WsChatLeave.eventMessageTemplate) => {
     const {chat, user} = message;
+    if (userId === user.userId) dispatch(refreshChat({chatId: chat.chatId, reason: 'leave'}));
     dispatch(
       setNotification({
         title: 'Chat - User left',

@@ -53,7 +53,7 @@ function Invitation({kind}: {kind: InvitationKind_Url}) {
               <Avatar
                 boxSize="100px"
                 src={
-                  (isSender ? receiver.avatarUrl : sender.avatarUrl) ?? './assets/sample_chat.png'
+                  (isSender ? receiver.avatarUrl : sender.avatarUrl) ?? '/assets/sample_chat.png'
                 }
               />
             </CardBody>

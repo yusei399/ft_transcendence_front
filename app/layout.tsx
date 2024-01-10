@@ -20,23 +20,22 @@ export default function RootLayout(props: React.PropsWithChildren) {
       <html lang="en">
         <body>
           <Providers>
-            <Flex bg="blue.700" h="100vh" w="100%" direction={{base: 'column', lg: 'row'}}>
+            <Flex bg="blue.700" h="100vh" w="100vw" direction={{base: 'column', lg: 'row'}}>
               <Flex
                 as="aside"
                 bg="blue.400"
                 h={{base: '100px', lg: '100vh'}}
-                w={{base: '100%', lg: 'fit-content'}}
-                p={{base: '12px', lg: '30px'}}
-                padding={{base: '20px', lg: '30px'}}>
+                w={{base: '100%', lg: '160px'}}
+                padding={{base: '20px', lg: '24px'}}>
                 <Sidebar />
               </Flex>
               <Flex
                 as="main"
                 p="40px"
-                height="fit-content"
                 maxH={{base: 'calc(100vh - 120px)', lg: '100vh'}}
-                justifyContent="center"
+                maxW={{base: '100vw', lg: 'calc(100vw - 160px)'}}
                 padding={'20px'}
+                justifyContent="center"
                 flex="1">
                 <Navigation>
                   {props.children}

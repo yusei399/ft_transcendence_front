@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {useJoinChatMutation} from '@/lib/redux/api';
 import {Button, Flex, FormControl, FormLabel, Input} from '@chakra-ui/react';
 import {useAppDispatch} from '@/lib/redux/hook';
-import {refreshChat, setNotification} from '@/lib/redux';
+import {setNotification} from '@/lib/redux';
 import {type ErrorType} from '@/lib/redux/api/';
 
 type JoinChatProps = {
@@ -20,7 +20,6 @@ const JoinChat = ({chatId, hasPassword}: JoinChatProps) => {
     e.preventDefault();
     try {
       await joinChat([chatId, {password}]).unwrap();
-      dispatch(refreshChat({chatId, reason: 'join'}));
     } catch (err) {
       let message = 'Error at joining chat';
       if ((err as ErrorType).status === 403) message = 'Wrong password';
@@ -38,6 +37,7 @@ const JoinChat = ({chatId, hasPassword}: JoinChatProps) => {
             <Input
               type="password"
               name="password"
+              autoComplete="off"
               value={password ?? ''}
               onChange={e => setPassword(e.target.value)}
             />

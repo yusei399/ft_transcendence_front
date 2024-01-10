@@ -2,12 +2,16 @@
 
 import React, {useState} from 'react';
 import {FormControl, FormLabel, Input, Button, Flex} from '@chakra-ui/react';
-import {useCreateChatMutation} from '@/lib/redux/api';
+import {ErrorType, useCreateChatMutation} from '@/lib/redux/api';
 import {HttpCreateChat} from '@/shared/HttpEndpoints/chat';
-import {refreshChat} from '@/lib/redux';
+import {useRouter} from 'next/navigation';
+import {useAppDispatch} from '@/lib/redux/hook';
+import {setNotification} from '@/lib/redux';
 
 const CreateChat = () => {
-  const [createChat, {error}] = useCreateChatMutation();
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const [createChat] = useCreateChatMutation();
   const [chatInfo, setChatInfo] = useState<HttpCreateChat.reqTemplate>({
     chatName: '',
     chatAvatar: undefined,
@@ -18,13 +22,16 @@ const CreateChat = () => {
     e.preventDefault();
     try {
       const res = await createChat([chatInfo]).unwrap();
-      dispatch(refreshChat({chatId: res.chatId, reason: 'join'}));
+      setChatInfo({chatName: '', chatAvatar: undefined, password: undefined});
+      router.push(`/chat/${res.chatId}`);
     } catch (error) {
-      console.error('Error creating chat:', error);
+      const message =
+        (error as ErrorType).status === 409 ? 'Chat name already taken' : 'Something went wrong';
+      dispatch(
+        setNotification({status: 'error', title: 'Chat creation error', description: message}),
+      );
     }
   };
-
-  if (error) console.log(error);
 
   return (
     <form onSubmit={e => handleCreate(e)}>
@@ -33,6 +40,8 @@ const CreateChat = () => {
           <FormLabel>Chat Name:</FormLabel>
           <Input
             type="text"
+            minLength={3}
+            maxLength={20}
             value={chatInfo.chatName}
             onChange={e => setChatInfo({...chatInfo, chatName: e.target.value})}
           />
@@ -42,6 +51,7 @@ const CreateChat = () => {
           <Input
             type="password"
             autoComplete="off"
+            minLength={3}
             value={chatInfo.password ?? ''}
             onChange={e => setChatInfo({...chatInfo, password: e.target.value})}
           />
@@ -64,9 +74,3 @@ const CreateChat = () => {
 };
 
 export default CreateChat;
-function dispatch(arg0: {
-  payload: {chatId: number; reason: 'join' | 'leave' | 'newMessage'} | undefined;
-  type: 'chat/refreshChat';
-}) {
-  throw new Error('Function not implemented.');
-}

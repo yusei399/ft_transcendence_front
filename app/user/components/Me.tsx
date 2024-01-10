@@ -1,6 +1,6 @@
 'use client';
 import {useGetMeQuery} from '@/lib/redux/api';
-import {Box, Text, Image, VStack, useColorModeValue, Button} from '@chakra-ui/react';
+import {Box, Text, VStack, useColorModeValue, Button, HStack, Avatar} from '@chakra-ui/react';
 import Loading from '@/app/components/global/Loading';
 import Link from 'next/link';
 
@@ -13,13 +13,13 @@ const Me = () => {
   if (error) return <Box>An error occurred</Box>;
 
   return (
-    <VStack p={5} spacing={4} boxShadow="md" borderRadius="lg" bg={bgColor} maxW="sm" mx="auto">
-      {data.avatarUrl && (
-        <Image borderRadius="full" boxSize="150px" src={data.avatarUrl} alt="Avatar" />
-      )}
-      <Text fontSize="xl" fontWeight="bold">
-        {data.nickname}
-      </Text>
+    <VStack p={5} spacing={4} boxShadow="md" borderRadius="lg" bg={bgColor} alignSelf="center">
+      <HStack justifyContent="center" alignContent="space-around" width="100%">
+        <Avatar borderRadius="full" size="lg" src={data.avatarUrl ?? '/assets/sample.png'} />
+        <Text fontSize="xl" fontWeight="bold">
+          {data.nickname}
+        </Text>
+      </HStack>
       <Text>{data.email}</Text>
       <Link href="/user/edit-profile" scroll={false}>
         <Button colorScheme="teal" size="sm">

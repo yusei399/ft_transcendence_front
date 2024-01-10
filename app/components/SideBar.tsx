@@ -20,7 +20,6 @@ export default function Sidebar() {
       align="center"
       justifyContent="space-between"
       fontSize={{base: '1.2em', lg: '1.4em'}}
-      spacing="25px"
       wrap="wrap">
       {isLogin ? (
         <Button onClick={() => dispatch(logout())}>

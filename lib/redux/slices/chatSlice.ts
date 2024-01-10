@@ -5,7 +5,7 @@ import {RootState} from '../store';
 interface ChatSliceState {
   chatToRefresh?: {
     chatId: number;
-    reason: 'leave' | 'join' | 'newMessage';
+    reason: 'leave' | 'join' | 'newMessage' | 'edit';
   };
 }
 

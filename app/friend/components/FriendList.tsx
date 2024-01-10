@@ -16,17 +16,7 @@ import {
   needFriendInvitationRefreshSelector,
 } from '@/lib/redux/slices/invitationSlice';
 import {RepeatIcon, StarIcon} from '@chakra-ui/icons';
-import {
-  Avatar,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Flex,
-  HStack,
-  Heading,
-  Text,
-} from '@chakra-ui/react';
+import {Avatar, Button, Card, CardBody, CardHeader, Flex, HStack, Heading} from '@chakra-ui/react';
 import {useEffect} from 'react';
 
 function FriendList() {
@@ -146,7 +136,7 @@ function FriendList() {
               </Flex>
             </CardHeader>
             <CardBody padding="6px">
-              <Avatar boxSize="80px" src={avatarUrl ?? './assets/sample.png'} />
+              <Avatar boxSize="80px" src={avatarUrl ?? '/assets/sample.png'} />
             </CardBody>
             {isFriend ? (
               <Button colorScheme="red" onClick={() => handleRemoveFriend(userId)}>

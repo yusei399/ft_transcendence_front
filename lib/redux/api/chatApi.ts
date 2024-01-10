@@ -10,6 +10,7 @@ const chatApi = backEndApi.injectEndpoints({
     joinChat: createMutation(build, HttpChat.join.requestSender, ['Chat']),
     leaveChat: createMutation(build, HttpChat.leave.requestSender, ['Chat']),
     updateChat: createMutation(build, HttpChat.update.requestSender, ['Chat']),
+    updateChatMember: createMutation(build, HttpChat.updateParticipation.requestSender, ['Chat']),
   }),
   // @ts-ignore
   overrideExisting: module.hot?.status() === 'apply',
@@ -22,4 +23,5 @@ export const {
   useJoinChatMutation,
   useLeaveChatMutation,
   useUpdateChatMutation,
+  useUpdateChatMemberMutation,
 } = chatApi;

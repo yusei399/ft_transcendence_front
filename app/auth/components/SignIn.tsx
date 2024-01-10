@@ -39,6 +39,8 @@ function SignIn() {
           <FormLabel>Nickname:</FormLabel>
           <Input
             type="text"
+            minLength={3}
+            maxLength={20}
             name="nickname"
             autoComplete="username"
             value={signInData.nickname}
@@ -50,6 +52,7 @@ function SignIn() {
           <Input
             type="password"
             name="password"
+            minLength={3}
             autoComplete="current-password"
             value={signInData.password}
             onChange={e => setSignInData({...signInData, password: e.target.value})}
