@@ -40,8 +40,6 @@ export function setUpFriendEvents(socket: Socket, dispatch: AppDispatch): void {
   socket.on(WsFriendConnection.eventName, (message: WsFriendConnection.eventMessageTemplate) => {
     const {userId, avatarUrl, nickname} = message.friend;
 
-    dispatch(backEndApi.util.invalidateTags(['Friend']));
-
     dispatch(
       setNotification({
         title: 'Friend Connection',
@@ -55,7 +53,6 @@ export function setUpFriendEvents(socket: Socket, dispatch: AppDispatch): void {
     WsFriendDisconnection.eventName,
     (message: WsFriendDisconnection.eventMessageTemplate) => {
       const {userId, avatarUrl, nickname} = message.friend;
-      dispatch(backEndApi.util.invalidateTags(['Friend']));
 
       dispatch(
         setNotification({

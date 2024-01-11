@@ -1,5 +1,5 @@
 import {AppDispatch, setNotification} from '@/lib/redux';
-import {backEndApi} from '@/lib/redux/api';
+import {TagType, backEndApi} from '@/lib/redux/api';
 import {
   WsChatJoin,
   WsChatLeave,
@@ -13,7 +13,12 @@ export function setUpChatEvents(socket: Socket, dispatch: AppDispatch, userId: n
   socket.on(WsChatJoin.eventName, (message: WsChatJoin.eventMessageTemplate) => {
     const {chat, user} = message;
 
-    dispatch(backEndApi.util.invalidateTags(['Chat']));
+    const isSender = userId === user.userId;
+    const tags: TagType[] = ['ChatInfo'];
+    if (isSender) tags.push('ChatOverView');
+
+    dispatch(backEndApi.util.invalidateTags(tags));
+
     dispatch(
       setNotification({
         title: 'Chat - User joined',
@@ -25,7 +30,11 @@ export function setUpChatEvents(socket: Socket, dispatch: AppDispatch, userId: n
 
   socket.on(WsChatLeave.eventName, (message: WsChatLeave.eventMessageTemplate) => {
     const {chat, user} = message;
-    dispatch(backEndApi.util.invalidateTags(['Chat']));
+
+    const isSender = userId === user.userId;
+    const tags: TagType[] = ['ChatInfo'];
+    if (isSender) tags.push('ChatOverView');
+    dispatch(backEndApi.util.invalidateTags(tags));
 
     dispatch(
       setNotification({
@@ -43,9 +52,11 @@ export function setUpChatEvents(socket: Socket, dispatch: AppDispatch, userId: n
       sender: {nickname, userId: senderId},
     } = message;
 
-    dispatch(backEndApi.util.invalidateTags(['Chat']));
+    const isSender = userId === senderId;
 
-    if (userId === senderId) return;
+    dispatch(backEndApi.util.invalidateTags(['ChatInfo']));
+
+    if (isSender) return;
 
     dispatch(
       setNotification({
@@ -59,9 +70,9 @@ export function setUpChatEvents(socket: Socket, dispatch: AppDispatch, userId: n
   socket.on(WsChatUpdate.eventName, (message: WsChatUpdate.eventMessageTemplate) => {
     const {chat, updater, action} = message;
 
-    dispatch(backEndApi.util.invalidateTags(['Chat']));
+    dispatch(backEndApi.util.invalidateTags(['ChatOverView', 'ChatInfo']));
 
-    let description = `[${chat.chatName}] ${updater.nickname} updated:`;
+    let description = `[${chat.chatName}] ${updater.nickname} updated: `;
     if (action.updateAvatar) description += `avatar, `;
     if (action.updateName) description += `name, `;
     if ('updatePassword' in action && action.updatePassword) description += `password, `;
@@ -82,7 +93,7 @@ export function setUpChatEvents(socket: Socket, dispatch: AppDispatch, userId: n
     (message: WsChatParticipationUpdate.eventMessageTemplate) => {
       const {chat, updater, updatedUser, action} = message;
 
-      dispatch(backEndApi.util.invalidateTags(['Chat']));
+      dispatch(backEndApi.util.invalidateTags(['ChatInfo']));
 
       const iskick = 'kick' in action && action.kick;
       const isChangeRole = 'changeRole' in action && action.changeRole;

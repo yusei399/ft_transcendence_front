@@ -2,7 +2,7 @@
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
 import {RootState} from '../store';
 
-export type NavRoutes = '/' | '/auth' | '/chat' | '/friend' | '/game';
+export type NavRoutes = '/' | '/auth' | '/chat' | `/chat/${number}` | '/friend' | '/game';
 export type Nav = {
   route: NavRoutes;
   params?: Record<string, string>;

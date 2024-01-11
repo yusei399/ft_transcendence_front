@@ -4,10 +4,7 @@ import {createMutation, createQuery} from './utils';
 
 const friendApi = backEndApi.injectEndpoints({
   endpoints: build => ({
-    getFriend: createQuery(build, HttpFriend.getFriendLists.requestSender, [
-      'Friend',
-      'Invitation',
-    ]),
+    getFriend: createQuery(build, HttpFriend.getFriendLists.requestSender, ['Friend']),
     removeFriend: createMutation(build, HttpFriend.removeFriend.requestSender, ['Friend']),
   }),
   // @ts-ignore
