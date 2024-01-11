@@ -9,47 +9,18 @@ import {
   useSendInvitationMutation,
 } from '@/lib/redux/api';
 import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
-import {
-  clearEventToHandle,
-  clearInvitationToRefresh,
-  friendEventToHandleSelector,
-  needFriendInvitationRefreshSelector,
-} from '@/lib/redux/slices/invitationSlice';
 import {RepeatIcon, StarIcon} from '@chakra-ui/icons';
 import {Avatar, Button, Card, CardBody, CardHeader, Flex, HStack, Heading} from '@chakra-ui/react';
-import {useEffect} from 'react';
 
 function FriendList() {
   const {data, error, isLoading} = useAllUsersQuery([]);
-  const {
-    data: friendData,
-    error: friendError,
-    isLoading: FriendIsLoading,
-    refetch: friendRefetch,
-  } = useGetFriendQuery([]);
-  const {
-    data: invitationData,
-    isLoading: invitationIsLoading,
-    refetch: invitationRefetch,
-  } = useGetInvitationsQuery(['friend']);
+  const {data: friendData, error: friendError, isLoading: FriendIsLoading} = useGetFriendQuery([]);
+  const {data: invitationData, isLoading: invitationIsLoading} = useGetInvitationsQuery(['friend']);
   const [sendInvitation] = useSendInvitationMutation();
   const [removeFriend] = useRemoveFriendMutation();
 
   const current_userId = useAppSelector(userIdSelector);
-  const needRefresh = useAppSelector(needFriendInvitationRefreshSelector);
-  const eventToHandle = useAppSelector(friendEventToHandleSelector);
   const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (needRefresh) {
-      invitationRefetch();
-      dispatch(clearInvitationToRefresh());
-    }
-    if (eventToHandle) {
-      friendRefetch();
-      dispatch(clearEventToHandle());
-    }
-  }, [needRefresh, eventToHandle]);
 
   if (isLoading || FriendIsLoading || invitationIsLoading) return <Loading />;
   if (error) console.log(error);

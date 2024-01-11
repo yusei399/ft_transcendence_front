@@ -36,7 +36,10 @@ function SignIn() {
       {isLoading && <Loading />}
       <form onSubmit={e => signInUser(e)}>
         <FormControl isRequired>
-          <FormLabel>Nickname:</FormLabel>
+          <FormLabel>
+            Nickname: {signInData.nickname && signInData.nickname.length < 3 && ' 3 characters min'}
+            {signInData.nickname && signInData.nickname.length > 20 && ' 20 characters max'}
+          </FormLabel>
           <Input
             type="text"
             minLength={3}
@@ -48,7 +51,9 @@ function SignIn() {
           />
         </FormControl>
         <FormControl isRequired>
-          <FormLabel>Password:</FormLabel>
+          <FormLabel>
+            Password:{signInData.password && signInData.password.length < 3 && ' 3 characters min'}
+          </FormLabel>
           <Input
             type="password"
             name="password"

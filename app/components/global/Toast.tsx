@@ -6,8 +6,8 @@ import {useToast} from '@chakra-ui/react';
 import {useEffect} from 'react';
 
 const toastDuration = 3000;
-const titleMaxLength = 40;
-const descriptionMaxLength = 60;
+const titleMaxLength = 60;
+const descriptionMaxLength = 120;
 
 function Toast() {
   const toast = useToast();

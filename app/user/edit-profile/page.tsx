@@ -8,6 +8,7 @@ import {useAppDispatch} from '@/lib/redux/hook';
 import {setNotification} from '@/lib/redux';
 import {filterDefinedProperties} from '@/shared/sharedUtilities/utils.functions.';
 import Link from 'next/link';
+import {setImage} from '@/app/utils/setImage';
 
 const EditProfile = () => {
   const {data, isLoading: queryLoading, error} = useGetMeQuery([]);
@@ -89,7 +90,7 @@ const EditProfile = () => {
           id="avatar"
           type="file"
           max={1}
-          onChange={e => setUpdateInfo({...updateInfo, avatar: e.target.files?.[0]})}
+          onChange={e => setUpdateInfo({...updateInfo, avatar: setImage(e, dispatch)})}
         />
       </FormControl>
       <FormControl>

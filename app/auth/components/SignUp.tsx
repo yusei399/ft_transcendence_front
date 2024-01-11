@@ -8,6 +8,7 @@ import {setLogInError} from './logUser';
 import Loading from '../../components/global/Loading';
 import {set2fa} from '@/lib/redux';
 import {HttpSignUp} from '@/shared/HttpEndpoints/auth';
+import {setImage} from '@/app/utils/setImage';
 
 function SignUp() {
   const [signUpData, setSignUpData] = useState<HttpSignUp.reqTemplate>({
@@ -37,7 +38,10 @@ function SignUp() {
       {isLoading && <Loading />}
       <form onSubmit={e => signUpUser(e)}>
         <FormControl isRequired>
-          <FormLabel>Nickname:</FormLabel>
+          <FormLabel>
+            Nickname: {signUpData.nickname && signUpData.nickname.length < 3 && ' 3 characters min'}
+            {signUpData.nickname && signUpData.nickname.length > 20 && ' 20 characters max'}
+          </FormLabel>
           <Input
             type="text"
             name="nickname"
@@ -59,7 +63,9 @@ function SignUp() {
           />
         </FormControl>
         <FormControl isRequired>
-          <FormLabel>Password:</FormLabel>
+          <FormLabel>
+            Password:{signUpData.password && signUpData.password.length < 3 && ' 3 characters min'}
+          </FormLabel>
           <Input
             type="password"
             name="password"
@@ -76,7 +82,7 @@ function SignUp() {
             name="avatar"
             max={1}
             accept="image/*"
-            onChange={e => setSignUpData({...signUpData, avatar: e.target.files?.[0]})}></Input>
+            onChange={e => setSignUpData({...signUpData, avatar: setImage(e, dispatch)})}></Input>
         </FormControl>
         <Button type="submit">Sign Up</Button>
       </form>

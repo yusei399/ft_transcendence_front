@@ -1,25 +1,28 @@
 'use client';
 import Loading from '@/app/components/global/Loading';
-import {chatToRefreshSelector, clearChatToRefresh, setNotification} from '@/lib/redux';
+import {setNotification} from '@/lib/redux';
 import {useGetChatInfoQuery} from '@/lib/redux/api';
-import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
+import {useAppDispatch} from '@/lib/redux/hook';
 import {SocketService} from '@/services/websocket/socketService';
-import {Button, FormControl, Input, ListItem, List, Text, HStack, Center} from '@chakra-ui/react';
-import React, {useEffect, useState} from 'react';
+import {
+  Button,
+  FormControl,
+  Input,
+  ListItem,
+  List,
+  Text,
+  HStack,
+  Center,
+  Avatar,
+} from '@chakra-ui/react';
+import React, {useState} from 'react';
 import LeaveChat from './leaveChat';
 
 const ChatContent = ({chatId}: {chatId: number}) => {
   const [toSend, setToSend] = useState('');
   const dispatch = useAppDispatch();
-  const chatToRefresh = useAppSelector(chatToRefreshSelector);
 
-  const {data, isLoading, refetch} = useGetChatInfoQuery([chatId]);
-
-  useEffect(() => {
-    if (!data || chatToRefresh?.reason !== 'newMessage' || chatToRefresh?.chatId !== chatId) return;
-    refetch();
-    dispatch(clearChatToRefresh());
-  }, [chatToRefresh, data]);
+  const {data, isLoading} = useGetChatInfoQuery([chatId]);
 
   if (isLoading || !data) return <Loading />;
 
@@ -80,22 +83,23 @@ const ChatContent = ({chatId}: {chatId: number}) => {
               minW="50%"
               w="fit-content"
               maxW="80%"
-              borderWidth="1px"
+              borderWidth="2px"
               borderRadius="lg"
+              borderColor={isSender ? 'azure' : 'black'}
               bgColor={isSender ? 'teal' : 'azure'}
               textAlign={isSender ? 'right' : 'left'}
               marginLeft={isSender ? 'auto' : 'initial'}
               overflow="hidden"
               padding="12px">
               <HStack flexDir={isSender ? 'row-reverse' : 'row'}>
-                <img
-                  src={avatarUrl ?? '/assets/sample.png'}
-                  alt={`${isSender ? 'your' : `${nickname}'s`} avatar`}
-                  style={{width: '30px', height: '30px'}}
-                />
-                <Text fontWeight={800}>{isSender ? 'You' : nickname}:</Text>
+                <Avatar src={avatarUrl ?? '/assets/sample.png'} width="40px" height="40px" />
+                <Text fontSize="lg" fontWeight={800}>
+                  {isSender ? 'You' : nickname}:
+                </Text>
               </HStack>
-              <Text>{messageContent}</Text>
+              <Text fontSize="lg" padding={isSender ? '0 8px 0 0' : '0 0 0 8px'}>
+                {messageContent}
+              </Text>
               <small>{new Date(createdAt).toLocaleString()}</small>
             </ListItem>
           );

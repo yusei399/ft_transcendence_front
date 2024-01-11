@@ -37,7 +37,10 @@ const CreateChat = () => {
     <form onSubmit={e => handleCreate(e)}>
       <Flex flexDir="column" alignItems="center" gap="10px">
         <FormControl isRequired>
-          <FormLabel>Chat Name:</FormLabel>
+          <FormLabel>
+            Chat Name:{chatInfo.chatName && chatInfo.chatName.length < 3 && ' 3 characters min'}
+            {chatInfo.chatName && chatInfo.chatName.length > 20 && ' 20 characters max'}
+          </FormLabel>
           <Input
             type="text"
             minLength={3}
@@ -47,7 +50,10 @@ const CreateChat = () => {
           />
         </FormControl>
         <FormControl>
-          <FormLabel>Password:</FormLabel>
+          <FormLabel>
+            Password:
+            {chatInfo.password && chatInfo.password.length < 3 && ' 3 characters min'}
+          </FormLabel>
           <Input
             type="password"
             autoComplete="off"

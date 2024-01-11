@@ -1,5 +1,5 @@
 import {AppDispatch, setNotification} from '@/lib/redux';
-import {refreshInvitation} from '@/lib/redux/slices/invitationSlice';
+import {backEndApi} from '@/lib/redux/api';
 import {
   WsInvitationAccepted,
   WsInvitationCanceled,
@@ -14,7 +14,7 @@ export function setUpInvitationEvents(socket: Socket, dispatch: AppDispatch): vo
     (message: WsInvitationAccepted.eventMessageTemplate) => {
       const {invitationId, receiverId, kind} = message;
 
-      dispatch(refreshInvitation(kind));
+      dispatch(backEndApi.util.invalidateTags(['Invitation']));
 
       dispatch(
         setNotification({
@@ -30,7 +30,7 @@ export function setUpInvitationEvents(socket: Socket, dispatch: AppDispatch): vo
     WsInvitationCanceled.eventName,
     (message: WsInvitationCanceled.eventMessageTemplate) => {
       const {invitationId, senderId, kind} = message;
-      dispatch(refreshInvitation(kind));
+      dispatch(backEndApi.util.invalidateTags(['Invitation']));
 
       dispatch(
         setNotification({
@@ -46,7 +46,7 @@ export function setUpInvitationEvents(socket: Socket, dispatch: AppDispatch): vo
     WsInvitationDeclined.eventName,
     (message: WsInvitationDeclined.eventMessageTemplate) => {
       const {invitationId, receiverId, kind} = message;
-      dispatch(refreshInvitation(kind));
+      dispatch(backEndApi.util.invalidateTags(['Invitation']));
 
       dispatch(
         setNotification({
@@ -60,7 +60,7 @@ export function setUpInvitationEvents(socket: Socket, dispatch: AppDispatch): vo
 
   socket.on(WsNewInvitation.eventName, (message: WsNewInvitation.eventMessageTemplate) => {
     const {invitationId, senderId, kind} = message;
-    dispatch(refreshInvitation(kind));
+    dispatch(backEndApi.util.invalidateTags(['Invitation']));
 
     dispatch(
       setNotification({

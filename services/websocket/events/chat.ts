@@ -1,15 +1,23 @@
-import {AppDispatch, refreshChat, setNotification} from '@/lib/redux';
-import {WsChatJoin, WsChatLeave, WsNewMessage} from '@/shared/WsEvents/chat/';
+import {AppDispatch, setNotification} from '@/lib/redux';
+import {backEndApi} from '@/lib/redux/api';
+import {
+  WsChatJoin,
+  WsChatLeave,
+  WsChatParticipationUpdate,
+  WsChatUpdate,
+  WsNewMessage,
+} from '@/shared/WsEvents/chat';
 import {Socket} from 'socket.io-client';
 
 export function setUpChatEvents(socket: Socket, dispatch: AppDispatch, userId: number): void {
   socket.on(WsChatJoin.eventName, (message: WsChatJoin.eventMessageTemplate) => {
     const {chat, user} = message;
-    if (userId === user.userId) dispatch(refreshChat({chatId: chat.chatId, reason: 'join'}));
+
+    dispatch(backEndApi.util.invalidateTags(['Chat']));
     dispatch(
       setNotification({
         title: 'Chat - User joined',
-        description: `User ${user.nickname} joined chat ${chat.chatName}`,
+        description: `${user.nickname} joined chat ${chat.chatName}`,
         status: 'info',
       }),
     );
@@ -17,11 +25,12 @@ export function setUpChatEvents(socket: Socket, dispatch: AppDispatch, userId: n
 
   socket.on(WsChatLeave.eventName, (message: WsChatLeave.eventMessageTemplate) => {
     const {chat, user} = message;
-    if (userId === user.userId) dispatch(refreshChat({chatId: chat.chatId, reason: 'leave'}));
+    dispatch(backEndApi.util.invalidateTags(['Chat']));
+
     dispatch(
       setNotification({
         title: 'Chat - User left',
-        description: `User ${user.nickname} left chat ${chat.chatName}`,
+        description: `${user.nickname} left chat ${chat.chatName}`,
         status: 'warning',
       }),
     );
@@ -34,7 +43,7 @@ export function setUpChatEvents(socket: Socket, dispatch: AppDispatch, userId: n
       sender: {nickname, userId: senderId},
     } = message;
 
-    dispatch(refreshChat({chatId, reason: 'newMessage'}));
+    dispatch(backEndApi.util.invalidateTags(['Chat']));
 
     if (userId === senderId) return;
 
@@ -46,4 +55,66 @@ export function setUpChatEvents(socket: Socket, dispatch: AppDispatch, userId: n
       }),
     );
   });
+
+  socket.on(WsChatUpdate.eventName, (message: WsChatUpdate.eventMessageTemplate) => {
+    const {chat, updater, action} = message;
+
+    dispatch(backEndApi.util.invalidateTags(['Chat']));
+
+    let description = `[${chat.chatName}] ${updater.nickname} updated:`;
+    if (action.updateAvatar) description += `avatar, `;
+    if (action.updateName) description += `name, `;
+    if ('updatePassword' in action && action.updatePassword) description += `password, `;
+    else if ('removePassword' in action && action.removePassword) description += `remove password`;
+    if (description.endsWith(', ')) description = description.slice(0, -2);
+
+    dispatch(
+      setNotification({
+        title: 'Chat - Updated',
+        description,
+        status: 'info',
+      }),
+    );
+  });
+
+  socket.on(
+    WsChatParticipationUpdate.eventName,
+    (message: WsChatParticipationUpdate.eventMessageTemplate) => {
+      const {chat, updater, updatedUser, action} = message;
+
+      dispatch(backEndApi.util.invalidateTags(['Chat']));
+
+      const iskick = 'kick' in action && action.kick;
+      const isChangeRole = 'changeRole' in action && action.changeRole;
+      const isMute = 'mute' in action && action.mute;
+      const isUnmute = 'unmute' in action && action.unmute;
+      let description = `[${chat.chatName}] `;
+      switch (true) {
+        case iskick:
+          description += `${updater.nickname} kicked ${updatedUser.nickname}`;
+          break;
+        case isChangeRole:
+          description += `${updater.nickname} changed ${updatedUser.nickname}'s role`;
+          if (isMute) description += ' and muted them';
+          else if (isUnmute) description += ' and unmuted them';
+          break;
+        case isMute:
+          description += `${updater.nickname} muted ${updatedUser.nickname}`;
+          break;
+        case isUnmute:
+          description += `${updater.nickname} unmuted ${updatedUser.nickname}`;
+          break;
+        default:
+          description += `${updater.nickname} has done something terrible to ${updatedUser.nickname}`;
+      }
+
+      dispatch(
+        setNotification({
+          title: 'Chat participation - Updated',
+          description,
+          status: 'info',
+        }),
+      );
+    },
+  );
 }

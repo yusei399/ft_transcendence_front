@@ -21,6 +21,7 @@ import {
 import {useAppDispatch} from '@/lib/redux/hook';
 import {setNotification} from '@/lib/redux';
 import {EditIcon} from '@chakra-ui/icons';
+import {setImage} from '@/app/utils/setImage';
 
 const UpdateChat = ({chatId, isAdmin}: {chatId: number; isAdmin: boolean}) => {
   const {isOpen, onOpen, onClose} = useDisclosure();
@@ -38,9 +39,13 @@ const UpdateChat = ({chatId, isAdmin}: {chatId: number; isAdmin: boolean}) => {
 
   const reqInvalid = () => {
     if (isLoading) return true;
-    if (updateInfo.chatAvatar && updateInfo.chatAvatar.size > 256 * 1024) return true;
+    if (updateInfo.chatAvatar && updateInfo.chatAvatar.size > 1024 * 1024) return true;
     if (!updateInfo.chatName && updateInfo.password === undefined && !updateInfo.chatAvatar)
       return true;
+    if (updateInfo.chatName && updateInfo.chatName.length < 3) return true;
+    if (updateInfo.chatName && updateInfo.chatName.length > 20) return true;
+    if (updateInfo.chatName && updateInfo.chatName === data.chatOverview.chatName) return true;
+    if (updateInfo.password && updateInfo.password.length < 3) return true;
     return false;
   };
 
@@ -74,6 +79,7 @@ const UpdateChat = ({chatId, isAdmin}: {chatId: number; isAdmin: boolean}) => {
       });
       onClose();
     } catch (error) {
+      console.log(error);
       const message =
         (error as ErrorType).status === 409 ? 'Chat name already taken' : 'Something went wrong';
       dispatch(
@@ -83,23 +89,6 @@ const UpdateChat = ({chatId, isAdmin}: {chatId: number; isAdmin: boolean}) => {
   };
 
   const {chatName, hasPassword} = data.chatOverview;
-
-  const setImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.[0]) return;
-    if (e.target.files[0].size > 256 * 1024) {
-      dispatch(
-        setNotification({
-          status: 'error',
-          title: 'Image too big',
-          description: 'Image must be less than 1MB',
-        }),
-      );
-      e.target.files = null;
-      e.target.value = '';
-      return;
-    }
-    setUpdateInfo({...updateInfo, chatAvatar: e.target.files[0]});
-  };
 
   return (
     <section>
@@ -118,7 +107,14 @@ const UpdateChat = ({chatId, isAdmin}: {chatId: number; isAdmin: boolean}) => {
           <ModalBody>
             <form onSubmit={handleSubmit}>
               <FormControl>
-                <FormLabel>Chat Name:</FormLabel>
+                <FormLabel>
+                  Chat Name:{' '}
+                  {updateInfo.chatName && updateInfo.chatName.length < 3 && ' 3 characters min'}
+                  {updateInfo.chatName && updateInfo.chatName.length > 20 && ' 20 characters max'}
+                  {updateInfo.chatName &&
+                    updateInfo.chatName === data.chatOverview.chatName &&
+                    ' need to be different'}
+                </FormLabel>
                 <Input
                   type="text"
                   minLength={3}
@@ -132,7 +128,10 @@ const UpdateChat = ({chatId, isAdmin}: {chatId: number; isAdmin: boolean}) => {
               </FormControl>
               <Flex gap="10px">
                 <FormControl>
-                  <FormLabel>Password:</FormLabel>
+                  <FormLabel>
+                    Password:
+                    {updateInfo.password && updateInfo.password.length < 3 && ' 3 characters min'}
+                  </FormLabel>
                   <Input
                     type="password"
                     value={updateInfo.password ?? ''}
@@ -163,7 +162,12 @@ const UpdateChat = ({chatId, isAdmin}: {chatId: number; isAdmin: boolean}) => {
               </Flex>
               <FormControl>
                 <FormLabel>Avatar:</FormLabel>
-                <Input type="file" max={1} accept="image/*" onChange={e => setImage(e)} />
+                <Input
+                  type="file"
+                  max={1}
+                  accept="image/*"
+                  onChange={e => setUpdateInfo({...updateInfo, chatAvatar: setImage(e, dispatch)})}
+                />
               </FormControl>
               <Button type="submit" isDisabled={reqInvalid()}>
                 Update Chat

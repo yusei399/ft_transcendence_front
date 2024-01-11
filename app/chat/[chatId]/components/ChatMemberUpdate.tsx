@@ -47,13 +47,20 @@ const UpdateChatMember = ({chatId, isAdmin, participation}: UpdateChatMemberProp
     try {
       await updateMember([chatId, updateInfo]).unwrap();
       onClose();
+      setUpdateInfo({
+        userId,
+        role: undefined,
+        mutedUntil: undefined,
+        blockedUntil: undefined,
+        kick: undefined,
+      });
     } catch (err) {
       console.log(err);
     }
   };
   const now = new Date().toLocaleDateString().slice(0, 16);
   return (
-    <section>
+    <Flex as="section" justifyContent="center" marginBottom="12px">
       <EditIcon
         as="button"
         color={isAdmin ? 'yellow.500' : 'gray.500'}
@@ -72,9 +79,20 @@ const UpdateChatMember = ({chatId, isAdmin, participation}: UpdateChatMemberProp
                 <FormLabel>Role:</FormLabel>
                 <RadioGroup
                   value={updateInfo.role ?? role}
-                  onChange={(value: Role) => setUpdateInfo({...updateInfo, role: value})}>
-                  <Radio value="MEMBER">Member</Radio>
-                  <Radio value="ADMIN">Admin</Radio>
+                  isDisabled={updateInfo.kick === true}
+                  onChange={(value: Role) =>
+                    setUpdateInfo({...updateInfo, role: value === role ? undefined : value})
+                  }>
+                  <Radio
+                    value="MEMBER"
+                    colorScheme={participation.role === 'MEMBER' ? 'gray' : 'red'}>
+                    Member
+                  </Radio>
+                  <Radio
+                    value="ADMIN"
+                    colorScheme={participation.role === 'ADMIN' ? 'gray' : 'green'}>
+                    Admin
+                  </Radio>
                 </RadioGroup>
               </FormControl>
               <Flex gap="10px">
@@ -83,6 +101,7 @@ const UpdateChatMember = ({chatId, isAdmin, participation}: UpdateChatMemberProp
                   <Input
                     type="datetime-local"
                     min={now}
+                    isDisabled={updateInfo.kick === true || updateInfo.mutedUntil === null}
                     onChange={e =>
                       setUpdateInfo({
                         ...updateInfo,
@@ -92,26 +111,53 @@ const UpdateChatMember = ({chatId, isAdmin, participation}: UpdateChatMemberProp
                     placeholder={now}
                   />
                 </FormControl>
-                <Checkbox
-                  size={'lg'}
-                  isChecked={updateInfo.kick === true}
-                  alignSelf="flex-end"
-                  marginBottom="8px"
-                  onChange={e =>
-                    setUpdateInfo({
-                      ...updateInfo,
-                      kick: e.target.checked ? true : undefined,
-                    })
-                  }>
-                  kick
-                </Checkbox>
+                {participation?.mutedUntil && (
+                  <Checkbox
+                    size={'lg'}
+                    isChecked={updateInfo.mutedUntil === null}
+                    alignSelf="flex-end"
+                    marginBottom="8px"
+                    onChange={e =>
+                      setUpdateInfo({
+                        ...updateInfo,
+                        mutedUntil: e.target.checked ? null : participation.mutedUntil,
+                      })
+                    }>
+                    unmute
+                  </Checkbox>
+                )}
               </Flex>
-              <Button type="submit">Update Member</Button>
+              <Checkbox
+                size={'lg'}
+                isChecked={updateInfo.kick === true}
+                width="100%"
+                color="red.500"
+                margin="12px"
+                justifyContent="center"
+                colorScheme="red"
+                onChange={e =>
+                  setUpdateInfo({
+                    ...updateInfo,
+                    kick: e.target.checked ? true : undefined,
+                  })
+                }>
+                kick
+              </Checkbox>
+              <Button
+                type="submit"
+                isDisabled={
+                  isLoading ||
+                  (updateInfo.role === undefined &&
+                    updateInfo.mutedUntil === undefined &&
+                    updateInfo.kick === undefined)
+                }>
+                Update Member
+              </Button>
             </form>
           </ModalBody>
         </ModalContent>
       </Modal>
-    </section>
+    </Flex>
   );
 };
 

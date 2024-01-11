@@ -36,10 +36,11 @@ export default function IndexPage() {
       );
     }
   }, [data, chat]);
+
   if (isLoading || !chat) return <Loading />;
+  const {chatName, chatAvatarUrl, hasPassword, participation} = chat;
   if (error) console.log(error);
 
-  const {chatName, chatAvatarUrl, hasPassword, participation} = chat;
   const hasJoined = !!participation;
   const isAdmin = participation?.role === 'ADMIN' ?? false;
 
