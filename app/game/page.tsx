@@ -5,6 +5,16 @@ import {Game} from './components/game';
 import {Button, VStack, Heading} from '@chakra-ui/react';
 
 export default function IndexPage() {
+  const screenWidth = window.innerWidth / 2;
+  const screenHeight = window.innerHeight / 2;
+  const [ballPosition, setBallPosition] = useState({
+    x: screenWidth / 2,
+    y: screenHeight / 2,
+    speedX: 2,
+    speedY: 2,
+  });
+  const [player1Y, setPlayer1Y] = useState(screenHeight / 2 - 40);
+  const [player2Y, setPlayer2Y] = useState(screenHeight / 2 - 40);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [game, setGame] = useState<Game | null>(null);
 
