@@ -19,6 +19,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import ChatMemberUpdate from './ChatMemberUpdate';
+import InviteFriend from './InviteFriend';
 
 const ChatMemberList = ({chatId}: {chatId: number}) => {
   const {isOpen, onOpen, onClose} = useDisclosure();
@@ -43,7 +44,13 @@ const ChatMemberList = ({chatId}: {chatId: number}) => {
         <ModalOverlay />
         <ModalContent padding={'20px'} alignItems="center">
           <ModalHeader>
-            <Heading size="lg">Members</Heading>
+            <Heading size="lg" display="flex" gap="12px" width="100%">
+              Members{' '}
+              <InviteFriend
+                chatId={chatId}
+                participantIds={otherParticipations.map(p => p.userId)}
+              />
+            </Heading>
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>

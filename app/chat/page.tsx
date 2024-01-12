@@ -1,6 +1,7 @@
-import {Flex} from '@chakra-ui/react';
+import {Flex, Heading} from '@chakra-ui/react';
 import ChatList from './components/ChatList';
 import CreateChat from './components/CreateChat';
+import InvitationsList from '../components/invitation/Invitation';
 
 export default function IndexPage() {
   return (
@@ -15,8 +16,16 @@ export default function IndexPage() {
         width="40%">
         <ChatList />
       </Flex>
-      <Flex alignItems="center" justifyContent="center" height="100%" width="55%">
+      <Flex
+        alignItems="center"
+        alignSelf="center"
+        height="100%"
+        width="55%"
+        gap="12px"
+        flexDir="column"
+        overflowY="auto">
         <CreateChat />
+        <InvitationsList kind_url="chat" />
       </Flex>
     </Flex>
   );

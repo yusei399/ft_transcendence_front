@@ -72,9 +72,21 @@ export function setUpChatEvents(socket: Socket, dispatch: AppDispatch, userId: n
 
     dispatch(backEndApi.util.invalidateTags(['ChatOverView', 'ChatInfo']));
 
+    if ('newChat' in action && action.newChat) {
+      dispatch(
+        setNotification({
+          title: 'Chat - Created',
+          description: `${updater.nickname} created chat ${chat.chatName}`,
+          status: 'info',
+        }),
+      );
+      return;
+    }
+    console.log(action);
+
     let description = `[${chat.chatName}] ${updater.nickname} updated: `;
-    if (action.updateAvatar) description += `avatar, `;
-    if (action.updateName) description += `name, `;
+    if ('updateAvatar' in action && action.updateAvatar) description += `avatar, `;
+    if ('updateName' in action && action.updateName) description += `name, `;
     if ('updatePassword' in action && action.updatePassword) description += `password, `;
     else if ('removePassword' in action && action.removePassword) description += `remove password`;
     if (description.endsWith(', ')) description = description.slice(0, -2);
