@@ -24,11 +24,11 @@ function InvitationsList({kind_url}: {kind_url: InvitationKind_Url}) {
           return (
             <Card key={invitationId} padding="8px" rowGap="6px" width="160px">
               <CardHeader padding={0}>
-                <Heading size="md">
-                  {isSender ? `${receiver.nickname}への招待` : `${sender.nickname}からの招待`}
+                <Heading size="md" textAlign="center">
+                  {isSender ? `${receiver.nickname}へ` : `${sender.nickname}から`}
                 </Heading>
               </CardHeader>
-              <CardBody padding="6px">
+              <CardBody padding="6px" margin="auto">
                 <Avatar
                   boxSize="80px"
                   src={(isSender ? receiver.avatarUrl : sender.avatarUrl) ?? '/assets/sample.png'}

@@ -42,8 +42,13 @@ export const axiosBaseQuery =
       const data = res.data;
       return {data};
     } catch (err) {
+      console.log(err);
       if (!axios.isAxiosError(err)) return {error: {data: 'Unknown error', status: 400}};
-      if (authToken && err.response?.status === 401) {
+      if (
+        authToken &&
+        err.response?.status === 401 &&
+        err.response?.data?.name === 'TokenExpiredError'
+      ) {
         const refreshConfig = {
           method: HttpRefresh.method,
           baseURL: baseUrl,
@@ -72,6 +77,9 @@ export const axiosBaseQuery =
             },
           };
         }
+      } else if (authToken && err.response?.status === 401) {
+        api.dispatch({type: 'auth/logout'});
+        return {error: {data: 'invalid token', status: 401}};
       }
       return {
         error: {

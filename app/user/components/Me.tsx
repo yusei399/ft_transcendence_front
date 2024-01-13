@@ -9,8 +9,8 @@ const Me = () => {
   const bgColor = useColorModeValue('gray.100', 'gray.700');
 
   if (isLoading) return <Loading />;
-  if (!data) return <Box>No data</Box>;
   if (error) return <Box>An error occurred</Box>;
+  if (!data) return <Box>No data</Box>;
 
   return (
     <VStack p={5} spacing={4} boxShadow="md" borderRadius="lg" bg={bgColor} alignSelf="center">
