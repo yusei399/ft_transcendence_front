@@ -5,6 +5,7 @@ import {
   WsChatLeave,
   WsChatParticipationUpdate,
   WsChatUpdate,
+  WsNewDirectMessage,
   WsNewMessage,
 } from '@/shared/WsEvents/chat';
 import {Socket} from 'socket.io-client';
@@ -140,4 +141,25 @@ export function setUpChatEvents(socket: Socket, dispatch: AppDispatch, userId: n
       );
     },
   );
+
+  socket.on(WsNewDirectMessage.eventName, (message: WsNewDirectMessage.eventMessageTemplate) => {
+    const {
+      message: {messageContent},
+      sender: {nickname, userId: senderId},
+    } = message;
+
+    const isSender = userId === senderId;
+
+    dispatch(backEndApi.util.invalidateTags(['DirectMessage']));
+
+    if (isSender) return;
+
+    dispatch(
+      setNotification({
+        title: 'Direct message - New message',
+        description: `From ${nickname}: ${messageContent}`,
+        status: 'success',
+      }),
+    );
+  });
 }

@@ -23,7 +23,7 @@ import {setNotification} from '@/lib/redux';
 import {EditIcon} from '@chakra-ui/icons';
 import {setImage} from '@/app/utils/setImage';
 
-const UpdateChat = ({chatId, isAdmin}: {chatId: number; isAdmin: boolean}) => {
+const UpdateChat = ({chatId, isOwner}: {chatId: number; isOwner: boolean}) => {
   const {isOpen, onOpen, onClose} = useDisclosure();
   const dispatch = useAppDispatch();
   const {data, isLoading: queryLoading} = useGetChatInfoQuery([chatId]);
@@ -94,9 +94,9 @@ const UpdateChat = ({chatId, isAdmin}: {chatId: number; isAdmin: boolean}) => {
     <section>
       <EditIcon
         as="button"
-        color={isAdmin ? 'yellow.500' : 'gray.500'}
-        _hover={isAdmin ? {color: 'yellow.600'} : undefined}
-        onClick={isAdmin ? onOpen : undefined}
+        color={isOwner ? 'yellow.500' : 'gray.500'}
+        _hover={isOwner ? {color: 'yellow.600'} : undefined}
+        onClick={isOwner ? onOpen : undefined}
         fontSize="3xl"
       />
       <Modal isOpen={isOpen} onClose={onClose} isCentered>

@@ -1,13 +1,21 @@
 import {createApi} from '@reduxjs/toolkit/query/react';
 import {axiosBaseQuery} from './utils';
 
-export type TagType = 'User' | 'OtherUsers' | 'Friend' | 'ChatOverView' | 'ChatInfo' | 'Invitation';
+export type TagType =
+  | 'User'
+  | 'OtherUsers'
+  | 'Friend'
+  | 'ChatOverView'
+  | 'ChatInfo'
+  | 'DirectMessage'
+  | 'Invitation';
 const tagTypes = [
   'User',
   'OtherUsers',
   'Friend',
   'ChatOverView',
   'ChatInfo',
+  'DirectMessage',
   'Invitation',
 ] as const;
 

@@ -21,7 +21,7 @@ const Me = () => {
         </Text>
       </HStack>
       <Text>{data.email}</Text>
-      <Link href="/user/edit-profile" scroll={false}>
+      <Link href="/users/edit-profile" scroll={false}>
         <Button colorScheme="teal" size="sm">
           Edit Profile
         </Button>

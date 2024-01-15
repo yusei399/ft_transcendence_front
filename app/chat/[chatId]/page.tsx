@@ -30,7 +30,7 @@ export default function IndexPage() {
       dispatch(
         setNotification({
           title: 'Invalid chat id',
-          description: isNaN(chatId) ? 'Chat id is not a number' : 'Chat does not exist',
+          description: isNaN(chatId) ? 'Chat id is not a number' : 'Access denied',
           status: 'error',
         }),
       );
@@ -42,7 +42,8 @@ export default function IndexPage() {
   if (error) console.log(error);
 
   const hasJoined = !!participation;
-  const isAdmin = participation?.role === 'ADMIN' ?? false;
+  const isAdmin = participation?.role === 'ADMIN' || participation?.role === 'OWNER';
+  const isOwner = participation?.role === 'OWNER';
 
   return (
     <Flex flexDir="column" gap="20px" height="100%" width="80%">
@@ -55,7 +56,7 @@ export default function IndexPage() {
         {hasJoined && (
           <>
             <ChatMemberList chatId={chatId} />
-            <UpdateChat chatId={chatId} isAdmin={isAdmin} />
+            <UpdateChat chatId={chatId} isOwner={isOwner} />
           </>
         )}
         <Avatar size="md" name={chatName} src={chatAvatarUrl ?? '/assets/sample_chat.png'} />

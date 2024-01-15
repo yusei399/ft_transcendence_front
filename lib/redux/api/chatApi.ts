@@ -5,6 +5,10 @@ import {createMutation, createQuery} from './utils';
 const chatApi = backEndApi.injectEndpoints({
   endpoints: build => ({
     getAllChats: createQuery(build, HttpChat.getAll.requestSender, ['ChatOverView']),
+    getAllDirectMessage: createQuery(build, HttpChat.getDirectMessages.requestSender, [
+      'OtherUsers',
+      'DirectMessage',
+    ]),
     getChatInfo: createQuery(build, HttpChat.getInfo.requestSender, ['ChatOverView', 'ChatInfo']),
     createChat: createMutation(build, HttpChat.create.requestSender, ['ChatOverView']),
     joinChat: createMutation(build, HttpChat.join.requestSender, ['ChatInfo']),
@@ -20,6 +24,7 @@ const chatApi = backEndApi.injectEndpoints({
 
 export const {
   useGetAllChatsQuery,
+  useGetAllDirectMessageQuery,
   useGetChatInfoQuery,
   useCreateChatMutation,
   useJoinChatMutation,

@@ -3,7 +3,7 @@
 import React, {useState} from 'react';
 import {useAppDispatch} from '@/lib/redux/hook';
 import {ErrorType, useSignInMutation} from '@/lib/redux/api/';
-import {setLogInError} from './logUser';
+import {logUserIn, setLogInError} from './logUser';
 import Loading from '../../components/global/Loading';
 import {Button, FormControl, FormLabel, Input} from '@chakra-ui/react';
 import {set2fa} from '@/lib/redux';
@@ -22,7 +22,23 @@ function SignIn() {
     e.preventDefault();
     try {
       const res = await signIn([signInData]).unwrap();
-      dispatch(set2fa({...res, isSignUp: false}));
+      if (res.authToken && res.refreshToken)
+        logUserIn(
+          dispatch,
+          {
+            authToken: res.authToken,
+            refreshToken: res.refreshToken,
+          },
+          false,
+        );
+      else if (res.auth2FACode)
+        dispatch(
+          set2fa({
+            auth2FACode: res.auth2FACode,
+            userId: res.userId,
+            isSignUp: false,
+          }),
+        );
     } catch (error) {
       setLogInError(
         dispatch,

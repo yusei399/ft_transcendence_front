@@ -31,14 +31,13 @@ type UpdateChatMemberProps = {
 
 const UpdateChatMember = ({chatId, isAdmin, participation}: UpdateChatMemberProps) => {
   const {isOpen, onOpen, onClose} = useDisclosure();
-  const {role, mutedUntil, blockedUntil, userId} = participation;
+  const {role, mutedUntil, userId} = participation;
 
   const [updateMember, {isLoading}] = useUpdateChatMemberMutation();
   const [updateInfo, setUpdateInfo] = useState<HttpUpdateChatParticipation.reqTemplate>({
     userId,
     role: undefined,
     mutedUntil: undefined,
-    blockedUntil: undefined,
     kick: undefined,
   });
 
@@ -51,7 +50,6 @@ const UpdateChatMember = ({chatId, isAdmin, participation}: UpdateChatMemberProp
         userId,
         role: undefined,
         mutedUntil: undefined,
-        blockedUntil: undefined,
         kick: undefined,
       });
     } catch (err) {
@@ -60,7 +58,7 @@ const UpdateChatMember = ({chatId, isAdmin, participation}: UpdateChatMemberProp
   };
   const now = new Date().toLocaleDateString().slice(0, 16);
   return (
-    <Flex as="section" justifyContent="center" marginBottom="12px">
+    <Flex as="section" justifyContent="center">
       <EditIcon
         as="button"
         color={isAdmin ? 'yellow.500' : 'gray.500'}

@@ -19,14 +19,12 @@ export class SocketService {
   }
 
   private static getSocket() {
-    if (!SocketService.socket) {
-      throw new Error('Socket is not initialized');
-    }
     return SocketService.socket;
   }
 
   private static setUpWsEvents(dispatch: AppDispatch, userId: number) {
     const socket = SocketService.getSocket();
+    if (!socket) throw new Error('Socket is not initialized');
     socket.on(WsConnection.eventName, (message: WsConnection.eventMessageTemplate) => {
       SocketService.isConnected = true;
     });
@@ -35,7 +33,7 @@ export class SocketService {
       SocketService.closeSocket();
     });
 
-    setUpUserEvents(socket, dispatch);
+    setUpUserEvents(socket, dispatch, userId);
     setUpInvitationEvents(socket, dispatch);
     setUpFriendEvents(socket, dispatch);
     setUpChatEvents(socket, dispatch, userId);
@@ -53,7 +51,8 @@ export class SocketService {
     eventName: T['eventName'],
     data: T['message'],
   ) {
-    SocketService.getSocket().emit(eventName, data);
+    const socket = SocketService.getSocket();
+    if (socket) socket.emit(eventName, data);
   }
 
   public static hasSocket(): boolean {

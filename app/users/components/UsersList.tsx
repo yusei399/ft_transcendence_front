@@ -7,6 +7,7 @@ import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
 import {UserPublicProfile} from '@/shared/HttpEndpoints/interfaces';
 import {RepeatIcon, StarIcon} from '@chakra-ui/icons';
 import {Avatar, Button, Card, CardBody, CardHeader, Flex, HStack, Heading} from '@chakra-ui/react';
+import SeeUserProfileButton from './SeeUserProfileButton';
 
 type UsersListProps = {
   invitationButton?: 'friend' | 'chat' | 'game';
@@ -135,6 +136,7 @@ function UsersList({
                 フレンド削除
               </Button>
             )}
+            <SeeUserProfileButton userId={userId} />
           </Card>
         );
       })}

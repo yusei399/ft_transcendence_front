@@ -44,9 +44,9 @@ export default function Sidebar() {
         <ChatIcon color="white" />
         Chat
       </Link>
-      <Link href="/friend" scroll={false}>
+      <Link href="/users" scroll={false}>
         <AtSignIcon color="white" />
-        Friend
+        Users
       </Link>
     </Stack>
   );

@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {ErrorType, useEditMeMutation, useGetMeQuery} from '@/lib/redux/api';
 import Loading from '@/app/components/global/Loading';
 import {HttpEditMe} from '@/shared/HttpEndpoints/user';
-import {Box, VStack, FormControl, FormLabel, Input, Button} from '@chakra-ui/react';
+import {Box, VStack, FormControl, FormLabel, Input, Button, Switch, Flex} from '@chakra-ui/react';
 import {useAppDispatch} from '@/lib/redux/hook';
 import {setNotification} from '@/lib/redux';
 import {filterDefinedProperties} from '@/shared/sharedUtilities/utils.functions.';
@@ -19,6 +19,7 @@ const EditProfile = () => {
     nickname: undefined,
     avatar: undefined,
     password: undefined,
+    hasSet2Fa: undefined,
   });
 
   if (queryLoading || isLoading) return <Loading />;
@@ -59,8 +60,11 @@ const EditProfile = () => {
       nickname: undefined,
       avatar: undefined,
       password: undefined,
+      hasSet2Fa: undefined,
     });
   };
+
+  const has2FA = updateInfo.hasSet2Fa ?? data.hasSet2Fa;
 
   return (
     <VStack as="form" action="submit" onSubmit={e => handleSubmit(e)} spacing={4} p={5}>
@@ -74,16 +78,33 @@ const EditProfile = () => {
           placeholder={data.nickname}
         />
       </FormControl>
-      <FormControl>
-        <FormLabel htmlFor="email">Email</FormLabel>
-        <Input
-          id="email"
-          type="email"
-          value={updateInfo.email || ''}
-          onChange={e => setUpdateInfo({...updateInfo, email: e.target.value})}
-          placeholder={data.email}
-        />
-      </FormControl>
+      <Flex dir="row" width="100%" gap="12px">
+        <FormControl flex={4}>
+          <FormLabel htmlFor="email">Email</FormLabel>
+          <Input
+            id="email"
+            type="email"
+            value={updateInfo.email || ''}
+            onChange={e => setUpdateInfo({...updateInfo, email: e.target.value})}
+            placeholder={data.email}
+          />
+        </FormControl>
+        <FormControl
+          display="flex"
+          alignItems="flex-end"
+          marginBottom="12px"
+          flex={1}
+          width="120px">
+          <Switch
+            colorScheme={has2FA ? 'green' : 'blue'}
+            isChecked={has2FA}
+            onChange={e => setUpdateInfo({...updateInfo, hasSet2Fa: e.target.checked})}
+          />
+          <FormLabel mb="0" textColor={has2FA ? 'green.400' : 'blue.400'} paddingLeft="5px">
+            {has2FA ? 'Enabled' : 'Disabled'}
+          </FormLabel>
+        </FormControl>
+      </Flex>
       <FormControl>
         <FormLabel htmlFor="avatar">Avatar</FormLabel>
         <Input

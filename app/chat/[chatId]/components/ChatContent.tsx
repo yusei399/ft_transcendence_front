@@ -4,19 +4,8 @@ import {setNotification} from '@/lib/redux';
 import {useGetChatInfoQuery} from '@/lib/redux/api';
 import {useAppDispatch} from '@/lib/redux/hook';
 import {SocketService} from '@/services/websocket/socketService';
-import {
-  Button,
-  FormControl,
-  Input,
-  ListItem,
-  List,
-  Text,
-  HStack,
-  Center,
-  Avatar,
-} from '@chakra-ui/react';
+import {Button, FormControl, Input, ListItem, List, Text, HStack, Avatar} from '@chakra-ui/react';
 import React, {useState} from 'react';
-import LeaveChat from './leaveChat';
 
 const ChatContent = ({chatId}: {chatId: number}) => {
   const [toSend, setToSend] = useState('');
@@ -29,16 +18,7 @@ const ChatContent = ({chatId}: {chatId: number}) => {
   const participation = data.chatOverview.participation;
   if (!participation) return <Loading />;
 
-  const blockedUntil = new Date(participation.blockedUntil ?? 0).getTime();
   const mutedUntil = new Date(participation.mutedUntil ?? 0).getTime();
-
-  if (blockedUntil > Date.now())
-    return (
-      <Center>
-        You are blocked
-        <LeaveChat chatId={chatId} />
-      </Center>
-    );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

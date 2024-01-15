@@ -1,6 +1,6 @@
 'use client';
 
-import UsersList from '@/app/components/global/UsersList';
+import UsersList from '@/app/users/components/UsersList';
 import {PlusSquareIcon} from '@chakra-ui/icons';
 import {
   Flex,

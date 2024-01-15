@@ -1,26 +1,38 @@
 'use client';
 
-import {useGetInvitationsQuery} from '@/lib/redux/api';
+import {useGetInvitationFromToQuery, useGetInvitationsQuery} from '@/lib/redux/api';
 import {InvitationKind_Url} from '@/shared/HttpEndpoints/types';
 import {Avatar, Card, CardBody, CardHeader, Flex, HStack, Heading} from '@chakra-ui/react';
 import {useAppSelector} from '@/lib/redux/hook';
 import {userIdSelector} from '@/lib/redux';
 import UpdateInvitationButton from './UpdateInvitationButton';
+import {Invitation} from '@/shared/HttpEndpoints/interfaces/invitation.interface';
 
-function InvitationsList({kind_url}: {kind_url: InvitationKind_Url}) {
-  const {data} = useGetInvitationsQuery([kind_url]);
+type InvitationsListProps = {kind_url: InvitationKind_Url} | {userId: number};
+
+function InvitationsList(props: InvitationsListProps) {
+  let invitations: Invitation[] = [];
+  if ('kind_url' in props) {
+    const {kind_url} = props;
+    const {data} = useGetInvitationsQuery([kind_url]);
+    invitations = data?.invitations ?? [];
+  } else {
+    const {userId} = props;
+    const {data: _data, error} = useGetInvitationFromToQuery([userId]);
+    invitations = _data?.invitations ?? [];
+    if (error) console.log(error);
+  }
   const userId = useAppSelector(userIdSelector);
 
   return (
     <HStack spacing="8px" wrap="wrap" justifyContent="center" padding="12px" flexDir="column">
       <Heading size="lg">招待</Heading>
-      {data?.invitations.length === 0 && <Heading size="lg">招待はありません</Heading>}
+      {invitations.length === 0 && <Heading size="lg">招待はありません</Heading>}
       <Flex flexFlow="row">
-        {data?.invitations.map(invitation => {
+        {invitations.map(invitation => {
           const {sender, receiver, invitationId, kind} = invitation;
           const isSender = sender.userId === userId;
-          console.log(invitation);
-
+          const kind_url = kind === 'CHAT' ? 'chat' : kind === 'GAME' ? 'game' : 'friend';
           return (
             <Card key={invitationId} padding="8px" rowGap="6px" width="160px">
               <CardHeader padding={0}>

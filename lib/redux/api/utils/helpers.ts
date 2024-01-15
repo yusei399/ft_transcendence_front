@@ -42,7 +42,6 @@ export const axiosBaseQuery =
       const data = res.data;
       return {data};
     } catch (err) {
-      console.log(err);
       if (!axios.isAxiosError(err)) return {error: {data: 'Unknown error', status: 400}};
       if (
         authToken &&

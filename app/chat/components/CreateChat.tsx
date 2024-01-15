@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useState} from 'react';
-import {FormControl, FormLabel, Input, Button, Flex} from '@chakra-ui/react';
+import {FormControl, FormLabel, Input, Button, Flex, Switch} from '@chakra-ui/react';
 import {ErrorType, useCreateChatMutation} from '@/lib/redux/api';
 import {HttpCreateChat} from '@/shared/HttpEndpoints/chat';
 import {useRouter} from 'next/navigation';
@@ -16,12 +16,14 @@ const CreateChat = () => {
     chatName: '',
     chatAvatar: undefined,
     password: undefined,
+    isPrivate: false,
   });
 
   const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await createChat([chatInfo]).unwrap();
+      const req = {...chatInfo, password: chatInfo.isPrivate ? undefined : chatInfo.password};
+      const res = await createChat([req]).unwrap();
       setChatInfo({chatName: '', chatAvatar: undefined, password: undefined});
       router.push(`/chat/${res.chatId}`);
     } catch (error) {
@@ -49,19 +51,32 @@ const CreateChat = () => {
             onChange={e => setChatInfo({...chatInfo, chatName: e.target.value})}
           />
         </FormControl>
-        <FormControl>
-          <FormLabel>
-            Password:
-            {chatInfo.password && chatInfo.password.length < 3 && ' 3 characters min'}
-          </FormLabel>
-          <Input
-            type="password"
-            autoComplete="off"
-            minLength={3}
-            value={chatInfo.password ?? ''}
-            onChange={e => setChatInfo({...chatInfo, password: e.target.value})}
-          />
-        </FormControl>
+        <Flex flexFlow="row" gap="12px" width="100%">
+          <FormControl>
+            <FormLabel>
+              Password:
+              {chatInfo.password && chatInfo.password.length < 3 && ' 3 characters min'}
+            </FormLabel>
+            <Input
+              isDisabled={chatInfo.isPrivate}
+              type="password"
+              autoComplete="off"
+              minLength={3}
+              value={chatInfo.password ?? ''}
+              onChange={e => setChatInfo({...chatInfo, password: e.target.value})}
+            />
+          </FormControl>
+          <FormControl display="flex" alignItems="flex-end" marginBottom="12px">
+            <FormLabel mb="0" textColor={chatInfo.isPrivate ? 'red.400' : 'blue.400'}>
+              {chatInfo.isPrivate ? 'Private' : 'Public'}
+            </FormLabel>
+            <Switch
+              colorScheme={chatInfo.isPrivate ? 'red' : 'green'}
+              defaultChecked={false}
+              onChange={e => setChatInfo({...chatInfo, isPrivate: e.target.checked})}
+            />
+          </FormControl>
+        </Flex>
         <FormControl>
           <FormLabel>Avatar:</FormLabel>
           <Input

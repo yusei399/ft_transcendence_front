@@ -4,9 +4,8 @@ import {useAppDispatch} from '@/lib/redux/hook';
 import React, {useState} from 'react';
 import {Button, FormControl, FormLabel, Input} from '@chakra-ui/react';
 import {ErrorType, useSignUpMutation} from '@/lib/redux/api';
-import {setLogInError} from './logUser';
+import {logUserIn, setLogInError} from './logUser';
 import Loading from '../../components/global/Loading';
-import {set2fa} from '@/lib/redux';
 import {HttpSignUp} from '@/shared/HttpEndpoints/auth';
 import {setImage} from '@/app/utils/setImage';
 
@@ -24,7 +23,7 @@ function SignUp() {
     e.preventDefault();
     try {
       const res = await signUp([signUpData]).unwrap();
-      dispatch(set2fa({...res, isSignUp: true}));
+      logUserIn(dispatch, res, true);
     } catch (error) {
       setLogInError(
         dispatch,

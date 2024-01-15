@@ -20,8 +20,11 @@ import {
 } from '@chakra-ui/react';
 import ChatMemberUpdate from './ChatMemberUpdate';
 import InviteFriend from './InviteFriend';
+import {useRouter} from 'next/navigation';
+import SeeUserProfileButton from '@/app/users/components/SeeUserProfileButton';
 
 const ChatMemberList = ({chatId}: {chatId: number}) => {
+  const router = useRouter();
   const {isOpen, onOpen, onClose} = useDisclosure();
   const {data: usersData} = useAllUsersQuery([]);
   const {data} = useGetChatInfoQuery([chatId]);
@@ -30,6 +33,7 @@ const ChatMemberList = ({chatId}: {chatId: number}) => {
 
   const {otherParticipations} = data;
   const currentParticipation = data.chatOverview.participation;
+  const isAdmin = currentParticipation?.role === 'ADMIN' || currentParticipation?.role === 'OWNER';
 
   return (
     <section>
@@ -59,9 +63,7 @@ const ChatMemberList = ({chatId}: {chatId: number}) => {
               const user = usersData?.users.find(u => u.userId === participation.userId);
               if (!user) return null;
               const {userId, nickname, avatarUrl, isOnline} = user;
-              const {role, mutedUntil, blockedUntil} = participation;
-              const isAdmin = role === 'ADMIN';
-              const isBlocked = blockedUntil ? new Date(blockedUntil) > new Date() : false;
+              const {role, mutedUntil} = participation;
               const isMuted = mutedUntil ? new Date(mutedUntil) > new Date() : false;
               const nbMessage = data.chatMessages.filter(
                 message => message.senderId === userId,
@@ -78,19 +80,28 @@ const ChatMemberList = ({chatId}: {chatId: number}) => {
                       <Heading size="md" maxWidth={'80px'}>
                         {nickname}
                       </Heading>
-                      {(isAdmin && <Text>Admin</Text>) || <Text>Member</Text>}
+                      <Text>
+                        {role === 'OWNER' ? 'Owner' : role === 'ADMIN' ? 'Admin' : 'Member'}
+                      </Text>
                     </Flex>
                   </CardHeader>
                   <CardBody padding="6px">
-                    {data.chatOverview.participation?.role === 'ADMIN' && (
-                      <ChatMemberUpdate
-                        chatId={chatId}
-                        isAdmin={currentParticipation?.role === 'ADMIN'}
-                        participation={participation}
-                      />
-                    )}
+                    <Flex
+                      flexFlow="row"
+                      justifyContent="space-evenly"
+                      alignContent="center"
+                      gap="12px"
+                      marginBottom="12px">
+                      {isAdmin && participation.role !== 'OWNER' && (
+                        <ChatMemberUpdate
+                          chatId={chatId}
+                          isAdmin={isAdmin}
+                          participation={participation}
+                        />
+                      )}
+                      <SeeUserProfileButton userId={userId} />
+                    </Flex>
                     <Avatar boxSize="80px" src={avatarUrl ?? '/assets/sample.png'} />
-                    {isBlocked && <Text>Blocked</Text>}
                     {isMuted && <Text>Muted</Text>}
                     <Text>
                       {nbMessage} message{nbMessage > 1 ? 's' : ''}
