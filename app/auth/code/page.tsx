@@ -18,15 +18,21 @@ export default function IndexPage() {
   const [verify42] = useVerify42Mutation();
 
   useEffect(() => {
-    (async () => {
-      try {
-        if (!userId || !code) return;
-        const res = await verify42([{userId, code}]).unwrap();
-        logUserIn(dispatch, res, false);
-      } catch (error) {
-        router.push('/auth');
-      }
-    })();
+    if (!userId || !code) return;
+    verify42([{userId, code}])
+      .unwrap()
+      .then(res =>
+        logUserIn(
+          dispatch,
+          {authToken: res.authToken, userId: res.userInfo.userId, refreshToken: res.refreshToken},
+          false,
+        ),
+      )
+      .then(() => router.replace('/', {scroll: false}))
+      .catch(err => {
+        console.error(err);
+        router.replace('/auth', {scroll: false});
+      });
   }, [userId, code]);
 
   return <Loading />;

@@ -22,7 +22,7 @@ function InvitationsList(props: InvitationsListProps) {
     invitations = _data?.invitations ?? [];
     if (error) console.log(error);
   }
-  const userId = useAppSelector(userIdSelector);
+  const userId = useAppSelector(userIdSelector) as number;
 
   return (
     <HStack spacing="8px" wrap="wrap" justifyContent="center" padding="12px" flexDir="column">
@@ -32,7 +32,7 @@ function InvitationsList(props: InvitationsListProps) {
         {invitations.map(invitation => {
           const {sender, receiver, invitationId, kind} = invitation;
           const isSender = sender.userId === userId;
-          const kind_url = kind === 'CHAT' ? 'chat' : kind === 'GAME' ? 'game' : 'friend';
+          const kind_url = kind === 'CHAT' ? 'chat' : 'friend';
           return (
             <Card key={invitationId} padding="8px" rowGap="6px" width="160px">
               <CardHeader padding={0}>
@@ -45,20 +45,14 @@ function InvitationsList(props: InvitationsListProps) {
                   boxSize="80px"
                   src={(isSender ? receiver.avatarUrl : sender.avatarUrl) ?? '/assets/sample.png'}
                 />
-                {kind !== 'FRIEND' && (
-                  <Heading size="sm">
-                    {kind === 'CHAT'
-                      ? invitation.targetChatName
-                      : `ゲーム${invitation.targetGameId}`}
-                    への招待
-                  </Heading>
+                {kind === 'CHAT' && (
+                  <Heading size="sm">{invitation.targetChatName}への招待</Heading>
                 )}
               </CardBody>
               <UpdateInvitationButton
                 invitationId={invitationId}
                 invitationKind={kind_url}
                 targetChatId={kind === 'CHAT' ? invitation.targetChatId : undefined}
-                targetGameId={kind === 'GAME' ? invitation.targetGameId : undefined}
                 action={isSender ? 'cancel' : 'accept'}
               />
               {!isSender && (

@@ -10,7 +10,7 @@ const chatApi = backEndApi.injectEndpoints({
       'DirectMessage',
     ]),
     getChatInfo: createQuery(build, HttpChat.getInfo.requestSender, ['ChatOverView', 'ChatInfo']),
-    createChat: createMutation(build, HttpChat.create.requestSender, ['ChatOverView']),
+    createChat: createMutation(build, HttpChat.create.requestSender, []),
     joinChat: createMutation(build, HttpChat.join.requestSender, ['ChatInfo']),
     leaveChat: createMutation(build, HttpChat.leave.requestSender, ['ChatInfo']),
     updateChat: createMutation(build, HttpChat.update.requestSender, ['ChatOverView']),

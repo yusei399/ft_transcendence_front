@@ -10,7 +10,7 @@ import {Avatar, Button, Card, CardBody, CardHeader, Flex, HStack, Heading} from 
 import SeeUserProfileButton from './SeeUserProfileButton';
 
 type UsersListProps = {
-  invitationButton?: 'friend' | 'chat' | 'game';
+  invitationButton?: 'friend' | 'chat';
   targetChatId?: number;
   targetGameId?: number;
   filter?: 'allUser' | 'friendsOnly' | 'withoutFriends';
@@ -34,7 +34,7 @@ function UsersList({
   const {data: friendsData, error: friendsError} = useGetFriendQuery([]);
   const [removeFriend] = useRemoveFriendMutation();
 
-  const current_userId = useAppSelector(userIdSelector);
+  const currentUserId = useAppSelector(userIdSelector) as number;
   const dispatch = useAppDispatch();
 
   if (usersError) console.log(usersError);
@@ -50,15 +50,14 @@ function UsersList({
     });
   } else if (filter === 'withoutFriends') {
     usersData?.users.forEach(user => {
-      if (user.userId === current_userId) return;
+      if (user.userId === currentUserId) return;
       if (onlineOnly && !user.isOnline) return;
       if (friendsData?.friendsProfiles.find(friend => friend.userId === user.userId)) return;
-      console.log(user);
       usersList.push({...user, isFriend: false});
     });
   } else {
     usersData?.users.forEach(user => {
-      if (user.userId === current_userId) return;
+      if (user.userId === currentUserId) return;
       if (onlineOnly && !user.isOnline) return;
       const isFriend = friendsData?.friendsProfiles.find(friend => friend.userId === user.userId);
       usersList.push({...user, isFriend: isFriend ? true : false});

@@ -83,7 +83,6 @@ export function setUpChatEvents(socket: Socket, dispatch: AppDispatch, userId: n
       );
       return;
     }
-    console.log(action);
 
     let description = `[${chat.chatName}] ${updater.nickname} updated: `;
     if ('updateAvatar' in action && action.updateAvatar) description += `avatar, `;

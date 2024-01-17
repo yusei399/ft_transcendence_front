@@ -22,7 +22,7 @@ export default function IndexPage() {
   const params = useParams<{userId: string}>();
 
   const dispatch = useDispatch();
-  const currentUserId = useAppSelector(userIdSelector);
+  const currentUserId = useAppSelector(userIdSelector) as number;
   const router = useRouter();
   const userId = Number(params.userId);
   const {data, error, isLoading} = useGetUserQuery([userId], {

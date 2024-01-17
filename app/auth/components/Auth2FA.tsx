@@ -32,7 +32,12 @@ function Auth2FA() {
     setResentAfterError(false);
     try {
       const res = await verify2FA([reqBody]).unwrap();
-      logUserIn(dispatch, res, isSignUp);
+      const loginPayload = {
+        userId: res.userInfo.userId,
+        authToken: res.authToken,
+        refreshToken: res.refreshToken,
+      };
+      logUserIn(dispatch, loginPayload, isSignUp);
     } catch (error) {
       setLogInError(
         dispatch,

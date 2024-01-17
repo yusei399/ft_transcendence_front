@@ -28,6 +28,7 @@ function SignIn() {
           {
             authToken: res.authToken,
             refreshToken: res.refreshToken,
+            userId: res.userId,
           },
           false,
         );

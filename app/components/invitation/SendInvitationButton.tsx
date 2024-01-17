@@ -65,8 +65,6 @@ function SendInvitationButton({
       if (invitationKind === 'friend') return true;
       if (invitationKind === 'chat' && 'targetChatId' in invitation)
         return invitation.targetChatId === targetChatId;
-      if (invitationKind === 'game' && 'targetGameId' in invitation)
-        return invitation.targetGameId === targetGameId;
       return false;
     }) !== undefined;
   const alreadyReceived =
@@ -75,8 +73,6 @@ function SendInvitationButton({
       if (invitationKind === 'friend') return true;
       if (invitationKind === 'chat' && 'targetChatId' in invitation)
         return invitation.targetChatId === targetChatId;
-      if (invitationKind === 'game' && 'targetGameId' in invitation)
-        return invitation.targetGameId === targetGameId;
       return false;
     }) !== undefined;
   return (

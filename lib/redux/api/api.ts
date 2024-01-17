@@ -8,7 +8,10 @@ export type TagType =
   | 'ChatOverView'
   | 'ChatInfo'
   | 'DirectMessage'
-  | 'Invitation';
+  | 'Invitation'
+  | 'Game'
+  | 'GameMatchMaking'
+  | 'GameInCreation';
 const tagTypes = [
   'User',
   'OtherUsers',
@@ -17,6 +20,9 @@ const tagTypes = [
   'ChatInfo',
   'DirectMessage',
   'Invitation',
+  'Game',
+  'GameMatchMaking',
+  'GameInCreation',
 ] as const;
 
 export const backEndApi = createApi({

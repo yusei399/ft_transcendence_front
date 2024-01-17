@@ -34,8 +34,6 @@ function UpdateInvitationButton({
       await updateInvitation([invitationKind, action, invitationId]).unwrap();
       if (action === 'accept' && invitationKind === 'chat' && targetChatId) {
         router.push(`/chat/${targetChatId}`);
-      } else if (action === 'accept' && invitationKind === 'game' && targetGameId) {
-        router.push(`/game/${targetGameId}`);
       }
       dispatch(
         setNotification({
