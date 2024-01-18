@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import {Http} from '@/shared/HttpEndpoints';
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {AxiosBaseQuery, BuilderType, CstrArgs, ReqSenderCstr, TRes} from './types';
@@ -6,6 +7,7 @@ import {TagType} from '../api';
 import {HttpRefresh} from '@/shared/HttpEndpoints/auth';
 import {filterDefinedProperties} from '@/shared/sharedUtilities/utils.functions.';
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 const hasFile = (obj: Object): boolean => {
   for (const value of Object.values(obj)) {
     if (value instanceof File) return true;

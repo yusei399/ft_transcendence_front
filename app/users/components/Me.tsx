@@ -4,7 +4,7 @@ import {Box, Text, VStack, useColorModeValue, Button, HStack, Avatar} from '@cha
 import Loading from '@/app/components/global/Loading';
 import Link from 'next/link';
 
-const Me = () => {
+const Me: React.FC = () => {
   const {data, isLoading, error} = useGetMeQuery([]);
   const bgColor = useColorModeValue('gray.100', 'gray.700');
 

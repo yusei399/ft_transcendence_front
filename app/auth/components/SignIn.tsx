@@ -9,7 +9,7 @@ import {Button, FormControl, FormLabel, Input} from '@chakra-ui/react';
 import {set2fa} from '@/lib/redux';
 import {HttpSignIn} from '@/shared/HttpEndpoints/auth';
 
-function SignIn() {
+function SignIn(): JSX.Element {
   const dispatch = useAppDispatch();
   const [signInData, setSignInData] = useState<HttpSignIn.reqTemplate>({
     nickname: '',
@@ -18,7 +18,7 @@ function SignIn() {
 
   const [signIn, {isLoading}] = useSignInMutation();
 
-  const signInUser = async (e: React.FormEvent<HTMLFormElement>) => {
+  const signInUser = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     try {
       const res = await signIn([signInData]).unwrap();

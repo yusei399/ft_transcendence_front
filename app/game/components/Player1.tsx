@@ -1,4 +1,4 @@
-const Palyer1 = () => {
+const Palyer1 = (): JSX.Element => {
   return <div>Player1</div>;
 };
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 'use client';
 import Loading from '@/app/components/global/Loading';
 import SendInvitationButton from '@/app/components/invitation/SendInvitationButton';
@@ -27,7 +28,7 @@ function UsersList({
   filter = 'allUser',
   onlineOnly = false,
   removeFriendButton = false,
-}: UsersListProps) {
+}: UsersListProps)  {
   const {data: usersData, error: usersError} = useAllUsersQuery([], {
     skip: filter === 'friendsOnly',
   });

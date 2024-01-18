@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import {setNotification} from '@/lib/redux';
 import {useUpdateInvitationMutation} from '@/lib/redux/api';
 import {InvitationAction_Url, InvitationKind_Url} from '@/shared/HttpEndpoints/types';

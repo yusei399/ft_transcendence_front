@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* Core */
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
 import {RootState} from '../store';

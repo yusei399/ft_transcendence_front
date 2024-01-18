@@ -6,7 +6,7 @@ import Loading from '../components/global/Loading';
 import {useGetMatchMakingInfoQuery} from '@/lib/redux/api';
 import GameInCreation from './components/GameInCreation';
 
-export default function IndexPage() {
+export default function IndexPage(): JSX.Element {
   const {data} = useGetMatchMakingInfoQuery([]);
 
   if (!data) return <Loading />;

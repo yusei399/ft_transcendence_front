@@ -15,7 +15,7 @@ import Link from 'next/link';
 import {ArrowLeftIcon} from '@chakra-ui/icons';
 import ChatMemberList from './components/ChatMemberList';
 
-export default function IndexPage() {
+export default function IndexPage(): JSX.Element {
   const params = useParams<{chatId: string}>();
   const {data, error, isLoading} = useGetAllChatsQuery([]);
 
@@ -35,13 +35,14 @@ export default function IndexPage() {
         }),
       );
     }
-  }, [data, chat]);
+  }, [data, chat, chatId, dispatch, router]);
 
   if (isLoading || !chat) return <Loading />;
   const {chatName, chatAvatarUrl, hasPassword, participation} = chat;
   if (error) console.log(error);
 
   const hasJoined = !!participation;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isAdmin = participation?.role === 'ADMIN' || participation?.role === 'OWNER';
   const isOwner = participation?.role === 'OWNER';
 

@@ -18,7 +18,7 @@ import {useParams, useRouter} from 'next/navigation';
 import {useEffect} from 'react';
 import {useDispatch} from 'react-redux';
 
-export default function IndexPage() {
+export default function IndexPage(): JSX.Element {
   const params = useParams<{userId: string}>();
 
   const dispatch = useDispatch();
@@ -45,7 +45,7 @@ export default function IndexPage() {
         }),
       );
     }
-  }, [userId, error]);
+  }, [userId, error, currentUserId, dispatch, router]);
 
   if ((error as ErrorType)?.status === 403)
     return <Heading>You have been blocked by this user</Heading>;
@@ -54,7 +54,7 @@ export default function IndexPage() {
 
   const {nickname, avatarUrl, isOnline, isBlocked, isFriend, status} = data;
 
-  const blockUnblock = async () => {
+  const blockUnblock = async (): Promise<void> => {
     try {
       if (isBlocked) {
         await unBlockReq([userId]).unwrap();
@@ -86,7 +86,7 @@ export default function IndexPage() {
     }
   };
 
-  const handleRemoveFriend = async (friendId: number, friendNickname: string) => {
+  const handleRemoveFriend = async (friendId: number, friendNickname: string): Promise<void> => {
     try {
       await removeFriend([{friendId}]).unwrap();
       dispatch(

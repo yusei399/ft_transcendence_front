@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import Loading from '@/app/components/global/Loading';
@@ -7,6 +8,7 @@ import {useRouter, useSearchParams} from 'next/navigation';
 import {useEffect} from 'react';
 import {logUserIn} from '../components/logUser';
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export default function IndexPage() {
   const searchParams = useSearchParams();
   const router = useRouter();

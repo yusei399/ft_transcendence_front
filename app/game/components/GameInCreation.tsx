@@ -26,7 +26,7 @@ type GameInCreationProps = {
   gameInCreationId: number;
 };
 
-function GameInCreation({gameInCreationId}: GameInCreationProps) {
+function GameInCreation({gameInCreationId}: GameInCreationProps): JSX.Element {
   const {data} = useGetGameInCreationQuery([gameInCreationId]);
   const [updateInfo, setUpdateInfo] = useState<HttpGameUpdateInCreation.reqTemplate>({
     scoreToWin: data?.gameInCreation.rules.scoreToWin ?? 3,
@@ -35,14 +35,14 @@ function GameInCreation({gameInCreationId}: GameInCreationProps) {
   const [update, {isLoading}] = useUpdateGameInCreationMutation();
   const [accept] = useAcceptGameInCreationMutation();
 
-  if (!data) return null;
+  if (!data) return <></>;
 
   const {status, rules, playerOne, playerTwo} = data.gameInCreation;
   const me = playerOne.userId === currentUserId ? playerOne : playerTwo;
   const opponent = playerOne.userId === currentUserId ? playerTwo : playerOne;
-  if (status !== 'IN_CREATION') return null;
+  if (status !== 'IN_CREATION') return <></>;
 
-  async function updateGame(e: React.FormEvent<HTMLFormElement>) {
+  async function updateGame(e: React.FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
     try {
       await update([gameInCreationId, updateInfo]).unwrap();
@@ -51,7 +51,7 @@ function GameInCreation({gameInCreationId}: GameInCreationProps) {
     }
   }
 
-  async function acceptGame() {
+  async function acceptGame(): Promise<void> {
     try {
       await accept([gameInCreationId, {hasAccepted: !me.hasAccepted}]).unwrap();
     } catch (err) {

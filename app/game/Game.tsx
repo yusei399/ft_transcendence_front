@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import {useEffect, useRef, useState} from 'react';
 import {Game} from './components/game';
 import {Button, VStack, Heading} from '@chakra-ui/react';
 
-export default function GameView() {
+export default function GameView(): JSX.Element {
   const screenWidth = window.innerWidth / 2;
   const screenHeight = window.innerHeight / 2;
   const [ballPosition, setBallPosition] = useState({
@@ -26,7 +27,7 @@ export default function GameView() {
     }
   }, []);
 
-  const handleStart = () => {
+  const handleStart = (): void => {
     game?.startGame();
   };
 

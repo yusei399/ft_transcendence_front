@@ -6,11 +6,11 @@ import {Card, CardBody, CardHeader, Heading, Avatar, HStack} from '@chakra-ui/re
 import Loading from '@/app/components/global/Loading';
 import Link from 'next/link';
 
-function ChatList() {
+function ChatList(): JSX.Element {
   const {data, error, isLoading} = useGetAllChatsQuery([]);
 
   if (error) console.log(error);
-  if (data === undefined) return isLoading ? <Loading /> : null;
+  if (data === undefined) return isLoading ? <Loading /> : <></>;
 
   return (
     <>

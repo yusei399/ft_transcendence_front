@@ -21,14 +21,15 @@ import Link from 'next/link';
 import {useParams, useRouter} from 'next/navigation';
 import {useEffect, useState} from 'react';
 
-export default function IndexPage() {
+export default function IndexPage(): JSX.Element {
   const params = useParams<{userId: string}>();
 
   const dispatch = useAppDispatch();
   const router = useRouter();
   const userId = Number(params.userId);
-  const {data: me, error: meError} = useGetMeQuery([]);
-  const {data, error, isLoading} = useGetAllDirectMessageQuery([userId], {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const {data: me} = useGetMeQuery([]);
+  const {data, error} = useGetAllDirectMessageQuery([userId], {
     skip: isNaN(userId),
   });
   const [toSend, setToSend] = useState('');
@@ -53,7 +54,7 @@ export default function IndexPage() {
         }),
       );
     }
-  }, [userId, error, me]);
+  }, [userId, error, me, dispatch, router]);
 
   if ((error as ErrorType)?.status === 403) return <Heading>This User has blocked you</Heading>;
 
@@ -61,7 +62,7 @@ export default function IndexPage() {
 
   const {messages, userProfile} = data;
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
 
     const toSendTrimmed = toSend.trim();
@@ -102,7 +103,7 @@ export default function IndexPage() {
           const {messageId, senderId, createdAt, messageContent} = message;
           const isSender = senderId === me.userId;
           const profile = isSender ? me : userProfile;
-          const {userId, nickname, avatarUrl} = profile;
+          const {nickname, avatarUrl} = profile;
           return (
             <ListItem
               key={messageId}

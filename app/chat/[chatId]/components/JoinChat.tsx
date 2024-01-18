@@ -11,12 +11,12 @@ type JoinChatProps = {
   hasPassword: boolean;
 };
 
-const JoinChat = ({chatId, hasPassword}: JoinChatProps) => {
+const JoinChat = ({chatId, hasPassword}: JoinChatProps): JSX.Element => {
   const [joinChat] = useJoinChatMutation();
   const [password, setPassword] = useState<string | undefined>();
   const dispatch = useAppDispatch();
 
-  const handleJoinChat = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleJoinChat = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     try {
       await joinChat([chatId, {password}]).unwrap();

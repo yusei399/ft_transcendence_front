@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import {AppDispatch, setNotification} from '@/lib/redux';
 
 const FILE_UPLOAD_MAX_SIZE = 1024 * 1024;

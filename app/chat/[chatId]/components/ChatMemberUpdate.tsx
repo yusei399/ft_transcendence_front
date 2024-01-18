@@ -29,9 +29,9 @@ type UpdateChatMemberProps = {
   participation: ChatParticipation;
 };
 
-const UpdateChatMember = ({chatId, isAdmin, participation}: UpdateChatMemberProps) => {
+const UpdateChatMember = ({chatId, isAdmin, participation}: UpdateChatMemberProps): JSX.Element => {
   const {isOpen, onOpen, onClose} = useDisclosure();
-  const {role, mutedUntil, userId} = participation;
+  const {role, userId} = participation;
 
   const [updateMember, {isLoading}] = useUpdateChatMemberMutation();
   const [updateInfo, setUpdateInfo] = useState<HttpUpdateChatParticipation.reqTemplate>({
@@ -41,7 +41,7 @@ const UpdateChatMember = ({chatId, isAdmin, participation}: UpdateChatMemberProp
     kick: undefined,
   });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     try {
       await updateMember([chatId, updateInfo]).unwrap();

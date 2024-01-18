@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import React, {useState} from 'react';
 import {ErrorType, useEditMeMutation, useGetMeQuery} from '@/lib/redux/api';
@@ -10,7 +11,7 @@ import {filterDefinedProperties} from '@/shared/sharedUtilities/utils.functions.
 import Link from 'next/link';
 import {setImage} from '@/app/utils/setImage';
 
-const EditProfile = () => {
+const EditProfile = (): JSX.Element => {
   const {data, isLoading: queryLoading, error} = useGetMeQuery([]);
   const [editMe, {isLoading, error: editError}] = useEditMeMutation();
   const dispatch = useAppDispatch();
@@ -26,7 +27,7 @@ const EditProfile = () => {
   if (error) console.log(error);
   if (!data) return <Box>No data</Box>;
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: any): Promise<void> => {
     e?.preventDefault();
     const toUpdate = filterDefinedProperties(updateInfo);
     if (Object.keys(toUpdate).length === 0) {

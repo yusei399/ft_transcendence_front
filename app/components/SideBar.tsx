@@ -7,7 +7,7 @@ import {useAppSelector} from '@/lib/redux/hook';
 import {isLoginSelector, logout} from '@/lib/redux';
 import {useDispatch} from 'react-redux';
 
-export default function Sidebar() {
+export default function Sidebar() : JSX.Element{
   const dispatch = useDispatch();
   const isLogin = useAppSelector(isLoginSelector);
 

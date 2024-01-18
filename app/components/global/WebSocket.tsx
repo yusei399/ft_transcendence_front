@@ -5,7 +5,7 @@ import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
 import {SocketService} from '@/services/websocket/socketService';
 import {useEffect} from 'react';
 
-function WebSocket() {
+function WebSocket(): JSX.Element {
   const authToken = useAppSelector(authTokenSelector);
   const userId = useAppSelector(userIdSelector);
   const hasSocket = SocketService.hasSocket();
@@ -18,8 +18,8 @@ function WebSocket() {
     if (needSocket) SocketService.initializeSocket(dispatch, authToken, userId);
     else if (closeSocket) SocketService.closeSocket();
     return () => SocketService.closeSocket();
-  }, [needSocket, closeSocket]);
-  return null;
+  }, [needSocket, closeSocket, authToken, dispatch, userId]);
+  return <></>;
 }
 
 export default WebSocket;

@@ -18,7 +18,7 @@ type InviteFriendProps = {
   participantIds: number[];
 };
 
-const InviteFriend = ({chatId, participantIds}: InviteFriendProps) => {
+const InviteFriend = ({chatId, participantIds}: InviteFriendProps): JSX.Element => {
   const {isOpen, onOpen, onClose} = useDisclosure();
 
   return (

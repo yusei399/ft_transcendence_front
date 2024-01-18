@@ -3,7 +3,7 @@ import InvitationsList from '../components/invitation/Invitation';
 import UsersList from './components/UsersList';
 import {HStack, StackDivider, VStack} from '@chakra-ui/react';
 
-export default function IndexPage() {
+export default function IndexPage(): JSX.Element {
   return (
     <HStack
       justifyContent="space-between"

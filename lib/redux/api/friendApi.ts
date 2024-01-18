@@ -7,7 +7,7 @@ const friendApi = backEndApi.injectEndpoints({
     getFriend: createQuery(build, HttpFriend.getFriendLists.requestSender, ['Friend']),
     removeFriend: createMutation(build, HttpFriend.removeFriend.requestSender, ['Friend']),
   }),
-  // @ts-ignore
+  // @ts-expect-error
   overrideExisting: module.hot?.status() === 'apply',
 });
 

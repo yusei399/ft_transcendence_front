@@ -20,16 +20,16 @@ import {
 } from '@chakra-ui/react';
 import ChatMemberUpdate from './ChatMemberUpdate';
 import InviteFriend from './InviteFriend';
-import {useRouter} from 'next/navigation';
+// import {useRouter} from 'next/navigation';
 import SeeUserProfileButton from '@/app/users/components/SeeUserProfileButton';
 
-const ChatMemberList = ({chatId}: {chatId: number}) => {
-  const router = useRouter();
+const ChatMemberList = ({chatId}: {chatId: number}): JSX.Element => {
+  // const router = useRouter();
   const {isOpen, onOpen, onClose} = useDisclosure();
   const {data: usersData} = useAllUsersQuery([]);
   const {data} = useGetChatInfoQuery([chatId]);
 
-  if (data === undefined || usersData === undefined) return null;
+  if (data === undefined || usersData === undefined) return <></>;
 
   const {otherParticipations} = data;
   const currentParticipation = data.chatOverview.participation;
