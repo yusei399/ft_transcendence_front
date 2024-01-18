@@ -1,31 +1,25 @@
 'use client';
 import React, {useState} from 'react';
-import {useEditMeMutation, useGetMeQuery} from '@/lib/redux/api';
+import {ErrorType, useEditMeMutation, useGetMeQuery} from '@/lib/redux/api';
 import Loading from '@/app/components/global/Loading';
 import {HttpEditMe} from '@/shared/HttpEndpoints/user';
-import {
-  Box,
-  VStack,
-  FormControl,
-  FormLabel,
-  Input,
-  Button,
-  FormErrorMessage,
-} from '@chakra-ui/react';
+import {Box, VStack, FormControl, FormLabel, Input, Button, Switch, Flex} from '@chakra-ui/react';
 import {useAppDispatch} from '@/lib/redux/hook';
 import {setNotification} from '@/lib/redux';
 import {filterDefinedProperties} from '@/shared/sharedUtilities/utils.functions.';
 import Link from 'next/link';
+import {setImage} from '@/app/utils/setImage';
 
 const EditProfile = () => {
   const {data, isLoading: queryLoading, error} = useGetMeQuery([]);
-  const [editMe, {isLoading, isError}] = useEditMeMutation();
+  const [editMe, {isLoading, error: editError}] = useEditMeMutation();
   const dispatch = useAppDispatch();
   const [updateInfo, setUpdateInfo] = useState<HttpEditMe.reqTemplate>({
     email: undefined,
     nickname: undefined,
     avatar: undefined,
     password: undefined,
+    hasSet2Fa: undefined,
   });
 
   if (queryLoading || isLoading) return <Loading />;
@@ -42,7 +36,7 @@ const EditProfile = () => {
       return;
     }
     try {
-      const response = await editMe([toUpdate]).unwrap();
+      await editMe([toUpdate]).unwrap();
       dispatch(
         setNotification({
           status: 'success',
@@ -50,20 +44,31 @@ const EditProfile = () => {
           description: 'Profile updated successfully',
         }),
       );
-    } catch (error) {
-      console.error('Error updating profile:', error);
+    } catch (error: any) {
+      if (error?.status === 409) {
+        dispatch(
+          setNotification({
+            status: 'error',
+            title: 'Profile update error',
+            description: 'Nickname already taken',
+          }),
+        );
+      }
     }
     setUpdateInfo({
       email: undefined,
       nickname: undefined,
       avatar: undefined,
       password: undefined,
+      hasSet2Fa: undefined,
     });
   };
 
+  const has2FA = updateInfo.hasSet2Fa ?? data.hasSet2Fa;
+
   return (
     <VStack as="form" action="submit" onSubmit={e => handleSubmit(e)} spacing={4} p={5}>
-      <FormControl isInvalid={isError}>
+      <FormControl isInvalid={(editError as ErrorType)?.status === 409}>
         <FormLabel htmlFor="nickname">Nickname</FormLabel>
         <Input
           id="nickname"
@@ -73,26 +78,43 @@ const EditProfile = () => {
           placeholder={data.nickname}
         />
       </FormControl>
-      <FormControl isInvalid={isError}>
-        <FormLabel htmlFor="email">Email</FormLabel>
-        <Input
-          id="email"
-          type="email"
-          value={updateInfo.email || ''}
-          onChange={e => setUpdateInfo({...updateInfo, email: e.target.value})}
-          placeholder={data.email}
-        />
-      </FormControl>
-      <FormControl isInvalid={isError}>
+      <Flex dir="row" width="100%" gap="12px">
+        <FormControl flex={4}>
+          <FormLabel htmlFor="email">Email</FormLabel>
+          <Input
+            id="email"
+            type="email"
+            value={updateInfo.email || ''}
+            onChange={e => setUpdateInfo({...updateInfo, email: e.target.value})}
+            placeholder={data.email}
+          />
+        </FormControl>
+        <FormControl
+          display="flex"
+          alignItems="flex-end"
+          marginBottom="12px"
+          flex={1}
+          width="120px">
+          <Switch
+            colorScheme={has2FA ? 'green' : 'blue'}
+            isChecked={has2FA}
+            onChange={e => setUpdateInfo({...updateInfo, hasSet2Fa: e.target.checked})}
+          />
+          <FormLabel mb="0" textColor={has2FA ? 'green.400' : 'blue.400'} paddingLeft="5px">
+            {has2FA ? 'Enabled' : 'Disabled'}
+          </FormLabel>
+        </FormControl>
+      </Flex>
+      <FormControl>
         <FormLabel htmlFor="avatar">Avatar</FormLabel>
         <Input
           id="avatar"
           type="file"
           max={1}
-          onChange={e => setUpdateInfo({...updateInfo, avatar: e.target.files?.[0]})}
+          onChange={e => setUpdateInfo({...updateInfo, avatar: setImage(e, dispatch)})}
         />
       </FormControl>
-      <FormControl isInvalid={isError}>
+      <FormControl>
         <FormLabel htmlFor="password">Password</FormLabel>
         <Input
           id="password"
@@ -101,7 +123,6 @@ const EditProfile = () => {
           onChange={e => setUpdateInfo({...updateInfo, password: e.target.value})}
           placeholder="your secret password"
         />
-        {isError && <FormErrorMessage>Error updating the profile.</FormErrorMessage>}
       </FormControl>
       <Button type="submit" isLoading={isLoading} colorScheme="blue">
         Update Profile

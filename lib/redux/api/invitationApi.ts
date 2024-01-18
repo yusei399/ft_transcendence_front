@@ -11,10 +11,17 @@ const invitationApi = backEndApi.injectEndpoints({
       'Invitation',
     ]),
     getInvitations: createQuery(build, HttpInvitation.getInvitations.requestSender, ['Invitation']),
+    getInvitationFromTo: createQuery(build, HttpInvitation.getInvitationsFromTo.requestSender, [
+      'Invitation',
+    ]),
   }),
   // @ts-ignore
   overrideExisting: module.hot?.status() === 'apply',
 });
 
-export const {useSendInvitationMutation, useUpdateInvitationMutation, useGetInvitationsQuery} =
-  invitationApi;
+export const {
+  useSendInvitationMutation,
+  useUpdateInvitationMutation,
+  useGetInvitationsQuery,
+  useGetInvitationFromToQuery,
+} = invitationApi;

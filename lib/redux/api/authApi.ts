@@ -6,6 +6,7 @@ const authApi = backEndApi.injectEndpoints({
   endpoints: build => ({
     signIn: createMutation(build, HttpAuth.SignIn.requestSender, ['User']),
     signUp: createMutation(build, HttpAuth.SignUp.requestSender, ['User']),
+    verify42: createMutation(build, HttpAuth.Auth42VerifyCode.requestSender, ['User']),
     verify2FA: createMutation(build, HttpAuth.Auth2FA.requestSender, ['User']),
     resend2FA: createMutation(build, HttpAuth.Resend2FA.requestSender, ['User']),
   }),
@@ -13,5 +14,10 @@ const authApi = backEndApi.injectEndpoints({
   overrideExisting: module.hot?.status() === 'apply',
 });
 
-export const {useSignInMutation, useSignUpMutation, useVerify2FAMutation, useResend2FAMutation} =
-  authApi;
+export const {
+  useSignInMutation,
+  useSignUpMutation,
+  useVerify2FAMutation,
+  useResend2FAMutation,
+  useVerify42Mutation,
+} = authApi;

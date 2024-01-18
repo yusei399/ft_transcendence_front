@@ -5,9 +5,9 @@ import {notificationSelector, removeNotificationById} from '@/lib/redux/slices/n
 import {useToast} from '@chakra-ui/react';
 import {useEffect} from 'react';
 
-const toastDuration = 6000;
-const titleMaxLength = 20;
-const descriptionMaxLength = 40;
+const toastDuration = 3000;
+const titleMaxLength = 60;
+const descriptionMaxLength = 120;
 
 function Toast() {
   const toast = useToast();

@@ -3,7 +3,7 @@
 import React, {useState} from 'react';
 import {useAppDispatch} from '@/lib/redux/hook';
 import {ErrorType, useSignInMutation} from '@/lib/redux/api/';
-import {setLogInError} from './logUser';
+import {logUserIn, setLogInError} from './logUser';
 import Loading from '../../components/global/Loading';
 import {Button, FormControl, FormLabel, Input} from '@chakra-ui/react';
 import {set2fa} from '@/lib/redux';
@@ -22,7 +22,24 @@ function SignIn() {
     e.preventDefault();
     try {
       const res = await signIn([signInData]).unwrap();
-      dispatch(set2fa({...res, isSignUp: false}));
+      if (res.authToken && res.refreshToken)
+        logUserIn(
+          dispatch,
+          {
+            authToken: res.authToken,
+            refreshToken: res.refreshToken,
+            userId: res.userId,
+          },
+          false,
+        );
+      else if (res.auth2FACode)
+        dispatch(
+          set2fa({
+            auth2FACode: res.auth2FACode,
+            userId: res.userId,
+            isSignUp: false,
+          }),
+        );
     } catch (error) {
       setLogInError(
         dispatch,
@@ -36,19 +53,29 @@ function SignIn() {
       {isLoading && <Loading />}
       <form onSubmit={e => signInUser(e)}>
         <FormControl isRequired>
-          <FormLabel>Nickname:</FormLabel>
+          <FormLabel>
+            Nickname: {signInData.nickname && signInData.nickname.length < 3 && ' 3 characters min'}
+            {signInData.nickname && signInData.nickname.length > 20 && ' 20 characters max'}
+          </FormLabel>
           <Input
             type="text"
+            minLength={3}
+            maxLength={20}
             name="nickname"
+            autoComplete="username"
             value={signInData.nickname}
             onChange={e => setSignInData({...signInData, nickname: e.target.value})}
           />
         </FormControl>
         <FormControl isRequired>
-          <FormLabel>Password:</FormLabel>
+          <FormLabel>
+            Password:{signInData.password && signInData.password.length < 3 && ' 3 characters min'}
+          </FormLabel>
           <Input
             type="password"
             name="password"
+            minLength={3}
+            autoComplete="current-password"
             value={signInData.password}
             onChange={e => setSignInData({...signInData, password: e.target.value})}
           />

@@ -1,41 +1,39 @@
 'use client';
 
-import {useEffect, useRef, useState} from 'react';
-import {Game} from './components/game';
-import {Button, VStack, Heading} from '@chakra-ui/react';
+import {Flex} from '@chakra-ui/react';
+import JoinLeaveWaitList from './components/JoinLeaveGame';
+import Loading from '../components/global/Loading';
+import {useGetMatchMakingInfoQuery} from '@/lib/redux/api';
+import GameInCreation from './components/GameInCreation';
 
 export default function IndexPage() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [game, setGame] = useState<Game | null>(null);
+  const {data} = useGetMatchMakingInfoQuery([]);
 
-  useEffect(() => {
-    if (canvasRef.current) {
-      const canvas = canvasRef.current;
-      const newGame = new Game(canvas);
-      setGame(newGame);
-    }
-  }, []);
+  if (!data) return <Loading />;
 
-  const handleStart = () => {
-    game?.startGame();
-  };
+  const {status, gameId, gameInCreationId} = data;
+
+  if (status === 'IN_GAME_CREATION' && gameInCreationId === undefined) {
+    console.error('gameInCreationId is undefined');
+    return <Loading />;
+  }
+
+  if (status === 'IN_GAME' && gameId === undefined) {
+    console.error('gameId is undefined');
+    return <Loading />;
+  }
 
   return (
-    <VStack padding={6} height="100%">
-      <Heading as="h1" size="lg">
-        Game Page
-      </Heading>
-      <canvas
-        ref={canvasRef}
-        style={{
-          border: '1px solid gray',
-          padding: '10px',
-          margin: '10px',
-          width: '80%',
-          height: '80%',
-        }}
-      />
-      <Button onClick={handleStart}>Start Game</Button>
-    </VStack>
+    <Flex height="100%" width="100%" justifyContent="center" alignItems="center" flexFlow="column">
+      {(status == 'IN_GAME_CREATION' || status === 'IN_GAME') && (
+        <Flex flex={1} width="100%" alignItems="center" justifyContent="center">
+          {status === 'IN_GAME_CREATION' && (
+            <GameInCreation gameInCreationId={gameInCreationId as number} />
+          )}
+          {status === 'IN_GAME' && <div>Game Started</div>}
+        </Flex>
+      )}
+      <JoinLeaveWaitList hasJoined={status !== 'UNREGISTERED'} />
+    </Flex>
   );
 }

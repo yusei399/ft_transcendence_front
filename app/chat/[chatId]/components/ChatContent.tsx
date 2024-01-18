@@ -1,52 +1,24 @@
 'use client';
 import Loading from '@/app/components/global/Loading';
-import {chatToRefreshSelector, clearChatToRefresh, setNotification} from '@/lib/redux';
+import {setNotification} from '@/lib/redux';
 import {useGetChatInfoQuery} from '@/lib/redux/api';
-import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
+import {useAppDispatch} from '@/lib/redux/hook';
 import {SocketService} from '@/services/websocket/socketService';
-import {
-  Button,
-  FormControl,
-  Input,
-  ListItem,
-  List,
-  Text,
-  VStack,
-  HStack,
-  Center,
-} from '@chakra-ui/react';
-import React, {useEffect, useState} from 'react';
-import LeaveChat from './leaveChat';
+import {Button, FormControl, Input, ListItem, List, Text, HStack, Avatar} from '@chakra-ui/react';
+import React, {useState} from 'react';
 
-const Chat = ({chatId}: {chatId: number}) => {
+const ChatContent = ({chatId}: {chatId: number}) => {
   const [toSend, setToSend] = useState('');
   const dispatch = useAppDispatch();
-  const chatToRefresh = useAppSelector(chatToRefreshSelector);
 
-  const {currentData, isFetching, refetch} = useGetChatInfoQuery([chatId]);
+  const {data, isLoading} = useGetChatInfoQuery([chatId]);
 
-  useEffect(() => {
-    if (!currentData || chatToRefresh?.reason !== 'newMessage' || chatToRefresh?.chatId !== chatId)
-      return;
-    refetch();
-    dispatch(clearChatToRefresh());
-  }, [chatToRefresh, currentData]);
+  if (isLoading || !data) return <Loading />;
 
-  if (isFetching || !currentData) return <Loading />;
-
-  const participation = currentData.chatOverview.participation;
+  const participation = data.chatOverview.participation;
   if (!participation) return <Loading />;
 
-  const blockedUntil = new Date(participation.blockedUntil ?? 0).getTime();
   const mutedUntil = new Date(participation.mutedUntil ?? 0).getTime();
-
-  if (blockedUntil > Date.now())
-    return (
-      <Center>
-        You are blocked
-        <LeaveChat chatId={chatId} />
-      </Center>
-    );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -80,30 +52,35 @@ const Chat = ({chatId}: {chatId: number}) => {
   };
 
   return (
-    <VStack h="75vh">
-      <List spacing={2} overflowY="auto" flex="1" width="100%">
-        {currentData.chatMessages.map(message => {
+    <>
+      <List spacing={2} overflowY="auto" height="100%">
+        {data.chatMessages.map(message => {
           const {messageId, avatarUrl, nickname, senderId, createdAt, messageContent} = message;
           const isSender = senderId === participation.userId;
           return (
             <ListItem
               key={messageId}
-              maxW="sm"
-              borderWidth="1px"
+              minW="50%"
+              w="fit-content"
+              maxW="80%"
+              borderWidth="2px"
               borderRadius="lg"
+              borderColor={isSender ? 'azure' : 'black'}
               bgColor={isSender ? 'teal' : 'azure'}
+              textAlign={isSender ? 'right' : 'left'}
+              marginLeft={isSender ? 'auto' : 'initial'}
               overflow="hidden"
-              padding="10px">
-              <HStack>
-                <img
-                  src={avatarUrl ?? './assets/sample.png'}
-                  alt={`${isSender ? 'your' : `${nickname}'s`} avatar`}
-                  style={{width: '30px', height: '30px'}}
-                />
-                <Text fontWeight={800}>{isSender ? 'You' : nickname}:</Text>
-                <small>{new Date(createdAt).toLocaleString()}</small>
+              padding="12px">
+              <HStack flexDir={isSender ? 'row-reverse' : 'row'}>
+                <Avatar src={avatarUrl ?? '/assets/sample.png'} width="40px" height="40px" />
+                <Text fontSize="lg" fontWeight={800}>
+                  {isSender ? 'You' : nickname}:
+                </Text>
               </HStack>
-              <Text>{messageContent}</Text>
+              <Text fontSize="lg" padding={isSender ? '0 8px 0 0' : '0 0 0 8px'}>
+                {messageContent}
+              </Text>
+              <small>{new Date(createdAt).toLocaleString()}</small>
             </ListItem>
           );
         })}
@@ -124,8 +101,8 @@ const Chat = ({chatId}: {chatId: number}) => {
           </Button>
         </HStack>
       </form>
-    </VStack>
+    </>
   );
 };
 
-export default Chat;
+export default ChatContent;

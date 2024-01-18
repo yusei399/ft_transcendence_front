@@ -13,6 +13,7 @@ interface AuthSliceState {
 export type SetTokensPayload = {
   authToken: string;
   refreshToken: string;
+  userId: number;
 };
 
 const initialState: AuthSliceState = {
@@ -36,6 +37,7 @@ const authSlice = createSlice({
     login: (state, action: PayloadAction<SetTokensPayload>) => {
       state.authToken = action.payload.authToken;
       state.refreshToken = action.payload.refreshToken;
+      state.userId = action.payload.userId;
     },
     logout: state => {
       state.authToken = undefined;

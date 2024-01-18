@@ -1,12 +1,14 @@
 'use client';
 
 import {setLogInError} from '@/app/auth/components/logUser';
-import {isLoginSelector, set2fa} from '@/lib/redux';
+import {isLoginSelector, set2fa, setNotification} from '@/lib/redux';
 import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
 import {Nav, clearRedirectTo, selectRedirectTo} from '@/lib/redux/slices/navigationSlice';
 import {useRouter, usePathname, useSearchParams} from 'next/navigation';
 import Loading from './Loading';
 import {useEffect, useState} from 'react';
+import {SocketService} from '@/services/websocket/socketService';
+import {UserStatusType} from '@/shared/HttpEndpoints/interfaces';
 
 type NavigationState = {url: string; replace: boolean};
 
@@ -23,13 +25,13 @@ function Navigation({children}: {children: React.ReactNode}) {
   const auth2FACode = searchParams.get('auth2FACode');
   const userIdString = searchParams.get('userId');
   const userId = userIdString ? parseInt(userIdString) : undefined;
-
   const [isRedirecting, setIsRedirecting] = useState<boolean>(false);
 
   let redirection: NavigationState | undefined;
   let sideEffect: (() => void) | undefined;
 
-  if (pathname === '/auth') {
+  if (pathname === '/auth/code') {
+  } else if (pathname === '/auth') {
     if (searchParams.has('OAuth42Error')) {
       sideEffect = () => setLogInError(dispatch, '42 OAuth error: Unauthorized');
       redirection = redirect({route: '/auth', isReplace: true});
@@ -42,6 +44,16 @@ function Navigation({children}: {children: React.ReactNode}) {
     redirection = redirect(navigation);
     sideEffect = () => dispatch(clearRedirectTo());
   }
+  const isSocketConnected = SocketService.isSocketConnected();
+
+  useEffect(() => {
+    if (!isSocketConnected) return;
+    let status: UserStatusType = 'chilling';
+    if (pathname.includes('/chat')) status = 'onChat';
+    else if (pathname.includes('/game')) status = 'onGame';
+
+    SocketService.emit('setUserStatus', {status});
+  }, [pathname, isSocketConnected]);
 
   useEffect(() => {
     if (redirection && !isRedirecting) {

@@ -4,6 +4,7 @@ import {AxiosBaseQuery, BuilderType, CstrArgs, ReqSenderCstr, TRes} from './type
 import {RootState} from '../../store';
 import {TagType} from '../api';
 import {HttpRefresh} from '@/shared/HttpEndpoints/auth';
+import {filterDefinedProperties} from '@/shared/sharedUtilities/utils.functions.';
 
 const hasFile = (obj: Object): boolean => {
   for (const value of Object.values(obj)) {
@@ -19,13 +20,13 @@ export const axiosBaseQuery =
       method: method,
       baseURL: baseUrl,
       url: endpoint,
-      data: req,
+      data: filterDefinedProperties(req),
       headers: {'Content-Type': 'application/json'},
     };
     if (hasFile(req)) {
       options.headers = {'Content-Type': 'multipart/form-data'};
       const formData = new FormData();
-      for (const [key, value] of Object.entries(req)) {
+      for (const [key, value] of Object.entries(filterDefinedProperties(req))) {
         formData.append(key, value);
       }
       options.data = formData;
@@ -42,7 +43,11 @@ export const axiosBaseQuery =
       return {data};
     } catch (err) {
       if (!axios.isAxiosError(err)) return {error: {data: 'Unknown error', status: 400}};
-      if (authToken && err.response?.status === 401) {
+      if (
+        authToken &&
+        err.response?.status === 401 &&
+        err.response?.data?.name === 'TokenExpiredError'
+      ) {
         const refreshConfig = {
           method: HttpRefresh.method,
           baseURL: baseUrl,
@@ -71,6 +76,9 @@ export const axiosBaseQuery =
             },
           };
         }
+      } else if (authToken && err.response?.status === 401) {
+        api.dispatch({type: 'auth/logout'});
+        return {error: {data: 'invalid token', status: 401}};
       }
       return {
         error: {

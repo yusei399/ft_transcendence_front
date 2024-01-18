@@ -1,7 +1,13 @@
 import {AppDispatch} from '@/lib/redux';
 import {io, Socket} from 'socket.io-client';
 import {WsEvents_FromClient} from '@/shared/WsEvents';
-import {setUpChatEvents, setUpGameEvents, setUpInvitationEvents} from './events';
+import {
+  setUpChatEvents,
+  setUpFriendEvents,
+  setUpGameEvents,
+  setUpInvitationEvents,
+  setUpUserEvents,
+} from './events';
 import {WsConnection, WsDisconnection} from '@/shared/WsEvents/default';
 
 export class SocketService {
@@ -13,14 +19,12 @@ export class SocketService {
   }
 
   private static getSocket() {
-    if (!SocketService.socket) {
-      throw new Error('Socket is not initialized');
-    }
     return SocketService.socket;
   }
 
   private static setUpWsEvents(dispatch: AppDispatch, userId: number) {
     const socket = SocketService.getSocket();
+    if (!socket) throw new Error('Socket is not initialized');
     socket.on(WsConnection.eventName, (message: WsConnection.eventMessageTemplate) => {
       SocketService.isConnected = true;
     });
@@ -29,7 +33,9 @@ export class SocketService {
       SocketService.closeSocket();
     });
 
+    setUpUserEvents(socket, dispatch, userId);
     setUpInvitationEvents(socket, dispatch);
+    setUpFriendEvents(socket, dispatch);
     setUpChatEvents(socket, dispatch, userId);
     setUpGameEvents(socket, dispatch);
   }
@@ -45,7 +51,8 @@ export class SocketService {
     eventName: T['eventName'],
     data: T['message'],
   ) {
-    SocketService.getSocket().emit(eventName, data);
+    const socket = SocketService.getSocket();
+    if (socket) socket.emit(eventName, data);
   }
 
   public static hasSocket(): boolean {
