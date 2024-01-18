@@ -10,7 +10,7 @@ import {Invitation} from '@/shared/HttpEndpoints/interfaces/invitation.interface
 
 type InvitationsListProps = {kind_url: InvitationKind_Url} | {userId: number};
 
-function InvitationsList(props: InvitationsListProps) {
+function InvitationsList(props: InvitationsListProps): JSX.Element {
   let invitations: Invitation[] = [];
   if ('kind_url' in props) {
     const {kind_url} = props;

@@ -8,7 +8,7 @@ import {useRouter} from 'next/navigation';
 import {useAppDispatch} from '@/lib/redux/hook';
 import {setNotification} from '@/lib/redux';
 
-const CreateChat = () => {
+const CreateChat: React.FC = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [createChat] = useCreateChatMutation();
@@ -19,7 +19,7 @@ const CreateChat = () => {
     isPrivate: false,
   });
 
-  const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleCreate = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     try {
       const req = {...chatInfo, password: chatInfo.isPrivate ? undefined : chatInfo.password};

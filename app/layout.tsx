@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   icons: './favicon.ico',
 };
 
-export default function RootLayout(props: React.PropsWithChildren) {
+export default function RootLayout(props: React.PropsWithChildren): JSX.Element {
   return (
     <StrictMode>
       <html lang="en">

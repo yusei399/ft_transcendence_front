@@ -1,6 +1,6 @@
 import {Spinner, Flex} from '@chakra-ui/react';
 
-function Loading() {
+function Loading() : JSX.Element {
   return (
     <Flex
       justifyContent="center"

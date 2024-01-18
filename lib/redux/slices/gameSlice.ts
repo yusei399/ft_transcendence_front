@@ -1,6 +1,6 @@
 /* Core */
-import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
-import {RootState} from '../store';
+import {createSlice} from '@reduxjs/toolkit';
+// import {RootState} from './store';
 
 interface GameSliceState {}
 

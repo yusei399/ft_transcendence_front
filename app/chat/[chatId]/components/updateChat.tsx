@@ -23,7 +23,7 @@ import {setNotification} from '@/lib/redux';
 import {EditIcon} from '@chakra-ui/icons';
 import {setImage} from '@/app/utils/setImage';
 
-const UpdateChat = ({chatId, isOwner}: {chatId: number; isOwner: boolean}) => {
+const UpdateChat = ({chatId, isOwner}: {chatId: number; isOwner: boolean}): JSX.Element => {
   const {isOpen, onOpen, onClose} = useDisclosure();
   const dispatch = useAppDispatch();
   const {data, isLoading: queryLoading} = useGetChatInfoQuery([chatId]);
@@ -37,7 +37,7 @@ const UpdateChat = ({chatId, isOwner}: {chatId: number; isOwner: boolean}) => {
   if (queryLoading) return <Loading />;
   if (!data) return <div>no data</div>;
 
-  const reqInvalid = () => {
+  const reqInvalid = (): boolean => {
     if (isLoading) return true;
     if (updateInfo.chatAvatar && updateInfo.chatAvatar.size > 1024 * 1024) return true;
     if (!updateInfo.chatName && updateInfo.password === undefined && !updateInfo.chatAvatar)
@@ -49,7 +49,7 @@ const UpdateChat = ({chatId, isOwner}: {chatId: number; isOwner: boolean}) => {
     return false;
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (updateInfo.chatName && updateInfo.chatName === data.chatOverview.chatName) {
       dispatch(

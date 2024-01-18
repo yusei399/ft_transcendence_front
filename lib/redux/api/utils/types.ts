@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {Http} from '@/shared/HttpEndpoints';
 import {ARequestSender} from '@/shared/HttpEndpoints/interfaces/ARequestSender';
 import {BaseQueryFn} from '@reduxjs/toolkit/dist/query';
@@ -7,17 +8,17 @@ import {TagType} from '../api';
 export type ErrorType = {status: number; data: string};
 export type AxiosBaseQuery = BaseQueryFn<Http.requestSender, Http.resTemplate, ErrorType>;
 
-export type CstrArgs<T extends new (...args: any[]) => Http.requestSender> = T extends new (
+export type CstrArgs<T extends new (...args: unknown[]) => Http.requestSender> = T extends new (
   ...args: infer P
-) => any
+) => unknown
   ? P
   : never;
 
-export type TRes<T extends new (...args: any[]) => ARequestSender<any, any>> = T extends new (
-  ...args: any[]
+export type TRes<T extends new (...args: unknown[]) => ARequestSender<any, any>> = T extends new (
+  ...args: unknown[]
 ) => ARequestSender<any, infer R>
   ? R
   : never;
 
 export type BuilderType = EndpointBuilder<AxiosBaseQuery, TagType, 'backEndApi'>;
-export type ReqSenderCstr = new (...args: any[]) => Http.requestSender;
+export type ReqSenderCstr = new (...args: unknown[]) => Http.requestSender;

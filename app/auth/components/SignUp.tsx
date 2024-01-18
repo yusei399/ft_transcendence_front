@@ -9,7 +9,7 @@ import Loading from '../../components/global/Loading';
 import {HttpSignUp} from '@/shared/HttpEndpoints/auth';
 import {setImage} from '@/app/utils/setImage';
 
-function SignUp() {
+function SignUp(): JSX.Element {
   const [signUpData, setSignUpData] = useState<HttpSignUp.reqTemplate>({
     nickname: '',
     password: '',
@@ -19,7 +19,7 @@ function SignUp() {
   const dispatch = useAppDispatch();
   const [signUp, {isLoading}] = useSignUpMutation();
 
-  const signUpUser = async (e: React.FormEvent<HTMLFormElement>) => {
+  const signUpUser = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     try {
       const res = await signUp([signUpData]).unwrap();

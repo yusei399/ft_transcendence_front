@@ -6,11 +6,11 @@ type JoinLeaveWaitListProps = {
   hasJoined: boolean;
 };
 
-function JoinLeaveWaitList({hasJoined}: JoinLeaveWaitListProps) {
+function JoinLeaveWaitList({hasJoined}: JoinLeaveWaitListProps): JSX.Element {
   const [joinGame] = useJoinWaitListMutation();
   const [leaveGame] = useLeaveGameMutation();
 
-  async function joinleaveWaitList() {
+  async function joinleaveWaitList(): Promise<void> {
     try {
       hasJoined ? await leaveGame([]).unwrap() : await joinGame([]).unwrap();
     } catch (err) {

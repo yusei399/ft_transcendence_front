@@ -5,7 +5,7 @@ export const logUserIn = (
   dispatch: AppDispatch,
   payload: SetTokensPayload,
   withSignUp: boolean,
-) => {
+): void => {
   dispatch(login(payload));
   dispatch(clear2fa());
 
@@ -28,7 +28,7 @@ type LogErrorMessages =
   | 'Nickname already taken'
   | '42 OAuth error: Unauthorized'
   | 'Something went wrong';
-export const setLogInError = (dispatch: AppDispatch, errorMsg: LogErrorMessages) => {
+export const setLogInError = (dispatch: AppDispatch, errorMsg: LogErrorMessages): void => {
   const title: Notification['title'] = 'Auth error';
   const description: Notification['description'] = errorMsg;
   const status: Notification['status'] = 'error';

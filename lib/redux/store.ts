@@ -25,7 +25,7 @@ const reducers = combineReducers({
 
 const persistedReducer = persistReducer(persistConfig, reducers);
 
-export const makeStore = () => {
+export const makeStore = (): ReturnType<typeof configureStore> => {
   const store = configureStore({
     devTools: process.env.NODE_ENV !== 'production',
     reducer: persistedReducer,

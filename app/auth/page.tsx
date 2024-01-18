@@ -8,7 +8,7 @@ import Auth2FA from './components/Auth2FA';
 import {is2FANeededSelector} from '@/lib/redux';
 import OAuth42 from './components/OAuth42';
 
-export default function IndexPage() {
+export default function IndexPage(): JSX.Element {
   const is2FA = useSelector(is2FANeededSelector);
 
   return (

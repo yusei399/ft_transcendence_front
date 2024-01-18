@@ -7,7 +7,7 @@ import {SocketService} from '@/services/websocket/socketService';
 import {Button, FormControl, Input, ListItem, List, Text, HStack, Avatar} from '@chakra-ui/react';
 import React, {useState} from 'react';
 
-const ChatContent = ({chatId}: {chatId: number}) => {
+const ChatContent = ({chatId}: {chatId: number}): JSX.Element => {
   const [toSend, setToSend] = useState('');
   const dispatch = useAppDispatch();
 
@@ -20,7 +20,7 @@ const ChatContent = ({chatId}: {chatId: number}) => {
 
   const mutedUntil = new Date(participation.mutedUntil ?? 0).getTime();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     if (mutedUntil > Date.now()) {
       dispatch(

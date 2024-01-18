@@ -9,7 +9,7 @@ import {logUserIn, setLogInError} from './logUser';
 import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
 import {authSelector, clear2fa} from '@/lib/redux';
 
-function Auth2FA() {
+function Auth2FA(): JSX.Element {
   const {auth2FACode, userId, isSignUp} = useAppSelector(authSelector);
   const dispatch = useAppDispatch();
   const [confirmCode, setConfirmCode] = useState<string>('');
@@ -22,7 +22,7 @@ function Auth2FA() {
     return <Loading />;
   }
 
-  const submit2FA = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submit2FA = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     const reqBody: Http2FA.reqTemplate = {
       auth2FACode,
@@ -47,7 +47,7 @@ function Auth2FA() {
     setConfirmCode('');
   };
 
-  const resendCode = async () => {
+  const resendCode = async (): Promise<void> => {
     const reqBody: HttpResend2FA.reqTemplate = {
       auth2FACode,
       userId,

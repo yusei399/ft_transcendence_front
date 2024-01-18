@@ -15,7 +15,7 @@ const invitationApi = backEndApi.injectEndpoints({
       'Invitation',
     ]),
   }),
-  // @ts-ignore
+  // @ts-expect-error
   overrideExisting: module.hot?.status() === 'apply',
 });
 

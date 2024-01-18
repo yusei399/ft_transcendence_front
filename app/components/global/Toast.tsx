@@ -9,7 +9,7 @@ const toastDuration = 3000;
 const titleMaxLength = 60;
 const descriptionMaxLength = 120;
 
-function Toast() {
+function Toast(): JSX.Element {
   const toast = useToast();
   const dispatch = useAppDispatch();
   const notifications = useAppSelector(notificationSelector);
@@ -31,9 +31,9 @@ function Toast() {
       setTimeout(() => toast.close(toastId), toastDuration);
       dispatch(removeNotificationById(notif.id));
     });
-  }, [notifications]);
+  }, [notifications, dispatch, toast]);
 
-  return null;
+  return <></>;
 }
 
 export default Toast;

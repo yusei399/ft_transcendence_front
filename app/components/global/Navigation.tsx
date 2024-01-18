@@ -1,7 +1,7 @@
 'use client';
 
 import {setLogInError} from '@/app/auth/components/logUser';
-import {isLoginSelector, set2fa, setNotification} from '@/lib/redux';
+import {isLoginSelector, set2fa} from '@/lib/redux';
 import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
 import {Nav, clearRedirectTo, selectRedirectTo} from '@/lib/redux/slices/navigationSlice';
 import {useRouter, usePathname, useSearchParams} from 'next/navigation';
@@ -12,7 +12,7 @@ import {UserStatusType} from '@/shared/HttpEndpoints/interfaces';
 
 type NavigationState = {url: string; replace: boolean};
 
-function Navigation({children}: {children: React.ReactNode}) {
+function Navigation({children}: {children: React.ReactNode}): JSX.Element {
   const dispatch = useAppDispatch();
 
   const router = useRouter();
@@ -33,16 +33,20 @@ function Navigation({children}: {children: React.ReactNode}) {
   if (pathname === '/auth/code') {
   } else if (pathname === '/auth') {
     if (searchParams.has('OAuth42Error')) {
-      sideEffect = () => setLogInError(dispatch, '42 OAuth error: Unauthorized');
+      sideEffect = (): void => setLogInError(dispatch, '42 OAuth error: Unauthorized');
       redirection = redirect({route: '/auth', isReplace: true});
     } else if (auth2FACode && userId) {
-      sideEffect = () => dispatch(set2fa({auth2FACode, userId, isSignUp: false}));
+      sideEffect = (): void => {
+        dispatch(set2fa({auth2FACode, userId, isSignUp: false}));
+      };
       redirection = redirect({route: '/auth', isReplace: true});
     } else if (isLogin) redirection = redirect({route: '/'});
   } else if (!isLogin) redirection = redirect({route: '/auth'});
   else if (navigation) {
     redirection = redirect(navigation);
-    sideEffect = () => dispatch(clearRedirectTo());
+    sideEffect = (): void => {
+      dispatch(clearRedirectTo());
+    };
   }
   const isSocketConnected = SocketService.isSocketConnected();
 
@@ -64,7 +68,7 @@ function Navigation({children}: {children: React.ReactNode}) {
       if (redirection.replace) router.replace(redirection.url, {scroll: false});
       else router.push(redirection.url, {scroll: false});
     } else if (!redirection && isRedirecting) setIsRedirecting(false);
-  }, [redirection]);
+  }, [isRedirecting, redirection, router, sideEffect]);
 
   if (redirection || isRedirecting) return <Loading />;
   else return <>{children}</>;

@@ -2,7 +2,7 @@ import {Search2Icon} from '@chakra-ui/icons';
 import {Button} from '@chakra-ui/react';
 import {useRouter} from 'next/navigation';
 
-function SeeUserProfileButton({userId}: {userId: number}) {
+function SeeUserProfileButton({userId}: {userId: number}): JSX.Element {
   const router = useRouter();
   return (
     <Button

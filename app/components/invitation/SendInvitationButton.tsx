@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import {setNotification} from '@/lib/redux';
 import {useGetInvitationsQuery, useSendInvitationMutation} from '@/lib/redux/api';
 import {HttpSendInvitation} from '@/shared/HttpEndpoints/invitation';
@@ -26,7 +28,7 @@ function SendInvitationButton({
 
   const kindWithCapital = invitationKind.charAt(0).toUpperCase() + invitationKind.slice(1);
 
-  const handleSendInvitation = async (targetUserId: number) => {
+  const handleSendInvitation = async (targetUserId: number): Promise<void> => {
     try {
       let req: HttpSendInvitation.reqTemplate;
       if (invitationKind === 'friend') req = {targetUserId};
@@ -60,7 +62,7 @@ function SendInvitationButton({
         : 'ゲーム招待送信';
 
   const alreadySent =
-    data.invitations.find(invitation => {
+    data.invitations.find((invitation: any) => {
       if (invitation.receiver.userId !== userId) return false;
       if (invitationKind === 'friend') return true;
       if (invitationKind === 'chat' && 'targetChatId' in invitation)
@@ -68,7 +70,7 @@ function SendInvitationButton({
       return false;
     }) !== undefined;
   const alreadyReceived =
-    data.invitations.find(invitation => {
+    data.invitations.find((invitation: any) => {
       if (invitation.sender.userId !== userId) return false;
       if (invitationKind === 'friend') return true;
       if (invitationKind === 'chat' && 'targetChatId' in invitation)
