@@ -52,7 +52,7 @@ export default function IndexPage() {
 
   if (isLoading || !data || currentUserId === userId) return <Loading />;
 
-  const {nickname, avatarUrl, isOnline, isBlocked, isFriend, status} = data;
+  const {nickname, avatarUrl, isOnline, isBlocked, hasBlockedMe, isFriend, status} = data;
 
   const blockUnblock = async () => {
     try {
@@ -155,8 +155,8 @@ export default function IndexPage() {
                 }
               </Text>
             )}
-            <Link href={`/user/${userId}/chat`}>
-              <Button colorScheme="orange" width={'100%'}>
+            <Link href={`/users/${userId}/chat`} scroll={false}>
+              <Button colorScheme="orange" width={'100%'} isDisabled={hasBlockedMe || isBlocked}>
                 Direct Messages
               </Button>
             </Link>
@@ -165,8 +165,11 @@ export default function IndexPage() {
                 フレンド削除
               </Button>
             )) || <SendInvitationButton invitationKind="friend" userId={userId} />}
-            <Button colorScheme={isBlocked ? 'green' : 'red'} onClick={blockUnblock}>
-              {isBlocked ? 'Unblock' : 'Block'}
+            <Button
+              colorScheme={isBlocked ? 'green' : 'red'}
+              onClick={blockUnblock}
+              isDisabled={hasBlockedMe && !isBlocked}>
+              {isBlocked ? 'Unblock' : hasBlockedMe ? 'Blocked' : 'Block'}
             </Button>
           </Flex>
         </CardBody>
