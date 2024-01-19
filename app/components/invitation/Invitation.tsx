@@ -12,16 +12,14 @@ type InvitationsListProps = {kind_url: InvitationKind_Url} | {userId: number};
 
 function InvitationsList(props: InvitationsListProps) {
   let invitations: Invitation[] = [];
-  if ('kind_url' in props) {
-    const {kind_url} = props;
-    const {data} = useGetInvitationsQuery([kind_url]);
-    invitations = data?.invitations ?? [];
-  } else {
-    const {userId} = props;
-    const {data: _data, error} = useGetInvitationFromToQuery([userId]);
-    invitations = _data?.invitations ?? [];
-    if (error) console.log(error);
-  }
+  const kind_url = 'kind_url' in props ? props.kind_url : 'friend';
+  const targetUserId = 'userId' in props ? props.userId : -1;
+  const {data} = useGetInvitationsQuery([kind_url], {skip: !('kind_url' in props)});
+  const {data: fromToData} = useGetInvitationFromToQuery([targetUserId], {
+    skip: !('userId' in props),
+  });
+
+  invitations = data?.invitations ?? fromToData?.invitations ?? [];
   const userId = useAppSelector(userIdSelector) as number;
 
   return (

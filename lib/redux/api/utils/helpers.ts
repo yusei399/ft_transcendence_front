@@ -6,7 +6,7 @@ import {TagType} from '../api';
 import {HttpRefresh} from '@/shared/HttpEndpoints/auth';
 import {filterDefinedProperties} from '@/shared/sharedUtilities/utils.functions.';
 
-const hasFile = (obj: Object): boolean => {
+const hasFile = (obj: object): boolean => {
   for (const value of Object.values(obj)) {
     if (value instanceof File) return true;
   }

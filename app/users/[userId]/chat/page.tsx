@@ -33,7 +33,12 @@ export default function IndexPage() {
   });
   const [toSend, setToSend] = useState('');
 
+  const typedErr = error as ErrorType;
+  const isBlocked = typedErr?.status === 403 && typedErr?.data.includes('you are blocked');
+  const hasBlockedMe = typedErr?.status === 403 && typedErr?.data.includes('user blocked');
+
   useEffect(() => {
+    if (hasBlockedMe || isBlocked) return;
     if (me && me.userId === userId) {
       router.push('/');
       dispatch(
@@ -53,9 +58,19 @@ export default function IndexPage() {
         }),
       );
     }
-  }, [userId, error, me]);
+  }, [userId, error, me, userId, hasBlockedMe, isBlocked]);
 
-  if ((error as ErrorType)?.status === 403) return <Heading>This User has blocked you</Heading>;
+  if (isBlocked || hasBlockedMe)
+    return (
+      <Flex flexDir="column" alignSelf="center" gap="20px" align="center">
+        <Heading>
+          {isBlocked ? 'You have been blocked by this user' : 'You have blocked this user'}
+        </Heading>
+        <Link href={`/users/${userId}`} scroll={false}>
+          <Button>Back to user profile</Button>
+        </Link>
+      </Flex>
+    );
 
   if (!data || !me || me.userId === userId) return <Loading />;
 
@@ -85,7 +100,7 @@ export default function IndexPage() {
   return (
     <Flex flexDir="column" gap="20px" height="100%" width="80%">
       <Flex justifyContent="space-between" alignItems="center">
-        <Link href={`/user/${userId}`} scroll={false}>
+        <Link href={`/users/${userId}`} scroll={false}>
           <ArrowLeftIcon color={'blue.500'} fontSize={'2.5em'}>
             Back
           </ArrowLeftIcon>

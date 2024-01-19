@@ -62,7 +62,7 @@ export function setUpChatEvents(socket: Socket, dispatch: AppDispatch, userId: n
     dispatch(
       setNotification({
         title: 'Chat - New message',
-        description: `[${chatName}] from ${nickname}: ${messageContent}`,
+        description: `New message in ${chatName} from ${nickname}`,
         status: 'success',
       }),
     );
