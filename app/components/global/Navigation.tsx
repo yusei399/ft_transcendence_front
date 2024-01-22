@@ -1,7 +1,7 @@
 'use client';
 
 import {setLogInError} from '@/app/auth/components/logUser';
-import {isLoginSelector, set2fa, setNotification} from '@/lib/redux';
+import {isLoginSelector, set2fa} from '@/lib/redux';
 import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
 import {Nav, clearRedirectTo, selectRedirectTo} from '@/lib/redux/slices/navigationSlice';
 import {useRouter, usePathname, useSearchParams} from 'next/navigation';
