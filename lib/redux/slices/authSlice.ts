@@ -16,6 +16,11 @@ export type SetTokensPayload = {
   userId: number;
 };
 
+export type RefreshPayload = {
+  authToken: string;
+  refreshToken: string;
+};
+
 const initialState: AuthSliceState = {
   authToken: undefined,
   refreshToken: undefined,
@@ -39,6 +44,10 @@ const authSlice = createSlice({
       state.refreshToken = action.payload.refreshToken;
       state.userId = action.payload.userId;
     },
+    refresh: (state, action: PayloadAction<RefreshPayload>) => {
+      state.authToken = action.payload.authToken;
+      state.refreshToken = action.payload.refreshToken;
+    },
     logout: state => {
       state.authToken = undefined;
       state.refreshToken = undefined;
@@ -55,7 +64,7 @@ const authSlice = createSlice({
   },
 });
 
-export const {login, logout, set2fa, clear2fa} = authSlice.actions;
+export const {login, logout, refresh, set2fa, clear2fa} = authSlice.actions;
 export const authSelector = (state: RootState) => state.auth;
 export const authTokenSelector = (state: RootState) => state.auth.authToken;
 export const refreshTokenSelector = (state: RootState) => state.auth.refreshToken;

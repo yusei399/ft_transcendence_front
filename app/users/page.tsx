@@ -6,7 +6,7 @@ import {HStack, StackDivider, VStack} from '@chakra-ui/react';
 export default function IndexPage() {
   return (
     <HStack
-      justifyContent="space-between"
+      justifyContent="space-around"
       width="100%"
       align="flex-start"
       divider={<StackDivider borderColor="gray.400" />}>

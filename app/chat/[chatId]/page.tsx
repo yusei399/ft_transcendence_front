@@ -42,7 +42,6 @@ export default function IndexPage() {
   if (error) console.log(error);
 
   const hasJoined = !!participation;
-  const isAdmin = participation?.role === 'ADMIN' || participation?.role === 'OWNER';
   const isOwner = participation?.role === 'OWNER';
 
   return (

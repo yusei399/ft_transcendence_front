@@ -14,6 +14,7 @@ const gameApi = backEndApi.injectEndpoints({
     ]),
     acceptGameInCreation: createMutation(build, HttpGame.acceptInCreation.requestSender, []),
     getGameInCreation: createQuery(build, HttpGame.getInCreation.requestSender, ['GameInCreation']),
+    getGameHistory: createQuery(build, HttpGame.getMatchHistory.requestSender, ['GameMatchMaking']),
   }),
   // @ts-ignore
   overrideExisting: module.hot?.status() === 'apply',
@@ -26,4 +27,5 @@ export const {
   useUpdateGameInCreationMutation,
   useAcceptGameInCreationMutation,
   useGetGameInCreationQuery,
+  useGetGameHistoryQuery,
 } = gameApi;

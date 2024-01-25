@@ -2,6 +2,7 @@
 import Loading from '@/app/components/global/Loading';
 import InvitationsList from '@/app/components/invitation/Invitation';
 import SendInvitationButton from '@/app/components/invitation/SendInvitationButton';
+import MatchHistory from '@/app/game/components/MatchHistory';
 import {setNotification, userIdSelector} from '@/lib/redux';
 import {
   ErrorType,
@@ -110,6 +111,7 @@ export default function IndexPage() {
 
   return (
     <Flex flexDir="row" alignItems="center" justifyContent="space-between" width="90%">
+      <MatchHistory userId={userId} />
       <InvitationsList userId={userId} />
       <Card
         key={userId}

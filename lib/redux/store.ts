@@ -12,7 +12,7 @@ import {setupListeners} from '@reduxjs/toolkit/query/react';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'game', 'notification'],
+  whitelist: ['auth', 'notification'],
 };
 
 const reducers = combineReducers({

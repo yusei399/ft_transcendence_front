@@ -5,6 +5,7 @@ import {RootState} from '../../store';
 import {TagType} from '../api';
 import {HttpRefresh} from '@/shared/HttpEndpoints/auth';
 import {filterDefinedProperties} from '@/shared/sharedUtilities/utils.functions.';
+import {refresh} from '../../slices';
 
 const hasFile = (obj: object): boolean => {
   for (const value of Object.values(obj)) {
@@ -59,7 +60,7 @@ export const axiosBaseQuery =
           const res = await axios<HttpRefresh.reqTemplate, AxiosResponse<HttpRefresh.resTemplate>>(
             refreshConfig,
           );
-          api.dispatch({type: 'auth/login', payload: res.data});
+          api.dispatch(refresh(res.data));
           options.headers = {...options.headers, Authorization: `Bearer ${res.data.authToken}`};
           const resRetry = await axios<
             Http.reqTemplate,

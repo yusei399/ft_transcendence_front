@@ -37,7 +37,7 @@ export class SocketService {
     setUpInvitationEvents(socket, dispatch);
     setUpFriendEvents(socket, dispatch);
     setUpChatEvents(socket, dispatch, userId);
-    setUpGameEvents(socket, dispatch);
+    setUpGameEvents(socket, dispatch, userId);
   }
 
   public static closeSocket() {
