@@ -1,4 +1,4 @@
-import {AppDispatch, setCurrentGame, setNotification} from '@/lib/redux';
+import {AppDispatch, updateCurrentGame, setNotification} from '@/lib/redux';
 import {backEndApi} from '@/lib/redux/api';
 import {
   WsGameStateUpdatePosition,
@@ -14,24 +14,11 @@ export function setUpGameEvents(socket: Socket, dispatch: AppDispatch, userId: n
   socket.on(
     WsGameStateUpdatePosition.eventName,
     (message: WsGameStateUpdatePosition.eventMessageTemplate) => {
-      const {gameId, ball, player1: p1, player2: p2, status, rules, countdown} = message;
+      const status = message.status;
+      if (status === 'FINISHED' || status === 'CANCELED')
+        dispatch(backEndApi.util.invalidateTags(['Game', 'GameMatchMaking']));
 
-      const mySide = p1.userId === userId ? 'left' : 'right';
-      const opponentSide = p1.userId === userId ? 'right' : 'left';
-      const me = {...(p1.userId === userId ? p1 : p2), side: mySide} as const;
-      const opponent = {...(p1.userId === userId ? p2 : p1), side: opponentSide} as const;
-
-      dispatch(
-        setCurrentGame({
-          countdown,
-          gameId,
-          ball,
-          me,
-          opponent,
-          status,
-          rules,
-        }),
-      );
+      dispatch(updateCurrentGame(message));
     },
   );
 
@@ -62,7 +49,7 @@ export function setUpGameEvents(socket: Socket, dispatch: AppDispatch, userId: n
   });
 
   socket.on(WsGameMatch.eventName, (message: WsGameMatch.eventMessageTemplate) => {
-    dispatch(backEndApi.util.invalidateTags(['GameMatchMaking']));
+    dispatch(backEndApi.util.invalidateTags(['GameMatchMaking', 'Game']));
 
     dispatch(
       setNotification({
@@ -86,7 +73,7 @@ export function setUpGameEvents(socket: Socket, dispatch: AppDispatch, userId: n
     dispatch(
       setNotification({
         title: 'Game',
-        description: `Game ${message.gameId} started!`,
+        description: `New game started!`,
         status: 'info',
       }),
     );

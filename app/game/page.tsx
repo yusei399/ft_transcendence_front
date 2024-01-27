@@ -1,33 +1,42 @@
 'use client';
 
-import {
-  Flex,
-  useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  CircularProgress,
-  Button,
-  Text,
-} from '@chakra-ui/react';
+import {Flex} from '@chakra-ui/react';
 import JoinLeaveWaitList from './components/JoinLeaveGame';
 import Loading from '../components/global/Loading';
-import {useGetMatchMakingInfoQuery} from '@/lib/redux/api';
+import {useGetGameQuery, useGetMatchMakingInfoQuery} from '@/lib/redux/api';
 import GameInCreation from './components/GameInCreation';
-import GameView from './Game';
+import Game from './Game';
 import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
-import {resetCurrentGame, selectCurrentGame} from '@/lib/redux';
+import {
+  resetCurrentGame,
+  currentGameSelector,
+  setCurrentGame,
+  userIdSelector,
+  lastGameResultSelector,
+  GameData,
+} from '@/lib/redux';
+import {useEffect} from 'react';
+import GameModal from './components/GameModal';
 
 export default function IndexPage() {
-  const {data, refetch} = useGetMatchMakingInfoQuery([]);
-  const currentGame = useAppSelector(selectCurrentGame);
+  const {data, isFetching, refetch} = useGetMatchMakingInfoQuery([]);
+  const currentGame = useAppSelector(currentGameSelector);
+  const lastGameResult = useAppSelector(lastGameResultSelector);
+  const userId = useAppSelector(userIdSelector) as number;
+  const {data: getGameData} = useGetGameQuery([data?.gameId ?? -1], {
+    skip: data?.gameId === undefined || isFetching,
+  });
   const dispatch = useAppDispatch();
-  const {onClose} = useDisclosure();
 
-  if (!data) return <Loading />;
+  useEffect(() => {
+    if (!data || isFetching) return;
+    if (data.status !== 'IN_GAME' && currentGame) dispatch(resetCurrentGame());
+    else if (data.status === 'IN_GAME' && getGameData && !getGameData.endedAt && !currentGame)
+      dispatch(setCurrentGame({...getGameData, userId}));
+  }, [data, getGameData, currentGame, isFetching]);
+
+  if (!data || (data.status === 'IN_GAME' && getGameData && !getGameData?.endedAt && !currentGame))
+    return <Loading />;
 
   const {status, gameId, gameInCreationId} = data;
 
@@ -41,48 +50,8 @@ export default function IndexPage() {
     return <Loading />;
   }
 
-  if (currentGame && currentGame.status !== 'IN_PROGRESS') {
-    return (
-      <Modal isOpen={true} onClose={onClose} isCentered>
-        <ModalOverlay />
-        <ModalContent justifyContent="center" alignItems="center">
-          <ModalHeader textAlign="center" justifySelf="center">
-            {currentGame.status === 'PAUSED'
-              ? 'Waiting for opponent'
-              : currentGame.status === 'CANCELED'
-                ? 'Game canceled'
-                : `Game over`}
-          </ModalHeader>
-          <ModalBody>
-            {currentGame.status === 'PAUSED' ? (
-              <CircularProgress size="120px" isIndeterminate color="green.300" />
-            ) : currentGame.status === 'CANCELED' ? (
-              'Game canceled'
-            ) : (
-              <>
-                <Text>{`(You) ${currentGame.me.score} - ${currentGame.opponent.score}`}</Text>
-                <Text>
-                  {currentGame.me.score > currentGame.opponent.score ? 'You Win' : 'You Lose'}
-                </Text>
-              </>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            {currentGame.status === 'PAUSED' ? (
-              <JoinLeaveWaitList hasJoined={true} />
-            ) : (
-              <Button
-                onClick={() => {
-                  dispatch(resetCurrentGame());
-                  refetch();
-                }}>
-                Close
-              </Button>
-            )}
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    );
+  if ((currentGame && currentGame?.status !== 'IN_PROGRESS') || lastGameResult) {
+    return <GameModal gameData={currentGame ?? (lastGameResult as GameData)} />;
   }
 
   return (
@@ -99,7 +68,7 @@ export default function IndexPage() {
             <GameInCreation gameInCreationId={gameInCreationId as number} />
           )}
           {status === 'IN_GAME' && currentGame && (
-            <GameView gameId={gameId as number} currentGame={currentGame} />
+            <Game gameId={gameId as number} currentGame={currentGame} />
           )}
         </Flex>
       )}

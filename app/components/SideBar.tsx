@@ -1,5 +1,3 @@
-'use client';
-
 import {Button, Stack, StackDivider} from '@chakra-ui/react';
 import {ChatIcon, ArrowForwardIcon, TriangleUpIcon, AtSignIcon} from '@chakra-ui/icons';
 import Link from 'next/link';

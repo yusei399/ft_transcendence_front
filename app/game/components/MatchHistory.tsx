@@ -16,9 +16,9 @@ function MatchHistory({userId}: MatchHistoryProps) {
     <div>
       {data.plays.map(play => {
         const currentPlayer =
-          play.playerOne.profile.userId === currentUserId ? play.playerOne : play.playerTwo;
+          play.player1.profile.userId === currentUserId ? play.player1 : play.player2;
         const opponent =
-          play.playerOne.profile.userId === currentUserId ? play.playerTwo : play.playerOne;
+          play.player1.profile.userId === currentUserId ? play.player2 : play.player1;
         const isWinner = play.winnerId === currentPlayer.profile.userId;
         const {userId, nickname, avatarUrl} = currentPlayer.profile;
         const {

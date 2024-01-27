@@ -43,9 +43,9 @@ function GameInCreation({gameInCreationId}: GameInCreationProps) {
 
   if (!data) return null;
 
-  const {status, rules, playerOne, playerTwo} = data.gameInCreation;
-  const me = playerOne.userId === currentUserId ? playerOne : playerTwo;
-  const opponent = playerOne.userId === currentUserId ? playerTwo : playerOne;
+  const {status, rules, player1, player2} = data.gameInCreation;
+  const me = player1.userId === currentUserId ? player1 : player2;
+  const opponent = player1.userId === currentUserId ? player2 : player1;
   if (status !== 'IN_CREATION') return null;
 
   async function updateGame(e: React.FormEvent<HTMLFormElement>) {

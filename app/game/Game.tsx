@@ -1,24 +1,35 @@
 'use client';
 
 import {useEffect, useRef, useState} from 'react';
-import {VStack, Heading, Text, Flex} from '@chakra-ui/react';
-import {CurrentGameData} from '@/lib/redux';
+import {Flex, VStack} from '@chakra-ui/react';
+import {GameData} from '@/lib/redux';
 import {SocketService} from '@/services/websocket/socketService';
 import {
   ballSizeToNumber,
   paddleHeightToNumber,
   paddleWidthToNumber,
 } from '@/shared/HttpEndpoints/interfaces';
+import InGamePlayerProfile from './components/InGamePlayerProfile';
 
-type PongCanvasProps = {
+type GameProps = {
   gameId: number;
-  currentGame: CurrentGameData;
+  currentGame: GameData;
 };
 
-export default function PongCanvas({gameId, currentGame}: PongCanvasProps) {
+type PaddleMove = {
+  direction: 'up' | 'down';
+  lastUpdate: number;
+};
+
+type CanvasDimensions = {
+  width: number;
+  height: number;
+};
+
+export default function Game({gameId, currentGame}: GameProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [paddleMove, setPaddleMove] = useState<'up' | 'down' | undefined>(undefined);
-  const [dimensions, setdimensions] = useState({width: 0, height: 0});
+  const [paddleMove, setPaddleMove] = useState<PaddleMove | undefined>(undefined);
+  const [dimensions, setdimensions] = useState<CanvasDimensions>({height: 0, width: 0});
 
   const resize = () => {
     const container = canvasRef.current?.parentElement;
@@ -49,7 +60,8 @@ export default function PongCanvas({gameId, currentGame}: PongCanvasProps) {
 
     width -= canvasBorderX;
     height -= canvasBorderY;
-
+    if (width <= 0) width = 1;
+    if (height <= 0) height = 1;
     if (dimensions.width !== width || dimensions.height !== height) {
       setdimensions({width, height});
     }
@@ -59,7 +71,7 @@ export default function PongCanvas({gameId, currentGame}: PongCanvasProps) {
     if (!canvasRef.current) return;
 
     const canvas = canvasRef.current;
-    if (dimensions.width === 0 && dimensions.height === 0) resize();
+    if (dimensions.height === 0 && dimensions.width === 0) resize();
     const context = canvas.getContext('2d');
     if (context) {
       drawEverything({
@@ -72,7 +84,8 @@ export default function PongCanvas({gameId, currentGame}: PongCanvasProps) {
       window.addEventListener('keyup', handleKey);
       window.addEventListener('resize', resize);
     }
-    if (paddleMove) SocketService.emit('sendPlayerMove', {gameId, direction: paddleMove});
+    if (paddleMove && Date.now() - paddleMove.lastUpdate > 1000 / 30)
+      SocketService.emit('sendPlayerMove', {gameId, direction: paddleMove.direction});
     return () => {
       window.removeEventListener('keydown', handleKey);
       window.removeEventListener('keyup', handleKey);
@@ -82,16 +95,31 @@ export default function PongCanvas({gameId, currentGame}: PongCanvasProps) {
 
   const handleKey = (event: KeyboardEvent) => {
     if (event.type === 'keyup') setPaddleMove(undefined);
-    else if (event.key === 'ArrowUp' || event.key === 'w') setPaddleMove('up');
-    else if (event.key === 'ArrowDown' || event.key === 's') setPaddleMove('down');
+    else if (event.key === 'ArrowUp' || event.key === 'w')
+      setPaddleMove({direction: 'up', lastUpdate: Date.now()});
+    else if (event.key === 'ArrowDown' || event.key === 's')
+      setPaddleMove({direction: 'down', lastUpdate: Date.now()});
   };
 
+  const leftPlayer = currentGame.me.side === 'left' ? currentGame.me : currentGame.opponent;
+  const rightPlayer = currentGame.me.side === 'right' ? currentGame.me : currentGame.opponent;
   return (
-    <VStack padding={6} height="100%" width="100%">
-      <Heading as="h1" size="lg">
-        Game Page
-      </Heading>
-      <Flex height="80%" width="100%" justifyContent="center">
+    <VStack padding={6} height="100%" width="100%" alignContent="center">
+      <Flex height="120px" width={`${dimensions.width}px`} justifyContent="space-between">
+        <InGamePlayerProfile
+          side="left"
+          profile={leftPlayer.profile}
+          score={leftPlayer.score}
+          isMe={currentGame.me.side === 'left'}
+        />
+        <InGamePlayerProfile
+          side="right"
+          profile={rightPlayer.profile}
+          score={rightPlayer.score}
+          isMe={currentGame.me.side === 'right'}
+        />
+      </Flex>
+      <Flex height="calc(100% - 120px)" width="100%" justifyContent="center" align="center">
         <canvas
           ref={canvasRef}
           style={{
@@ -104,8 +132,6 @@ export default function PongCanvas({gameId, currentGame}: PongCanvasProps) {
           }}
         />
       </Flex>
-      <Text>Your score: {currentGame.me.score}</Text>
-      <Text>Opponent's score: {currentGame.opponent.score}</Text>
     </VStack>
   );
 }
@@ -114,7 +140,7 @@ type DrawEverythingProps = {
   context: CanvasRenderingContext2D;
   w: number;
   h: number;
-  state: CurrentGameData;
+  state: GameData;
 };
 
 const drawEverything = ({context, w, h, state}: DrawEverythingProps) => {
