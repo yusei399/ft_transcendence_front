@@ -4,8 +4,7 @@ import {Flex} from '@chakra-ui/react';
 import Sidebar from '../SideBar';
 import Navigation from './Navigation';
 import WebSocket from './WebSocket';
-import {useAppSelector} from '@/lib/redux/hook';
-import {isInGameSelector, isLoginSelector} from '@/lib/redux';
+import {useAppSelector, isInGameSelector, isLoginSelector} from '@/lib/redux';
 import Toast from './Toast';
 
 function MainLayout(props: React.PropsWithChildren) {
@@ -38,8 +37,8 @@ function MainLayout(props: React.PropsWithChildren) {
         <Navigation>
           {props.children}
           <Toast />
-          <WebSocket />
         </Navigation>
+        <WebSocket />
       </Flex>
     </Flex>
   );

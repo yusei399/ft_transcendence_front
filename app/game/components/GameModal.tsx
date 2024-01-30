@@ -1,4 +1,3 @@
-import {GameData, cleanLastGameResult} from '@/lib/redux';
 import {
   Modal,
   ModalHeader,
@@ -6,36 +5,43 @@ import {
   ModalOverlay,
   ModalBody,
   CircularProgress,
-  Text,
   ModalFooter,
   Button,
   useDisclosure,
+  Flex,
+  Heading,
 } from '@chakra-ui/react';
 import React from 'react';
 import JoinLeaveWaitList from './JoinLeaveGame';
-import {useAppDispatch} from '@/lib/redux/hook';
+import {useAppDispatch, useAppSelector, resetCurrentGame, userIdSelector} from '@/lib/redux';
+import {useGetGameQuery} from '@/lib/redux/api';
+import InGamePlayerProfile from './InGamePlayerProfile';
 
-type GameModalProps = {
-  gameData: GameData;
-};
-
-function GameModal({gameData}: GameModalProps) {
-  const {status, me, opponent} = gameData;
+function GameModal({gameId}: {gameId: number}) {
+  const userId = useAppSelector(userIdSelector);
+  const {currentData} = useGetGameQuery([gameId ?? -1], {skip: !gameId});
   const dispatch = useAppDispatch();
   const {onClose} = useDisclosure();
 
-  if (status === 'WAIT_START') return null;
+  if (!currentData || !gameId || !userId) return null;
+
+  const {player1, player2, status} = currentData;
+  const me = player1.profile.userId === userId ? player1 : player2;
+  const opponent = player1.profile.userId === userId ? player2 : player1;
+  const mySide = player1.profile.userId === userId ? 'left' : 'right';
 
   return (
     <Modal isOpen={true} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent justifyContent="center" alignItems="center">
         <ModalHeader textAlign="center" justifySelf="center">
-          {status === 'PAUSED'
-            ? 'Waiting for opponent'
-            : status === 'CANCELED'
-              ? 'Game canceled'
-              : `Game over`}
+          <Heading>
+            {status === 'PAUSED'
+              ? 'Waiting for opponent'
+              : status === 'CANCELED'
+                ? 'Game canceled'
+                : 'Game over'}
+          </Heading>
         </ModalHeader>
         <ModalBody>
           {status === 'PAUSED' ? (
@@ -43,17 +49,32 @@ function GameModal({gameData}: GameModalProps) {
           ) : status === 'CANCELED' ? (
             'Game canceled'
           ) : (
-            <>
-              <Text>{`(You) ${me.score} - ${opponent.score}`}</Text>
-              <Text>{me.score > opponent.score ? 'You Win' : 'You Lose'}</Text>
-            </>
+            <Flex flexDir="column" width="100%" textAlign="center" gap="12px">
+              <Flex width="100%" justify="space-around" gap="24px">
+                <InGamePlayerProfile
+                  profile={me.profile}
+                  score={me.score}
+                  side={mySide}
+                  isMe={true}
+                  withChevron={false}
+                />
+                <InGamePlayerProfile
+                  profile={opponent.profile}
+                  score={opponent.score}
+                  side={mySide === 'left' ? 'right' : 'left'}
+                  isMe={false}
+                  withChevron={false}
+                />
+              </Flex>
+              <Heading size="md">{me.score > opponent.score ? 'You Win' : 'You Lose'}</Heading>
+            </Flex>
           )}
         </ModalBody>
         <ModalFooter>
           {status === 'PAUSED' ? (
             <JoinLeaveWaitList hasJoined={true} />
           ) : (
-            <Button onClick={() => dispatch(cleanLastGameResult())}>Close</Button>
+            <Button onClick={() => dispatch(resetCurrentGame())}>Close</Button>
           )}
         </ModalFooter>
       </ModalContent>

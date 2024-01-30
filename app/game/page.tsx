@@ -6,37 +6,35 @@ import Loading from '../components/global/Loading';
 import {useGetGameQuery, useGetMatchMakingInfoQuery} from '@/lib/redux/api';
 import GameInCreation from './components/GameInCreation';
 import Game from './Game';
-import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
 import {
-  resetCurrentGame,
-  currentGameSelector,
+  useAppDispatch,
+  useAppSelector,
   setCurrentGame,
   userIdSelector,
-  lastGameResultSelector,
-  GameData,
+  currentGameStatusSelector,
+  currentGameIdSelector,
 } from '@/lib/redux';
 import {useEffect} from 'react';
 import GameModal from './components/GameModal';
 
 export default function IndexPage() {
-  const {data, isFetching, refetch} = useGetMatchMakingInfoQuery([]);
-  const currentGame = useAppSelector(currentGameSelector);
-  const lastGameResult = useAppSelector(lastGameResultSelector);
+  const {data, isFetching} = useGetMatchMakingInfoQuery([]);
+  const currentGameStatus = useAppSelector(currentGameStatusSelector);
+  const currentGameId = useAppSelector(currentGameIdSelector);
   const userId = useAppSelector(userIdSelector) as number;
   const {data: getGameData} = useGetGameQuery([data?.gameId ?? -1], {
     skip: data?.gameId === undefined || isFetching,
   });
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    if (!data || isFetching) return;
-    if (data.status !== 'IN_GAME' && currentGame) dispatch(resetCurrentGame());
-    else if (data.status === 'IN_GAME' && getGameData && !getGameData.endedAt && !currentGame)
-      dispatch(setCurrentGame({...getGameData, userId}));
-  }, [data, getGameData, currentGame, isFetching]);
+  const needToSetCurrentGame =
+    data?.gameId !== undefined && currentGameId !== data?.gameId && getGameData;
 
-  if (!data || (data.status === 'IN_GAME' && getGameData && !getGameData?.endedAt && !currentGame))
-    return <Loading />;
+  useEffect(() => {
+    if (needToSetCurrentGame) dispatch(setCurrentGame({...getGameData, userId}));
+  }, [needToSetCurrentGame]);
+
+  if (!data || needToSetCurrentGame) return <Loading />;
 
   const {status, gameId, gameInCreationId} = data;
 
@@ -50,9 +48,12 @@ export default function IndexPage() {
     return <Loading />;
   }
 
-  if ((currentGame && currentGame?.status !== 'IN_PROGRESS') || lastGameResult) {
-    return <GameModal gameData={currentGame ?? (lastGameResult as GameData)} />;
-  }
+  if (
+    currentGameStatus &&
+    currentGameId &&
+    ['PAUSED', 'CANCELED', 'FINISHED'].includes(currentGameStatus as string)
+  )
+    return <GameModal gameId={currentGameId} />;
 
   return (
     <Flex
@@ -67,9 +68,7 @@ export default function IndexPage() {
           {status === 'IN_GAME_CREATION' && (
             <GameInCreation gameInCreationId={gameInCreationId as number} />
           )}
-          {status === 'IN_GAME' && currentGame && (
-            <Game gameId={gameId as number} currentGame={currentGame} />
-          )}
+          {status === 'IN_GAME' && currentGameStatus && <Game />}
         </Flex>
       )}
       <JoinLeaveWaitList hasJoined={status !== 'UNREGISTERED'} />

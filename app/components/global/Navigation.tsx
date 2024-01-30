@@ -1,9 +1,16 @@
 'use client';
 
 import {setLogInError} from '@/app/auth/components/logUser';
-import {isInGameSelector, isLoginSelector, set2fa} from '@/lib/redux';
-import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
-import {Nav, clearRedirectTo, selectRedirectTo} from '@/lib/redux/slices/navigationSlice';
+import {
+  useAppDispatch,
+  useAppSelector,
+  Nav,
+  clearRedirectTo,
+  selectRedirectTo,
+  isInGameSelector,
+  isLoginSelector,
+  set2fa,
+} from '@/lib/redux';
 import {useRouter, usePathname, useSearchParams} from 'next/navigation';
 import Loading from './Loading';
 import {useEffect, useState} from 'react';

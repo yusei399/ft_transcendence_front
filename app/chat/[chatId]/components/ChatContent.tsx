@@ -1,8 +1,7 @@
 'use client';
 import Loading from '@/app/components/global/Loading';
-import {setNotification} from '@/lib/redux';
 import {useGetChatInfoQuery} from '@/lib/redux/api';
-import {useAppDispatch} from '@/lib/redux/hook';
+import {useAppDispatch, setNotification} from '@/lib/redux';
 import {SocketService} from '@/services/websocket/socketService';
 import {Button, FormControl, Input, ListItem, List, Text, HStack, Avatar} from '@chakra-ui/react';
 import React, {useState} from 'react';

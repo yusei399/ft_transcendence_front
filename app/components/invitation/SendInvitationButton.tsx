@@ -1,9 +1,8 @@
-import {setNotification} from '@/lib/redux';
 import {useGetInvitationsQuery, useSendInvitationMutation} from '@/lib/redux/api';
+import {useAppDispatch, setNotification} from '@/lib/redux';
 import {HttpSendInvitation} from '@/shared/HttpEndpoints/invitation';
 import {InvitationKind_Url} from '@/shared/HttpEndpoints/types';
 import {Button} from '@chakra-ui/react';
-import {useDispatch} from 'react-redux';
 
 type SendInvitationButtonProps = {
   userId: number;
@@ -18,7 +17,7 @@ function SendInvitationButton({
   targetGameId,
   invitationKind,
 }: SendInvitationButtonProps) {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const {data} = useGetInvitationsQuery([invitationKind]);
   const [sendInvitation] = useSendInvitationMutation();
 

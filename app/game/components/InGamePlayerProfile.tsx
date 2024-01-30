@@ -8,9 +8,10 @@ type InGamePlayerProfileProps = {
   score: number;
   side: 'left' | 'right';
   isMe: boolean;
+  withChevron: boolean;
 };
 
-function InGamePlayerProfile({profile, score, side, isMe}: InGamePlayerProfileProps) {
+function InGamePlayerProfile({profile, score, side, isMe, withChevron}: InGamePlayerProfileProps) {
   const {nickname, avatarUrl} = profile;
   return (
     <Card padding="4px" alignItems={'center'} rowGap="3px" bgColor={isMe ? 'blue.100' : 'red.100'}>
@@ -22,7 +23,7 @@ function InGamePlayerProfile({profile, score, side, isMe}: InGamePlayerProfilePr
           </Heading>
         </Flex>
         <Flex flexDir={side === 'left' ? 'row' : 'row-reverse'} justifyContent="space-around">
-          <ChevronDownIcon color={isMe ? 'blue.500' : 'red.500'} boxSize="40px" />
+          {withChevron && <ChevronDownIcon color={isMe ? 'blue.500' : 'red.500'} boxSize="40px" />}
           <Text
             fontSize="2xl"
             color={isMe ? 'blue.500' : 'red.500'}

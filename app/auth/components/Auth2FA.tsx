@@ -6,8 +6,7 @@ import {Http2FA, HttpResend2FA} from '@/shared/HttpEndpoints/auth';
 import {Button, FormControl, FormLabel, HStack, Input} from '@chakra-ui/react';
 import {useState} from 'react';
 import {logUserIn, setLogInError} from './logUser';
-import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
-import {authSelector, clear2fa} from '@/lib/redux';
+import {authSelector, clear2fa, useAppDispatch, useAppSelector} from '@/lib/redux';
 
 function Auth2FA() {
   const {auth2FACode, userId, isSignUp} = useAppSelector(authSelector);

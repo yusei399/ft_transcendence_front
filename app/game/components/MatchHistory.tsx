@@ -1,8 +1,7 @@
 'use client';
 
-import {userIdSelector} from '@/lib/redux';
 import {useGetGameHistoryQuery} from '@/lib/redux/api';
-import {useAppSelector} from '@/lib/redux/hook';
+import {useAppSelector, userIdSelector} from '@/lib/redux';
 
 type MatchHistoryProps = {
   userId?: number;

@@ -1,5 +1,6 @@
 import {AppDispatch, updateCurrentGame, setNotification} from '@/lib/redux';
-import {backEndApi} from '@/lib/redux/api';
+import {TagType, backEndApi} from '@/lib/redux/api';
+import {GameStatus} from '@/shared/HttpEndpoints/interfaces';
 import {
   WsGameStateUpdatePosition,
   WsGameInCreationChange,
@@ -8,17 +9,24 @@ import {
   WsGameMatch,
   WsGameStart,
 } from '@/shared/WsEvents/game/';
-import {Socket} from 'socket.io-client';
+import {type Socket} from 'socket.io-client';
+
+let lastStatus: Omit<GameStatus, 'IN_CREATION'> | undefined = undefined;
 
 export function setUpGameEvents(socket: Socket, dispatch: AppDispatch, userId: number): void {
   socket.on(
     WsGameStateUpdatePosition.eventName,
     (message: WsGameStateUpdatePosition.eventMessageTemplate) => {
       const status = message.status;
-      if (status === 'FINISHED' || status === 'CANCELED')
-        dispatch(backEndApi.util.invalidateTags(['Game', 'GameMatchMaking']));
+      if (status !== lastStatus) {
+        const tags: TagType[] = ['Game'];
+        if (!lastStatus || status === 'CANCELED' || status === 'FINISHED')
+          tags.push('GameMatchMaking');
+        dispatch(backEndApi.util.invalidateTags(tags));
+      }
 
       dispatch(updateCurrentGame(message));
+      lastStatus = status;
     },
   );
 

@@ -1,11 +1,10 @@
 'use client';
-import {userIdSelector} from '@/lib/redux';
 import {
   useAcceptGameInCreationMutation,
   useGetGameInCreationQuery,
   useUpdateGameInCreationMutation,
 } from '@/lib/redux/api';
-import {useAppSelector} from '@/lib/redux/hook';
+import {useAppSelector, userIdSelector} from '@/lib/redux';
 import {HttpGameUpdateInCreation} from '@/shared/HttpEndpoints/game';
 import {BallSize, BallSpeed, PaddleSize, PaddleSpeed} from '@/shared/HttpEndpoints/interfaces';
 import {

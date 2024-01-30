@@ -1,10 +1,8 @@
 'use client';
 import React, {useState} from 'react';
-import {useJoinChatMutation} from '@/lib/redux/api';
+import {useJoinChatMutation, type ErrorType} from '@/lib/redux/api';
 import {Button, Flex, FormControl, FormLabel, Input} from '@chakra-ui/react';
-import {useAppDispatch} from '@/lib/redux/hook';
-import {setNotification} from '@/lib/redux';
-import {type ErrorType} from '@/lib/redux/api/';
+import {useAppDispatch, setNotification} from '@/lib/redux';
 
 type JoinChatProps = {
   chatId: number;

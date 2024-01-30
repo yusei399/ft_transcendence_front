@@ -3,8 +3,7 @@
 import {useParams, useRouter} from 'next/navigation';
 import ChatContent from './components/ChatContent';
 import {useEffect} from 'react';
-import {useDispatch} from 'react-redux';
-import {setNotification} from '@/lib/redux';
+import {useAppDispatch, setNotification} from '@/lib/redux';
 import {useGetAllChatsQuery} from '@/lib/redux/api';
 import Loading from '@/app/components/global/Loading';
 import JoinChat from './components/JoinChat';
@@ -19,7 +18,7 @@ export default function IndexPage() {
   const params = useParams<{chatId: string}>();
   const {data, error, isLoading} = useGetAllChatsQuery([]);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const chatId = Number(params.chatId);
   const chat = data?.chats.find(chat => chat.chatId === chatId);

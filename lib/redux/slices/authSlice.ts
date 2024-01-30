@@ -51,6 +51,9 @@ const authSlice = createSlice({
     logout: state => {
       state.authToken = undefined;
       state.refreshToken = undefined;
+      state.userId = undefined;
+      state.auth2FACode = undefined;
+      state.isSignUp = undefined;
     },
     set2fa: (state, action: PayloadAction<set2FAPayload>) => {
       state.auth2FACode = action.payload.auth2FACode;

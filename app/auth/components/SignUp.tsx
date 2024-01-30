@@ -1,6 +1,6 @@
 'use client';
 
-import {useAppDispatch} from '@/lib/redux/hook';
+import {useAppDispatch} from '@/lib/redux';
 import React, {useState} from 'react';
 import {Button, FormControl, FormLabel, Input} from '@chakra-ui/react';
 import {ErrorType, useSignUpMutation} from '@/lib/redux/api';

@@ -1,9 +1,10 @@
 'use client';
+
 import Loading from '@/app/components/global/Loading';
 import InvitationsList from '@/app/components/invitation/Invitation';
 import SendInvitationButton from '@/app/components/invitation/SendInvitationButton';
 import MatchHistory from '@/app/game/components/MatchHistory';
-import {setNotification, userIdSelector} from '@/lib/redux';
+import {useAppDispatch, useAppSelector, setNotification, userIdSelector} from '@/lib/redux';
 import {
   ErrorType,
   useBlockUserMutation,
@@ -11,18 +12,16 @@ import {
   useRemoveFriendMutation,
   useUnblockUserMutation,
 } from '@/lib/redux/api';
-import {useAppSelector} from '@/lib/redux/hook';
 import {RepeatIcon, StarIcon} from '@chakra-ui/icons';
 import {Avatar, Button, Card, CardBody, CardHeader, Flex, Heading, Text} from '@chakra-ui/react';
 import Link from 'next/link';
 import {useParams, useRouter} from 'next/navigation';
 import {useEffect} from 'react';
-import {useDispatch} from 'react-redux';
 
 export default function IndexPage() {
   const params = useParams<{userId: string}>();
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const currentUserId = useAppSelector(userIdSelector) as number;
   const router = useRouter();
   const userId = Number(params.userId);

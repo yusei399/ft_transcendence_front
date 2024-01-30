@@ -38,7 +38,6 @@ export type SetUpCurrentGamePayload = {
 
 export interface GameSliceState {
   currentGame?: GameData;
-  lastGameResult?: GameData;
 }
 
 const initialState: GameSliceState = {
@@ -50,7 +49,6 @@ const gameSlice = createSlice({
   initialState,
   reducers: {
     setCurrentGame(state, action: PayloadAction<SetUpCurrentGamePayload>) {
-      state.lastGameResult = undefined;
       const {player1, player2, userId, rules, gameId, startedAt, endedAt, winnerId} =
         action.payload;
       const leftPlayer = {...player1, side: 'left'} as const;
@@ -74,34 +72,34 @@ const gameSlice = createSlice({
       state,
       action: PayloadAction<WsGameStateUpdatePosition.eventMessageTemplate>,
     ) {
-      const {currentGame, lastGameResult} = state;
-      const game = currentGame ?? lastGameResult;
-      if (!game) return;
+      const {currentGame} = state;
+      if (!currentGame) return;
       const {player1, player2, ball, status, countdown} = action.payload;
-      const {me, opponent} = game;
-      game.ball.x = ball.x;
-      game.ball.y = ball.y;
-      game.status = status;
-      game.countdown = countdown;
+      const {me, opponent} = currentGame;
+
+      currentGame.ball.x = ball.x;
+      currentGame.ball.y = ball.y;
+      currentGame.status = status;
+      currentGame.countdown = countdown;
       me.paddlePos = (me.side === 'left' ? player1 : player2).paddlePos;
       me.score = (me.side === 'left' ? player1 : player2).score;
       opponent.paddlePos = (opponent.side === 'left' ? player1 : player2).paddlePos;
       opponent.score = (opponent.side === 'left' ? player1 : player2).score;
     },
     resetCurrentGame(state) {
-      state.lastGameResult = state.currentGame;
       state.currentGame = undefined;
-    },
-    cleanLastGameResult(state) {
-      state.lastGameResult = undefined;
     },
   },
 });
 
-export const {updateCurrentGame, setCurrentGame, resetCurrentGame, cleanLastGameResult} =
-  gameSlice.actions;
+export const {updateCurrentGame, setCurrentGame, resetCurrentGame} = gameSlice.actions;
 export const currentGameSelector = (state: RootState) => state.game.currentGame;
-export const lastGameResultSelector = (state: RootState) => state.game.lastGameResult;
-export const isInGameSelector = (state: RootState) =>
-  state.game?.currentGame?.status === 'IN_PROGRESS' || state.game?.currentGame?.status === 'PAUSED';
+export const isInGameSelector = (state: RootState) => {
+  const {status} = state.game?.currentGame ?? {};
+  return status && (status === 'IN_PROGRESS' || status === 'PAUSED');
+};
+
+export const currentGameIdSelector = (state: RootState) => state.game?.currentGame?.gameId;
+export const currentGameStatusSelector = (state: RootState) => state.game?.currentGame?.status;
+
 export default gameSlice.reducer;

@@ -1,13 +1,13 @@
+'use client';
+
 import {Button, Stack, StackDivider} from '@chakra-ui/react';
 import {ChatIcon, ArrowForwardIcon, TriangleUpIcon, AtSignIcon} from '@chakra-ui/icons';
 import Link from 'next/link';
-import {useAppSelector} from '@/lib/redux/hook';
-import {isLoginSelector, logout} from '@/lib/redux';
-import {useDispatch} from 'react-redux';
+import {useAppDispatch} from '@/lib/redux';
+import {resetSlicesAndLogout} from '../auth/components/logUser';
 
 export default function Sidebar() {
-  const dispatch = useDispatch();
-  const isLogin = useAppSelector(isLoginSelector);
+  const dispatch = useAppDispatch();
 
   return (
     <Stack
@@ -19,17 +19,10 @@ export default function Sidebar() {
       justifyContent="space-between"
       fontSize={{base: '1.2em', lg: '1.4em'}}
       wrap="wrap">
-      {isLogin ? (
-        <Button onClick={() => dispatch(logout())}>
-          <ArrowForwardIcon color="white" />
-          Sign Out
-        </Button>
-      ) : (
-        <Link href="/auth" scroll={false}>
-          <ArrowForwardIcon color="white" />
-          Sign In / Sign Up
-        </Link>
-      )}
+      <Button onClick={() => resetSlicesAndLogout(dispatch)}>
+        <ArrowForwardIcon color="white" />
+        Sign Out
+      </Button>
       <Link href="/" scroll={false}>
         <TriangleUpIcon color="white" />
         Home

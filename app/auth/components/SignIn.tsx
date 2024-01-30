@@ -1,12 +1,11 @@
 'use client';
 
 import React, {useState} from 'react';
-import {useAppDispatch} from '@/lib/redux/hook';
 import {ErrorType, useSignInMutation} from '@/lib/redux/api/';
 import {logUserIn, setLogInError} from './logUser';
 import Loading from '../../components/global/Loading';
 import {Button, FormControl, FormLabel, Input} from '@chakra-ui/react';
-import {set2fa} from '@/lib/redux';
+import {useAppDispatch, set2fa} from '@/lib/redux';
 import {HttpSignIn} from '@/shared/HttpEndpoints/auth';
 
 function SignIn() {
