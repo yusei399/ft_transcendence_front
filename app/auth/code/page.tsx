@@ -2,7 +2,7 @@
 
 import Loading from '@/app/components/global/Loading';
 import {useVerify42Mutation} from '@/lib/redux/api';
-import {useAppDispatch} from '@/lib/redux/hook';
+import {useAppDispatch} from '@/lib/redux';
 import {useRouter, useSearchParams} from 'next/navigation';
 import {useEffect} from 'react';
 import {logUserIn} from '../components/logUser';

@@ -1,51 +1,38 @@
 'use client';
 
-import {useEffect, useRef, useState} from 'react';
-import {Game} from './components/game';
-import {Button, VStack, Heading} from '@chakra-ui/react';
+import {Flex, VStack} from '@chakra-ui/react';
+import {useAppSelector, currentGameSelector} from '@/lib/redux';
+import InGamePlayerProfile from './components/InGamePlayerProfile';
+import GameCanvas from './components/GameCanvas';
 
-export default function GameView() {
-  const screenWidth = window.innerWidth / 2;
-  const screenHeight = window.innerHeight / 2;
-  const [ballPosition, setBallPosition] = useState({
-    x: screenWidth / 2,
-    y: screenHeight / 2,
-    speedX: 2,
-    speedY: 2,
-  });
-  const [player1Y, setPlayer1Y] = useState(screenHeight / 2 - 40);
-  const [player2Y, setPlayer2Y] = useState(screenHeight / 2 - 40);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [game, setGame] = useState<Game | null>(null);
+export default function Game() {
+  const currentGame = useAppSelector(currentGameSelector);
 
-  useEffect(() => {
-    if (canvasRef.current) {
-      const canvas = canvasRef.current;
-      const newGame = new Game(canvas);
-      setGame(newGame);
-    }
-  }, []);
+  if (!currentGame) return null;
 
-  const handleStart = () => {
-    game?.startGame();
-  };
-
+  const leftPlayer = currentGame.me.side === 'left' ? currentGame.me : currentGame.opponent;
+  const rightPlayer = currentGame.me.side === 'right' ? currentGame.me : currentGame.opponent;
   return (
-    <VStack padding={6} height="100%">
-      <Heading as="h1" size="lg">
-        Game Page
-      </Heading>
-      <canvas
-        ref={canvasRef}
-        style={{
-          border: '1px solid gray',
-          padding: '10px',
-          margin: '10px',
-          width: '80%',
-          height: '80%',
-        }}
-      />
-      <Button onClick={handleStart}>Start Game</Button>
+    <VStack padding={6} height="100%" width="100%" alignContent="center">
+      <Flex height="120px" width="80%" justifyContent="space-around">
+        <InGamePlayerProfile
+          side="left"
+          profile={leftPlayer.profile}
+          score={leftPlayer.score}
+          isMe={currentGame.me.side === 'left'}
+          withChevron={true}
+        />
+        <InGamePlayerProfile
+          side="right"
+          profile={rightPlayer.profile}
+          score={rightPlayer.score}
+          isMe={currentGame.me.side === 'right'}
+          withChevron={true}
+        />
+      </Flex>
+      <Flex height="calc(100% - 120px)" width="100%" justifyContent="center" align="center">
+        <GameCanvas gameData={currentGame}></GameCanvas>
+      </Flex>
     </VStack>
   );
 }

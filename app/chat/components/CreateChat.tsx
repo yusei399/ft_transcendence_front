@@ -5,8 +5,7 @@ import {FormControl, FormLabel, Input, Button, Flex, Switch} from '@chakra-ui/re
 import {ErrorType, useCreateChatMutation} from '@/lib/redux/api';
 import {HttpCreateChat} from '@/shared/HttpEndpoints/chat';
 import {useRouter} from 'next/navigation';
-import {useAppDispatch} from '@/lib/redux/hook';
-import {setNotification} from '@/lib/redux';
+import {useAppDispatch, setNotification} from '@/lib/redux';
 
 const CreateChat = () => {
   const router = useRouter();

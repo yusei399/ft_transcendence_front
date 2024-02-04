@@ -1,9 +1,8 @@
 'use client';
 import Loading from '@/app/components/global/Loading';
 import SendInvitationButton from '@/app/components/invitation/SendInvitationButton';
-import {setNotification, userIdSelector} from '@/lib/redux';
 import {useAllUsersQuery, useGetFriendQuery, useRemoveFriendMutation} from '@/lib/redux/api';
-import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
+import {setNotification, userIdSelector, useAppDispatch, useAppSelector} from '@/lib/redux';
 import {UserPublicProfile} from '@/shared/HttpEndpoints/interfaces';
 import {RepeatIcon, StarIcon} from '@chakra-ui/icons';
 import {Avatar, Button, Card, CardBody, CardHeader, Flex, HStack, Heading} from '@chakra-ui/react';

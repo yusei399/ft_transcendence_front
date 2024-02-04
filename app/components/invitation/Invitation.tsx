@@ -3,8 +3,7 @@
 import {useGetInvitationFromToQuery, useGetInvitationsQuery} from '@/lib/redux/api';
 import {InvitationKind_Url} from '@/shared/HttpEndpoints/types';
 import {Avatar, Card, CardBody, CardHeader, Flex, HStack, Heading} from '@chakra-ui/react';
-import {useAppSelector} from '@/lib/redux/hook';
-import {userIdSelector} from '@/lib/redux';
+import {useAppSelector, userIdSelector} from '@/lib/redux';
 import UpdateInvitationButton from './UpdateInvitationButton';
 import {Invitation} from '@/shared/HttpEndpoints/interfaces/invitation.interface';
 

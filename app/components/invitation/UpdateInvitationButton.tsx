@@ -1,26 +1,23 @@
-import {setNotification} from '@/lib/redux';
 import {useUpdateInvitationMutation} from '@/lib/redux/api';
+import {useAppDispatch, setNotification} from '@/lib/redux';
 import {InvitationAction_Url, InvitationKind_Url} from '@/shared/HttpEndpoints/types';
 import {Button} from '@chakra-ui/react';
 import {useRouter} from 'next/navigation';
-import {useDispatch} from 'react-redux';
 
 type UpdateInvitationButtonProps = {
   invitationId: number;
   invitationKind: InvitationKind_Url;
   targetChatId?: number;
-  targetGameId?: number;
   action: InvitationAction_Url;
 };
 
 function UpdateInvitationButton({
   targetChatId,
-  targetGameId,
   invitationKind,
   invitationId,
   action,
 }: UpdateInvitationButtonProps) {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const [updateInvitation] = useUpdateInvitationMutation();
 

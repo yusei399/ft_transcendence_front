@@ -1,24 +1,34 @@
-import {AppDispatch, setNotification} from '@/lib/redux';
-import {backEndApi} from '@/lib/redux/api';
+import {AppDispatch, updateCurrentGame, setNotification} from '@/lib/redux';
+import {TagType, backEndApi} from '@/lib/redux/api';
+import {GameStatus} from '@/shared/HttpEndpoints/interfaces';
 import {
-  WsBallPosition,
+  WsGameStateUpdatePosition,
   WsGameInCreationChange,
   WsGameJoin,
   WsGameLeave,
   WsGameMatch,
   WsGameStart,
-  WsNewPlayerMove,
 } from '@/shared/WsEvents/game/';
-import {Socket} from 'socket.io-client';
+import {type Socket} from 'socket.io-client';
 
-export function setUpGameEvents(socket: Socket, dispatch: AppDispatch): void {
-  socket.on(WsBallPosition.eventName, (message: WsBallPosition.eventMessageTemplate) => {
-    console.log(message);
-  });
+let lastStatus: Omit<GameStatus, 'IN_CREATION'> | undefined = undefined;
 
-  socket.on(WsNewPlayerMove.eventName, (message: WsNewPlayerMove.eventMessageTemplate) => {
-    console.log(message);
-  });
+export function setUpGameEvents(socket: Socket, dispatch: AppDispatch, userId: number): void {
+  socket.on(
+    WsGameStateUpdatePosition.eventName,
+    (message: WsGameStateUpdatePosition.eventMessageTemplate) => {
+      const status = message.status;
+      if (status !== lastStatus) {
+        const tags: TagType[] = ['Game'];
+        if (!lastStatus || status === 'CANCELED' || status === 'FINISHED')
+          tags.push('GameMatchMaking');
+        dispatch(backEndApi.util.invalidateTags(tags));
+      }
+
+      dispatch(updateCurrentGame(message));
+      lastStatus = status;
+    },
+  );
 
   socket.on(WsGameJoin.eventName, (message: WsGameJoin.eventMessageTemplate) => {
     dispatch(backEndApi.util.invalidateTags(['GameMatchMaking']));
@@ -47,9 +57,8 @@ export function setUpGameEvents(socket: Socket, dispatch: AppDispatch): void {
   });
 
   socket.on(WsGameMatch.eventName, (message: WsGameMatch.eventMessageTemplate) => {
-    dispatch(backEndApi.util.invalidateTags(['GameMatchMaking']));
+    dispatch(backEndApi.util.invalidateTags(['GameMatchMaking', 'Game']));
 
-    console.log(message);
     dispatch(
       setNotification({
         title: 'Game',
@@ -72,7 +81,7 @@ export function setUpGameEvents(socket: Socket, dispatch: AppDispatch): void {
     dispatch(
       setNotification({
         title: 'Game',
-        description: `Game ${message.gameId} started!`,
+        description: `New game started!`,
         status: 'info',
       }),
     );

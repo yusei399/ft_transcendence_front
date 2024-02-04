@@ -18,8 +18,7 @@ import {
   ModalOverlay,
   useDisclosure,
 } from '@chakra-ui/react';
-import {useAppDispatch} from '@/lib/redux/hook';
-import {setNotification} from '@/lib/redux';
+import {setNotification, useAppDispatch} from '@/lib/redux';
 import {EditIcon} from '@chakra-ui/icons';
 import {setImage} from '@/app/utils/setImage';
 

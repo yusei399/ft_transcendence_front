@@ -5,6 +5,7 @@ import authReducer from './slices/authSlice';
 import gameReducer from './slices/gameSlice';
 import navigationReducer from './slices/navigationSlice';
 import notificationReducer from './slices/notificationSlice';
+import webSocketReducer from './slices/webSocketSlice';
 import {backEndApi} from './api/api';
 import storage from './localStorage';
 import {setupListeners} from '@reduxjs/toolkit/query/react';
@@ -12,11 +13,12 @@ import {setupListeners} from '@reduxjs/toolkit/query/react';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'game', 'notification'],
+  whiteList: ['auth', 'game', 'notification'],
 };
 
 const reducers = combineReducers({
   auth: authReducer,
+  webSocket: webSocketReducer,
   game: gameReducer,
   navigation: navigationReducer,
   notification: notificationReducer,

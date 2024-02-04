@@ -1,5 +1,15 @@
-import {AppDispatch, SetTokensPayload, clear2fa, login} from '@/lib/redux';
-import {setNotification, Notification} from '@/lib/redux/slices/notificationSlice';
+import {
+  AppDispatch,
+  SetTokensPayload,
+  clear2fa,
+  clearRedirectTo,
+  login,
+  logout,
+  resetCurrentGame,
+  setNotification,
+  Notification,
+  clearNotifications,
+} from '@/lib/redux';
 
 export const logUserIn = (
   dispatch: AppDispatch,
@@ -34,4 +44,11 @@ export const setLogInError = (dispatch: AppDispatch, errorMsg: LogErrorMessages)
   const status: Notification['status'] = 'error';
 
   dispatch(setNotification({title, description, status}));
+};
+
+export const resetSlicesAndLogout = (dispatch: AppDispatch) => {
+  dispatch(clearRedirectTo());
+  dispatch(resetCurrentGame());
+  dispatch(clearNotifications());
+  dispatch(logout());
 };

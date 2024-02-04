@@ -47,9 +47,14 @@ const notificationSlice = createSlice({
         notification => notification.id !== action.payload,
       );
     },
+    clearNotifications: state => {
+      state.nextId = 0;
+      state.notifications = [];
+    },
   },
 });
 
-export const {setNotification, removeNotificationById} = notificationSlice.actions;
+export const {setNotification, removeNotificationById, clearNotifications} =
+  notificationSlice.actions;
 export const notificationSelector = (state: RootState) => state.notification.notifications;
 export default notificationSlice.reducer;

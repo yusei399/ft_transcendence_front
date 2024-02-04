@@ -1,7 +1,11 @@
 'use client';
 
-import {useAppDispatch, useAppSelector} from '@/lib/redux/hook';
-import {notificationSelector, removeNotificationById} from '@/lib/redux/slices/notificationSlice';
+import {
+  useAppDispatch,
+  useAppSelector,
+  notificationSelector,
+  removeNotificationById,
+} from '@/lib/redux';
 import {useToast} from '@chakra-ui/react';
 import {useEffect} from 'react';
 
