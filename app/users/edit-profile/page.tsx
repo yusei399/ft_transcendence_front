@@ -68,10 +68,16 @@ const EditProfile = () => {
   return (
     <VStack as="form" action="submit" onSubmit={e => handleSubmit(e)} spacing={4} p={5}>
       <FormControl isInvalid={(editError as ErrorType)?.status === 409}>
-        <FormLabel htmlFor="nickname">Nickname</FormLabel>
+        <FormLabel htmlFor="nickname">
+          {' '}
+          Nickname: {updateInfo.nickname && updateInfo.nickname.length < 3 && ' 3 characters min'}
+          {updateInfo.nickname && updateInfo.nickname.length > 20 && ' 20 characters max'}
+        </FormLabel>
         <Input
           id="nickname"
           type="text"
+          minLength={3}
+          maxLength={20}
           value={updateInfo.nickname || ''}
           onChange={e => setUpdateInfo({...updateInfo, nickname: e.target.value})}
           placeholder={data.nickname}
@@ -110,14 +116,18 @@ const EditProfile = () => {
           id="avatar"
           type="file"
           max={1}
+          accept="image/*"
           onChange={e => setUpdateInfo({...updateInfo, avatar: setImage(e, dispatch)})}
         />
       </FormControl>
       <FormControl>
-        <FormLabel htmlFor="password">Password</FormLabel>
+        <FormLabel htmlFor="password">
+          Password:{updateInfo.password && updateInfo.password.length < 3 && ' 3 characters min'}
+        </FormLabel>
         <Input
           id="password"
           type="password"
+          minLength={3}
           value={updateInfo.password || ''}
           onChange={e => setUpdateInfo({...updateInfo, password: e.target.value})}
           placeholder="your secret password"

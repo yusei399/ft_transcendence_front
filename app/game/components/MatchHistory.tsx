@@ -9,15 +9,17 @@ type MatchHistoryProps = {
 
 function MatchHistory({userId}: MatchHistoryProps) {
   const currentUserId = useAppSelector(userIdSelector) as number;
-  const {data} = useGetGameHistoryQuery([userId ?? currentUserId]);
+  const playerId = userId ?? currentUserId;
+  const {data} = useGetGameHistoryQuery([playerId]);
+
   if (!data) return null;
+
   return (
     <div>
       {data.plays.map(play => {
         const currentPlayer =
-          play.player1.profile.userId === currentUserId ? play.player1 : play.player2;
-        const opponent =
-          play.player1.profile.userId === currentUserId ? play.player2 : play.player1;
+          play.player1.profile.userId === playerId ? play.player1 : play.player2;
+        const opponent = play.player1.profile.userId === playerId ? play.player2 : play.player1;
         const isWinner = play.winnerId === currentPlayer.profile.userId;
         const {userId, nickname, avatarUrl} = currentPlayer.profile;
         const {

@@ -1,5 +1,5 @@
 import {UserPublicProfile} from '@/shared/HttpEndpoints/interfaces';
-import {ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon} from '@chakra-ui/icons';
+import {ChevronDownIcon} from '@chakra-ui/icons';
 import {Avatar, Card, CardBody, Flex, Heading, Text} from '@chakra-ui/react';
 import React from 'react';
 
@@ -18,7 +18,7 @@ function InGamePlayerProfile({profile, score, side, isMe, withChevron}: InGamePl
       <CardBody padding="4px">
         <Flex flexDir={side === 'left' ? 'row' : 'row-reverse'} alignItems="center" gap="12px">
           <Avatar boxSize="60px" src={avatarUrl ?? '/assets/sample.png'} />
-          <Heading size="md" maxWidth={'80px'} color={isMe ? 'blue.500' : 'red.500'}>
+          <Heading size="md" color={isMe ? 'blue.500' : 'red.500'}>
             {nickname}
           </Heading>
         </Flex>
