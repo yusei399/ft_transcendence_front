@@ -2,12 +2,25 @@
 
 import {useGetGameHistoryQuery} from '@/lib/redux/api';
 import {useAppSelector, userIdSelector} from '@/lib/redux';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  TableContainer,
+  useColorModeValue,
+} from '@chakra-ui/react'
 
 type MatchHistoryProps = {
   userId?: number;
 };
 
 function MatchHistory({userId}: MatchHistoryProps) {
+  const bgColor = useColorModeValue('gray.100', 'gray.700');
   const currentUserId = useAppSelector(userIdSelector) as number;
   const {data} = useGetGameHistoryQuery([userId ?? currentUserId]);
   if (!data) return null;
@@ -29,12 +42,37 @@ function MatchHistory({userId}: MatchHistoryProps) {
         const startDate = new Date(play.startDate).toLocaleString();
         const endDate = play.endDate ? new Date(play.endDate).toLocaleString() : 'not finished';
         return (
-          <div key={play.gameId}>
-            <div>id: {play.gameId}</div>
-            <div>start: {startDate}</div>
-            <div>end: {endDate}</div>
-            <div>winner: {isWinner ? nickname : oppNickname}</div>
-          </div>
+          <TableContainer>
+          <Table  key={play.gameId} variant='simple' bg={bgColor} boxShadow="md" borderRadius="lg">
+            {/*<TableCaption color={bgColor}>Imperial to metric conversion factors</TableCaption>*/}
+            <Thead>
+              <Tr>
+              </Tr>
+            </Thead>
+            <Tbody>
+              <Tr>
+                <Td>id</Td>
+                <Td>{play.gameId}</Td>
+              </Tr>
+              <Tr>
+                <Td>start</Td>
+                <Td>{startDate}</Td>
+              </Tr>
+              <Tr>
+                <Td>end</Td>
+                <Td>{endDate}</Td>
+              </Tr>
+              <Tr>
+                <Td>winner</Td>
+                <Td>{isWinner ? nickname : oppNickname}</Td>
+              </Tr>
+            </Tbody>
+            <Tfoot>
+              <Tr>
+              </Tr>
+            </Tfoot>
+          </Table>
+        </TableContainer>
         );
       })}
     </div>
