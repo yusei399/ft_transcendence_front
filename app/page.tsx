@@ -4,7 +4,7 @@ import MatchHistory from './game/components/MatchHistory';
 
 export default function IndexPage() {
   return (
-    <Flex>
+    <Flex flexDir="row" alignItems="center" justifyContent="space-between" width="90%">
       <MatchHistory />
       <Me />
     </Flex>
