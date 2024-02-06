@@ -1,13 +1,14 @@
 'use client';
 
 import React, {useState} from 'react';
-import {FormControl, FormLabel, Input, Button, Flex, Switch} from '@chakra-ui/react';
+import {FormControl, FormLabel, Input, Button, Flex, Switch, useColorModeValue} from '@chakra-ui/react';
 import {ErrorType, useCreateChatMutation} from '@/lib/redux/api';
 import {HttpCreateChat} from '@/shared/HttpEndpoints/chat';
 import {useRouter} from 'next/navigation';
 import {useAppDispatch, setNotification} from '@/lib/redux';
 
 const CreateChat = () => {
+  const bgColor = useColorModeValue('gray.100', 'gray.700');
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [createChat] = useCreateChatMutation();
@@ -38,7 +39,7 @@ const CreateChat = () => {
     <form onSubmit={e => handleCreate(e)}>
       <Flex flexDir="column" alignItems="center" gap="10px">
         <FormControl isRequired>
-          <FormLabel>
+          <FormLabel color='blue.400'>
             Chat Name:{chatInfo.chatName && chatInfo.chatName.length < 3 && ' 3 characters min'}
             {chatInfo.chatName && chatInfo.chatName.length > 20 && ' 20 characters max'}
           </FormLabel>
@@ -48,11 +49,12 @@ const CreateChat = () => {
             maxLength={20}
             value={chatInfo.chatName}
             onChange={e => setChatInfo({...chatInfo, chatName: e.target.value})}
+            bg={bgColor}
           />
         </FormControl>
         <Flex flexFlow="row" gap="12px" width="100%">
           <FormControl>
-            <FormLabel>
+            <FormLabel color='blue.400'>
               Password:
               {chatInfo.password && chatInfo.password.length < 3 && ' 3 characters min'}
             </FormLabel>
@@ -63,6 +65,7 @@ const CreateChat = () => {
               minLength={3}
               value={chatInfo.password ?? ''}
               onChange={e => setChatInfo({...chatInfo, password: e.target.value})}
+              bg={bgColor}
             />
           </FormControl>
           <FormControl display="flex" alignItems="flex-end" marginBottom="12px">
@@ -77,12 +80,13 @@ const CreateChat = () => {
           </FormControl>
         </Flex>
         <FormControl>
-          <FormLabel>Avatar:</FormLabel>
+          <FormLabel color='blue.400'>Avatar:</FormLabel>
           <Input
             type="file"
             accept="image/*"
             max={1}
             onChange={e => setChatInfo({...chatInfo, chatAvatar: e.target.files?.[0]})}
+            bg={bgColor}
           />
         </FormControl>
         <Button type="submit" size="lg" width="40%">
