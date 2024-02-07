@@ -1,20 +1,7 @@
-'use client';
-
-import {useGetGameHistoryQuery} from '@/lib/redux/api';
-import {useAppSelector, userIdSelector} from '@/lib/redux';
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
-  useColorModeValue,
-} from '@chakra-ui/react'
-
+"use client";
+import { useGetGameHistoryQuery } from '@/lib/redux/api';
+import { useAppSelector, userIdSelector } from '@/lib/redux';
+import { Box, Text, Avatar, VStack, HStack, Badge } from '@chakra-ui/react';
 
 type MatchHistoryProps = {
   userId?: number;
@@ -22,7 +9,6 @@ type MatchHistoryProps = {
 
 
 function MatchHistory({userId}: MatchHistoryProps) {
-  const bgColor = useColorModeValue('gray.100', 'gray.700');
   const currentUserId = useAppSelector(userIdSelector) as number;
   const playerId = userId ?? currentUserId;
   const { data } = useGetGameHistoryQuery([playerId]);
@@ -41,37 +27,24 @@ function MatchHistory({userId}: MatchHistoryProps) {
         const endDate = play.endDate ? new Date(play.endDate).toLocaleString() : 'Not finished';
 
         return (
-          <TableContainer>
-          <Table  key={play.gameId} variant='simple' bg={bgColor} boxShadow="md" borderRadius="lg">
-            {/*<TableCaption color={bgColor}>Imperial to metric conversion factors</TableCaption>*/}
-            <Thead>
-              <Tr>
-              </Tr>
-            </Thead>
-            <Tbody>
-              <Tr>
-                <Td>id</Td>
-                <Td>{play.gameId}</Td>
-              </Tr>
-              <Tr>
-                <Td>start</Td>
-                <Td>{startDate}</Td>
-              </Tr>
-              <Tr>
-                <Td>end</Td>
-                <Td>{endDate}</Td>
-              </Tr>
-              <Tr>
-                <Td>winner</Td>
-                <Td>{isWinner ? nickname : oppNickname}</Td>
-              </Tr>
-            </Tbody>
-            <Tfoot>
-              <Tr>
-              </Tr>
-            </Tfoot>
-          </Table>
-        </TableContainer>
+          <Box key={play.gameId} p={5} shadow="md" borderWidth="1px" borderRadius="lg">
+            <HStack spacing={4}>
+              <Avatar src={currentPlayer.profile.avatarUrl ?? undefined} />
+              <VStack align="start">
+                <Text fontWeight="bold">Game ID: {play.gameId}</Text>
+                <Text>Start: {startDate}</Text>
+                <Text>End: {endDate}</Text>
+                <Text>
+                  Winner: {isWinner ? currentPlayer.profile.nickname : opponent.profile.nickname}
+                </Text>
+                {isWinner ? (
+                  <Badge colorScheme="green">Win</Badge>
+                ) : (
+                  <Badge colorScheme="red">Loss</Badge>
+                )}
+              </VStack>
+            </HStack>
+          </Box>
         );
       })}
     </VStack>
