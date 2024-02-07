@@ -1,7 +1,8 @@
 "use client";
 import { useGetGameHistoryQuery } from '@/lib/redux/api';
 import { useAppSelector, userIdSelector } from '@/lib/redux';
-import { Box, Text, Avatar, VStack, HStack, Badge } from '@chakra-ui/react';
+import { Box, Text, Avatar, VStack, HStack, Badge, useColorModeValue } from '@chakra-ui/react';
+
 
 type MatchHistoryProps = {
   userId?: number;
@@ -9,6 +10,7 @@ type MatchHistoryProps = {
 
 
 function MatchHistory({userId}: MatchHistoryProps) {
+  const bgColor = useColorModeValue('gray.100', 'gray.700');
   const currentUserId = useAppSelector(userIdSelector) as number;
   const playerId = userId ?? currentUserId;
   const { data } = useGetGameHistoryQuery([playerId]);
@@ -16,7 +18,8 @@ function MatchHistory({userId}: MatchHistoryProps) {
   if (!data) return null;
 
   return (
-    <VStack spacing={4} align="stretch">
+    <Box maxH="calc(100vh - 100px)" overflowY="auto"> 
+    <VStack spacing={4} align="stretch" bg={bgColor}>
       {data.plays.map((play) => {
         const currentPlayer = play.player1.profile.userId === playerId ? play.player1 : play.player2;
         const opponent = play.player1.profile.userId === playerId ? play.player2 : play.player1;
@@ -48,6 +51,7 @@ function MatchHistory({userId}: MatchHistoryProps) {
         );
       })}
     </VStack>
+    </Box>
   );
 }
 
