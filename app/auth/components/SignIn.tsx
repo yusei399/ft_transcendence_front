@@ -4,11 +4,12 @@ import React, {useState} from 'react';
 import {ErrorType, useSignInMutation} from '@/lib/redux/api/';
 import {logUserIn, setLogInError} from './logUser';
 import Loading from '../../components/global/Loading';
-import {Button, FormControl, FormLabel, Input} from '@chakra-ui/react';
+import {Button, FormControl, FormLabel, Input, useColorModeValue} from '@chakra-ui/react';
 import {useAppDispatch, set2fa} from '@/lib/redux';
 import {HttpSignIn} from '@/shared/HttpEndpoints/auth';
 
 function SignIn() {
+  const bgColor = useColorModeValue('gray.100', 'gray.700');
   const dispatch = useAppDispatch();
   const [signInData, setSignInData] = useState<HttpSignIn.reqTemplate>({
     nickname: '',
@@ -52,7 +53,7 @@ function SignIn() {
       {isLoading && <Loading />}
       <form onSubmit={e => signInUser(e)}>
         <FormControl isRequired>
-          <FormLabel>
+          <FormLabel color='blue.400'>
             Nickname: {signInData.nickname && signInData.nickname.length < 3 && ' 3 characters min'}
             {signInData.nickname && signInData.nickname.length > 20 && ' 20 characters max'}
           </FormLabel>
@@ -64,10 +65,11 @@ function SignIn() {
             autoComplete="username"
             value={signInData.nickname}
             onChange={e => setSignInData({...signInData, nickname: e.target.value})}
+            bg={bgColor}
           />
         </FormControl>
         <FormControl isRequired>
-          <FormLabel>
+          <FormLabel color='blue.400'>
             Password:{signInData.password && signInData.password.length < 3 && ' 3 characters min'}
           </FormLabel>
           <Input
@@ -77,8 +79,10 @@ function SignIn() {
             autoComplete="current-password"
             value={signInData.password}
             onChange={e => setSignInData({...signInData, password: e.target.value})}
+            bg={bgColor}
           />
         </FormControl>
+        <br />
         <Button type="submit">Sign In</Button>
       </form>
     </>
