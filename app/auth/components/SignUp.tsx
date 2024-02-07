@@ -2,7 +2,7 @@
 
 import {useAppDispatch} from '@/lib/redux';
 import React, {useState} from 'react';
-import {Button, FormControl, FormLabel, Input} from '@chakra-ui/react';
+import {Button, FormControl, FormLabel, Input, useColorModeValue} from '@chakra-ui/react';
 import {ErrorType, useSignUpMutation} from '@/lib/redux/api';
 import {logUserIn, setLogInError} from './logUser';
 import Loading from '../../components/global/Loading';
@@ -10,6 +10,7 @@ import {HttpSignUp} from '@/shared/HttpEndpoints/auth';
 import {setImage} from '@/app/utils/setImage';
 
 function SignUp() {
+  const bgColor = useColorModeValue('gray.100', 'gray.700');
   const [signUpData, setSignUpData] = useState<HttpSignUp.reqTemplate>({
     nickname: '',
     password: '',
@@ -37,7 +38,7 @@ function SignUp() {
       {isLoading && <Loading />}
       <form onSubmit={e => signUpUser(e)}>
         <FormControl isRequired>
-          <FormLabel>
+          <FormLabel color='blue.400'>
             Nickname: {signUpData.nickname && signUpData.nickname.length < 3 && ' 3 characters min'}
             {signUpData.nickname && signUpData.nickname.length > 20 && ' 20 characters max'}
           </FormLabel>
@@ -49,20 +50,22 @@ function SignUp() {
             autoComplete="username"
             value={signUpData.nickname}
             onChange={e => setSignUpData({...signUpData, nickname: e.target.value})}
+            bg={bgColor}
           />
         </FormControl>
         <FormControl isRequired>
-          <FormLabel>Email:</FormLabel>
+          <FormLabel color='blue.400'>Email:</FormLabel>
           <Input
             type="email"
             name="email"
             autoComplete="email"
             value={signUpData.email}
             onChange={e => setSignUpData({...signUpData, email: e.target.value})}
+            bg={bgColor}
           />
         </FormControl>
         <FormControl isRequired>
-          <FormLabel>
+          <FormLabel color='blue.400'>
             Password:{signUpData.password && signUpData.password.length < 3 && ' 3 characters min'}
           </FormLabel>
           <Input
@@ -72,17 +75,21 @@ function SignUp() {
             autoComplete="new-password"
             value={signUpData.password}
             onChange={e => setSignUpData({...signUpData, password: e.target.value})}
+            bg={bgColor}
           />
         </FormControl>
         <FormControl>
-          <FormLabel>Avatar</FormLabel>
+          <FormLabel color='blue.400'>Avatar</FormLabel>
           <Input
             type="file"
             name="avatar"
             max={1}
             accept="image/*"
-            onChange={e => setSignUpData({...signUpData, avatar: setImage(e, dispatch)})}></Input>
+            onChange={e => setSignUpData({...signUpData, avatar: setImage(e, dispatch)})}
+            bg={bgColor}
+          />
         </FormControl>
+        <br />
         <Button type="submit">Sign Up</Button>
       </form>
     </>
