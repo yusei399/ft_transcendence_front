@@ -20,6 +20,7 @@ import {
   Input,
   CardFooter,
   Select,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import {useState} from 'react';
 
@@ -28,6 +29,7 @@ type GameInCreationProps = {
 };
 
 function GameInCreation({gameInCreationId}: GameInCreationProps) {
+  const bgColor = useColorModeValue('gray.100', 'gray.700');
   const {data} = useGetGameInCreationQuery([gameInCreationId]);
   const [updateInfo, setUpdateInfo] = useState<HttpGameUpdateInCreation.reqTemplate>({
     scoreToWin: data?.gameInCreation.rules.scoreToWin ?? 3,
@@ -306,7 +308,7 @@ function GameInCreation({gameInCreationId}: GameInCreationProps) {
                     updateInfo.scoreToWin < 3
                       ? 'blue'
                       : updateInfo.scoreToWin === 3
-                        ? 'gray'
+                        ? 'black'
                         : updateInfo.scoreToWin > 15
                           ? 'red'
                           : updateInfo.scoreToWin > 10
@@ -314,6 +316,8 @@ function GameInCreation({gameInCreationId}: GameInCreationProps) {
                             : 'green'
                   }
                   onChange={e => setUpdateInfo({...updateInfo, scoreToWin: Number(e.target.value)})}
+                  //bgColor='blue.400'
+                  bgColor={bgColor}
                 />
               </Flex>
             </FormControl>
@@ -325,7 +329,7 @@ function GameInCreation({gameInCreationId}: GameInCreationProps) {
                 bg={
                   {
                     SLOW: 'blue',
-                    NORMAL: 'gray',
+                    NORMAL: {bgColor},
                     FAST: 'orange',
                     VERY_FAST: 'red',
                   }[updateInfo.ballSpeed ?? 'NORMAL']
@@ -349,7 +353,7 @@ function GameInCreation({gameInCreationId}: GameInCreationProps) {
                   {
                     VERY_SMALL: 'red',
                     SMALL: 'orange',
-                    NORMAL: 'gray',
+                    NORMAL: {bgColor},
                     BIG: 'blue',
                     VERY_BIG: 'green',
                   }[updateInfo.ballSize ?? 'NORMAL']
@@ -371,7 +375,7 @@ function GameInCreation({gameInCreationId}: GameInCreationProps) {
                 bg={
                   {
                     SLOW: 'blue',
-                    NORMAL: 'gray',
+                    NORMAL: {bgColor},
                     FAST: 'orange',
                     VERY_FAST: 'red',
                   }[updateInfo.paddleSpeed ?? 'NORMAL']
@@ -395,7 +399,7 @@ function GameInCreation({gameInCreationId}: GameInCreationProps) {
                   {
                     VERY_SMALL: 'red',
                     SMALL: 'orange',
-                    NORMAL: 'gray',
+                    NORMAL: {bgColor},
                     BIG: 'blue',
                     VERY_BIG: 'green',
                   }[updateInfo.paddleSize ?? 'NORMAL']
