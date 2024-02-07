@@ -1,8 +1,9 @@
 'use client';
 import {useGetMeQuery} from '@/lib/redux/api';
-import {Box, Text, VStack, useColorModeValue, Button, HStack, Avatar} from '@chakra-ui/react';
+import {Box, Text, VStack, useColorModeValue, Button, HStack, Avatar, Badge} from '@chakra-ui/react';
 import Loading from '@/app/components/global/Loading';
 import Link from 'next/link';
+import { format } from 'date-fns';
 
 const Me = () => {
   const {data, isLoading, error} = useGetMeQuery([]);
@@ -13,28 +14,10 @@ const Me = () => {
   if (!data) return <Box>No data</Box>;
 
   const achievements = data.achievements;
-  console.log(achievements);
-  /*
-    cf: shared/HttpEndpoints/interfaces/UserProfileInfo.interface.ts
-    export interface Achievement {
-      achievementId: number;
-      name: AchievementName;
-      obtainedAt: Date;
-    }
 
-    export type AchievementName =
-      | 'firstGame'
-      | 'firstWin'
-      | 'longGame' // end a 20 points game
-      | 'shortGame' // end a 1 points game
-      | 'largePaddleSmallBall' // play with a large paddle and a small ball
-      | 'smallPaddleLargeBall' // play with a small paddle and a large ball
-      | 'speedUp' // play with a fast ball and a fast paddle
-      | 'speedDown' // play with a slow ball and a slow paddle
-      | 'impossibleSpeed' // play with a fast ball and a slow paddle
-      | 'impossible' // play with small paddle, small ball, fast ball and slow paddle
-      | 'quick'; // win a game in less than 30 secondes
-  */
+  const formatDate = (dateString) => {
+    return format(new Date(dateString), 'PPPpp');
+  };
 
   return (
     <VStack p={5} spacing={4} boxShadow="md" borderRadius="lg" bg={bgColor} alignSelf="center">
@@ -50,8 +33,24 @@ const Me = () => {
           Edit Profile
         </Button>
       </Link>
+      <VStack spacing={2} align="stretch">
+        <Text fontSize="md" fontWeight="semibold">
+          Achievements
+        </Text>
+        {achievements && achievements.length > 0 ? (
+          achievements.map((achievement) => (
+            <HStack key={achievement.achievementId}>
+              <Badge colorScheme="green">{achievement.name}</Badge>
+              <Text fontSize="sm">{formatDate(achievement.obtainedAt)}</Text>
+            </HStack>
+          ))
+        ) : (
+          <Text>No achievements yet</Text>
+        )}
+      </VStack>
     </VStack>
   );
 };
 
 export default Me;
+
