@@ -10,7 +10,6 @@ type MatchHistoryProps = {
 
 
 function MatchHistory({userId}: MatchHistoryProps) {
-  const bgColor = useColorModeValue('gray.100', 'gray.700');
   const currentUserId = useAppSelector(userIdSelector) as number;
   const playerId = userId ?? currentUserId;
   const { data } = useGetGameHistoryQuery([playerId]);
@@ -18,7 +17,6 @@ function MatchHistory({userId}: MatchHistoryProps) {
   if (!data) return null;
 
   return (
-    <Box maxH="calc(100vh - 100px)" overflowY="auto"> 
     <VStack spacing={4} align="stretch" bg={bgColor}>
       {data.plays.map((play) => {
         const currentPlayer = play.player1.profile.userId === playerId ? play.player1 : play.player2;
@@ -51,7 +49,6 @@ function MatchHistory({userId}: MatchHistoryProps) {
         );
       })}
     </VStack>
-    </Box>
   );
 }
 

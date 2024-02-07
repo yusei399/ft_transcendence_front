@@ -5,10 +5,10 @@ import MatchHistory from './game/components/MatchHistory';
 export default function IndexPage() {
   return (
     <Flex direction={{ base: 'column-reverse', md: 'row' }} height="100vh">
-      <Flex flex="1" alignItems="center" justifyContent="center" >
+      <Flex flex="1" alignItems="center" justifyContent="center">
         <Me />
       </Flex>
-      <Box flex="1" overflowY="auto"  alignItems="flex-end">
+      <Box flex="1" overflowY="auto">
         <MatchHistory />
       </Box>
     </Flex>
