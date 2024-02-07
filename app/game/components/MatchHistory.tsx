@@ -7,7 +7,9 @@ type MatchHistoryProps = {
   userId?: number;
 };
 
-function MatchHistory({ userId }: MatchHistoryProps) {
+
+function MatchHistory({userId}: MatchHistoryProps) {
+  const bgColor = useColorModeValue('gray.100', 'gray.700');
   const currentUserId = useAppSelector(userIdSelector) as number;
   const playerId = userId ?? currentUserId;
   const { data } = useGetGameHistoryQuery([playerId]);
