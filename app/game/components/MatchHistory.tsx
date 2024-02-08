@@ -2,7 +2,7 @@
 
 import {useGetGameHistoryQuery} from '@/lib/redux/api';
 import {useAppSelector, userIdSelector} from '@/lib/redux';
-import {Box, Text, VStack, useColorModeValue, Flex, HStack, Heading} from '@chakra-ui/react';
+import {Box, Text, VStack, useColorModeValue, Flex, HStack, Heading, useBreakpointValue} from '@chakra-ui/react';
 import InGamePlayerProfile from './InGamePlayerProfile';
 
 type MatchHistoryProps = {
@@ -14,6 +14,9 @@ function MatchHistory({userId}: MatchHistoryProps) {
   const currentUserId = useAppSelector(userIdSelector) as number;
   const playerId = userId ?? currentUserId;
   const {data} = useGetGameHistoryQuery([playerId], {skip: !playerId});
+
+  const flexDirection = useBreakpointValue({ base: 'column', md: 'row' });
+  const justifyContent = useBreakpointValue({ base: 'center', md: 'space-around' });
 
   if (!data) return null;
 
@@ -31,7 +34,14 @@ function MatchHistory({userId}: MatchHistoryProps) {
   }
 
   return (
-    <VStack spacing={4} alignItems="stretch" maxWidth="max-content" padding="8px">
+        <VStack
+        spacing={4}
+        alignItems="stretch"
+        maxWidth="max-content"
+        padding="8px"
+        maxHeight="80vh" 
+        overflowY="auto"
+      >
       {plays.map(play => {
         const currentPlayer =
           play.player1.profile.userId === playerId ? play.player1 : play.player2;
@@ -44,7 +54,7 @@ function MatchHistory({userId}: MatchHistoryProps) {
         return (
           <Box key={play.gameId} p={5} shadow="md" borderWidth="1px" borderRadius="lg" bg={bgColor}>
             <Flex flexDir="column" width="100%" textAlign="center" gap="12px">
-              <Flex width="100%" justify="space-around" gap="24px">
+              <Flex direction={flexDirection} justify={justifyContent} gap="24px">
                 <InGamePlayerProfile
                   profile={currentPlayer.profile}
                   score={currentPlayer.score}
