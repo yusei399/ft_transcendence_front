@@ -1,9 +1,18 @@
 'use client';
 import {useGetMeQuery} from '@/lib/redux/api';
-import {Box, Text, VStack, useColorModeValue, Button, HStack, Avatar, Badge} from '@chakra-ui/react';
+import {
+  Box,
+  Text,
+  VStack,
+  useColorModeValue,
+  Button,
+  HStack,
+  Avatar,
+  Badge,
+} from '@chakra-ui/react';
 import Loading from '@/app/components/global/Loading';
 import Link from 'next/link';
-import { format } from 'date-fns';
+import {format} from 'date-fns';
 
 const Me = () => {
   const {data, isLoading, error} = useGetMeQuery([]);
@@ -15,7 +24,7 @@ const Me = () => {
 
   const achievements = data.achievements;
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: Date) => {
     return format(new Date(dateString), 'PPPpp');
   };
 
@@ -38,7 +47,7 @@ const Me = () => {
           Achievements
         </Text>
         {achievements && achievements.length > 0 ? (
-          achievements.map((achievement) => (
+          achievements.map(achievement => (
             <HStack key={achievement.achievementId}>
               <Badge colorScheme="green">{achievement.name}</Badge>
               <Text fontSize="sm">{formatDate(achievement.obtainedAt)}</Text>
@@ -53,4 +62,3 @@ const Me = () => {
 };
 
 export default Me;
-

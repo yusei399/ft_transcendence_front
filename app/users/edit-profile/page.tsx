@@ -80,9 +80,6 @@ const EditProfile = () => {
     <VStack as="form" action="submit" onSubmit={e => handleSubmit(e)} spacing={4} p={5}>
       <FormControl isInvalid={(editError as ErrorType)?.status === 409}>
         <FormLabel htmlFor="nickname" color="blue.400">
-          Nickname
-        </FormLabel>
-        <FormLabel htmlFor="nickname">
           {' '}
           Nickname: {updateInfo.nickname && updateInfo.nickname.length < 3 && ' 3 characters min'}
           {updateInfo.nickname && updateInfo.nickname.length > 20 && ' 20 characters max'}

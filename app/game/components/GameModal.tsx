@@ -19,11 +19,11 @@ import InGamePlayerProfile from './InGamePlayerProfile';
 
 function GameModal({gameId}: {gameId: number}) {
   const userId = useAppSelector(userIdSelector);
-  const {currentData} = useGetGameQuery([gameId ?? -1], {skip: !gameId});
+  const {currentData} = useGetGameQuery([gameId]);
   const dispatch = useAppDispatch();
   const {onClose} = useDisclosure();
 
-  if (!currentData || !gameId || !userId) return null;
+  if (!currentData || !userId) return null;
 
   const {player1, player2, status} = currentData;
   const me = player1.profile.userId === userId ? player1 : player2;

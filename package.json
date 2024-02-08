@@ -16,6 +16,7 @@
     "@reduxjs/toolkit": "2.0.1",
     "axios": "^1.6.5",
     "class-transformer": "^0.5.1",
+    "date-fns": "^3.3.1",
     "framer-motion": "^10.17.9",
     "next": "^14.1.0",
     "next-redux-wrapper": "^8.1.0",
