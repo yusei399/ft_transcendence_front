@@ -2,18 +2,8 @@
 
 import {useGetGameHistoryQuery} from '@/lib/redux/api';
 import {useAppSelector, userIdSelector} from '@/lib/redux';
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
-  useColorModeValue,
-} from '@chakra-ui/react'
+import {Box, Text, VStack, useColorModeValue, Flex, HStack, Heading} from '@chakra-ui/react';
+import InGamePlayerProfile from './InGamePlayerProfile';
 
 type MatchHistoryProps = {
   userId?: number;
@@ -22,60 +12,63 @@ type MatchHistoryProps = {
 function MatchHistory({userId}: MatchHistoryProps) {
   const bgColor = useColorModeValue('gray.100', 'gray.700');
   const currentUserId = useAppSelector(userIdSelector) as number;
-  const {data} = useGetGameHistoryQuery([userId ?? currentUserId]);
+  const playerId = userId ?? currentUserId;
+  const {data} = useGetGameHistoryQuery([playerId], {skip: !playerId});
+
   if (!data) return null;
+
+  const plays =
+    data.plays.toSorted(
+      (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
+    ) ?? [];
+
+  if (plays.length === 0) {
+    return (
+      <VStack p={5} spacing={4} boxShadow="md" borderRadius="lg" bg={bgColor}>
+        <Heading size="md">No games played yet</Heading>
+      </VStack>
+    );
+  }
+
   return (
-    <div>
-      {data.plays.map(play => {
+    <VStack spacing={4} alignItems="stretch" maxWidth="max-content" padding="8px">
+      {plays.map(play => {
         const currentPlayer =
-          play.player1.profile.userId === currentUserId ? play.player1 : play.player2;
-        const opponent =
-          play.player1.profile.userId === currentUserId ? play.player2 : play.player1;
+          play.player1.profile.userId === playerId ? play.player1 : play.player2;
+        const opponent = play.player1.profile.userId === playerId ? play.player2 : play.player1;
         const isWinner = play.winnerId === currentPlayer.profile.userId;
-        const {userId, nickname, avatarUrl} = currentPlayer.profile;
-        const {
-          userId: oppUserId,
-          nickname: oppNickname,
-          avatarUrl: oppAvatarUrl,
-        } = opponent.profile;
+        const opponnentIsWinner = play.winnerId === opponent.profile.userId;
 
         const startDate = new Date(play.startDate).toLocaleString();
-        const endDate = play.endDate ? new Date(play.endDate).toLocaleString() : 'not finished';
+        const endDate = play.endDate ? new Date(play.endDate).toLocaleString() : 'Not finished';
         return (
-          <TableContainer>
-          <Table  key={play.gameId} variant='simple' bg={bgColor} boxShadow="md" borderRadius="lg">
-            {/*<TableCaption color={bgColor}>Imperial to metric conversion factors</TableCaption>*/}
-            <Thead>
-              <Tr>
-              </Tr>
-            </Thead>
-            <Tbody>
-              <Tr>
-                <Td>id</Td>
-                <Td>{play.gameId}</Td>
-              </Tr>
-              <Tr>
-                <Td>start</Td>
-                <Td>{startDate}</Td>
-              </Tr>
-              <Tr>
-                <Td>end</Td>
-                <Td>{endDate}</Td>
-              </Tr>
-              <Tr>
-                <Td>winner</Td>
-                <Td>{isWinner ? nickname : oppNickname}</Td>
-              </Tr>
-            </Tbody>
-            <Tfoot>
-              <Tr>
-              </Tr>
-            </Tfoot>
-          </Table>
-        </TableContainer>
+          <Box key={play.gameId} p={5} shadow="md" borderWidth="1px" borderRadius="lg" bg={bgColor}>
+            <Flex flexDir="column" width="100%" textAlign="center" gap="12px">
+              <Flex width="100%" justify="space-around" gap="24px">
+                <InGamePlayerProfile
+                  profile={currentPlayer.profile}
+                  score={currentPlayer.score}
+                  side={'left'}
+                  isMe={true}
+                  isWinner={isWinner}
+                />
+                <InGamePlayerProfile
+                  profile={opponent.profile}
+                  score={opponent.score}
+                  side={'right'}
+                  isMe={false}
+                  isWinner={opponnentIsWinner}
+                />
+              </Flex>
+              <HStack justifyContent="space-around">
+                <Text fontWeight="600">Start: {startDate}</Text>
+                <Text fontWeight="600">End: {endDate}</Text>
+              </HStack>
+            </Flex>
+          </Box>
         );
       })}
-    </div>
+    </VStack>
   );
 }
 

@@ -3,7 +3,17 @@ import React, {useState} from 'react';
 import {ErrorType, useEditMeMutation, useGetMeQuery} from '@/lib/redux/api';
 import Loading from '@/app/components/global/Loading';
 import {HttpEditMe} from '@/shared/HttpEndpoints/user';
-import {Box, VStack, FormControl, FormLabel, Input, Button, Switch, Flex, useColorModeValue} from '@chakra-ui/react';
+import {
+  Box,
+  VStack,
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+  Switch,
+  Flex,
+  useColorModeValue,
+} from '@chakra-ui/react';
 import {useAppDispatch, setNotification} from '@/lib/redux';
 import {filterDefinedProperties} from '@/shared/sharedUtilities/utils.functions.';
 import Link from 'next/link';
@@ -69,10 +79,16 @@ const EditProfile = () => {
   return (
     <VStack as="form" action="submit" onSubmit={e => handleSubmit(e)} spacing={4} p={5}>
       <FormControl isInvalid={(editError as ErrorType)?.status === 409}>
-        <FormLabel htmlFor="nickname" color='blue.400'>Nickname</FormLabel>
+        <FormLabel htmlFor="nickname" color="blue.400">
+          {' '}
+          Nickname: {updateInfo.nickname && updateInfo.nickname.length < 3 && ' 3 characters min'}
+          {updateInfo.nickname && updateInfo.nickname.length > 12 && ' 12 characters max'}
+        </FormLabel>
         <Input
           id="nickname"
           type="text"
+          minLength={3}
+          maxLength={12}
           value={updateInfo.nickname || ''}
           onChange={e => setUpdateInfo({...updateInfo, nickname: e.target.value})}
           placeholder={data.nickname}
@@ -81,7 +97,9 @@ const EditProfile = () => {
       </FormControl>
       <Flex dir="row" width="100%" gap="12px">
         <FormControl flex={4}>
-          <FormLabel htmlFor="email" color='blue.400'>Email</FormLabel>
+          <FormLabel htmlFor="email" color="blue.400">
+            Email
+          </FormLabel>
           <Input
             id="email"
             type="email"
@@ -108,20 +126,26 @@ const EditProfile = () => {
         </FormControl>
       </Flex>
       <FormControl>
-        <FormLabel htmlFor="avatar" color='blue.400'>Avatar</FormLabel>
+        <FormLabel htmlFor="avatar" color="blue.400">
+          Avatar
+        </FormLabel>
         <Input
           id="avatar"
           type="file"
           max={1}
+          accept="image/*"
           onChange={e => setUpdateInfo({...updateInfo, avatar: setImage(e, dispatch)})}
           bg={bgColor}
         />
       </FormControl>
       <FormControl>
-        <FormLabel htmlFor="password" color='blue.400'>Password</FormLabel>
+        <FormLabel htmlFor="password" color="blue.400">
+          Password:{updateInfo.password && updateInfo.password.length < 3 && ' 3 characters min'}
+        </FormLabel>
         <Input
           id="password"
           type="password"
+          minLength={3}
           value={updateInfo.password || ''}
           onChange={e => setUpdateInfo({...updateInfo, password: e.target.value})}
           placeholder="your secret password"

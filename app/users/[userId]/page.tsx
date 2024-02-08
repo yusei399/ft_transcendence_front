@@ -109,7 +109,12 @@ export default function IndexPage() {
   };
 
   return (
-    <Flex flexDir="row" alignItems="center" justifyContent="space-between" width="90%">
+    <Flex
+      flexDir="row"
+      alignItems="center"
+      justifyContent="space-between"
+      width="90%"
+      overflowY="auto">
       <MatchHistory userId={userId} />
       <InvitationsList userId={userId} />
       <Card

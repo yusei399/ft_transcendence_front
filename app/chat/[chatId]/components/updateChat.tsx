@@ -109,7 +109,7 @@ const UpdateChat = ({chatId, isOwner}: {chatId: number; isOwner: boolean}) => {
                 <FormLabel>
                   Chat Name:{' '}
                   {updateInfo.chatName && updateInfo.chatName.length < 3 && ' 3 characters min'}
-                  {updateInfo.chatName && updateInfo.chatName.length > 20 && ' 20 characters max'}
+                  {updateInfo.chatName && updateInfo.chatName.length > 12 && ' 12 characters max'}
                   {updateInfo.chatName &&
                     updateInfo.chatName === data.chatOverview.chatName &&
                     ' need to be different'}
@@ -117,7 +117,7 @@ const UpdateChat = ({chatId, isOwner}: {chatId: number; isOwner: boolean}) => {
                 <Input
                   type="text"
                   minLength={3}
-                  maxLength={20}
+                  maxLength={12}
                   value={updateInfo.chatName ?? ''}
                   onChange={e =>
                     setUpdateInfo({...updateInfo, chatName: e.target.value ?? undefined})

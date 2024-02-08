@@ -290,8 +290,12 @@ function GameInCreation({gameInCreationId}: GameInCreationProps) {
             <FormControl isRequired>
               <Flex justifyContent="space-between">
                 <FormLabel>
-                  Score to win:{updateInfo.scoreToWin && updateInfo.scoreToWin < 1 && ' 1 min'}
-                  {updateInfo.scoreToWin && updateInfo.scoreToWin > 20 && ' 20 max'}
+                  Score to win:
+                  {updateInfo.scoreToWin && updateInfo.scoreToWin < 1
+                    ? ' 1 min'
+                    : updateInfo.scoreToWin && updateInfo.scoreToWin > 20
+                      ? ' 20 max'
+                      : ''}
                 </FormLabel>
                 <Input
                   type="number"
@@ -315,9 +319,12 @@ function GameInCreation({gameInCreationId}: GameInCreationProps) {
                             ? 'orange'
                             : 'green'
                   }
-                  onChange={e => setUpdateInfo({...updateInfo, scoreToWin: Number(e.target.value)})}
-                  //bgColor='blue.400'
                   bgColor={bgColor}
+                  onChange={e => {
+                    const value = Number(e.target.value);
+                    if (value < 1 || value > 20) return;
+                    setUpdateInfo({...updateInfo, scoreToWin: value});
+                  }}
                 />
               </Flex>
             </FormControl>
