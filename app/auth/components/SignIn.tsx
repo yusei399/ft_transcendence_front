@@ -53,14 +53,14 @@ function SignIn() {
       {isLoading && <Loading />}
       <form onSubmit={e => signInUser(e)}>
         <FormControl isRequired>
-          <FormLabel color='blue.400'>
+          <FormLabel color="blue.400">
             Nickname: {signInData.nickname && signInData.nickname.length < 3 && ' 3 characters min'}
-            {signInData.nickname && signInData.nickname.length > 20 && ' 20 characters max'}
+            {signInData.nickname && signInData.nickname.length > 12 && ' 12 characters max'}
           </FormLabel>
           <Input
             type="text"
             minLength={3}
-            maxLength={20}
+            maxLength={12}
             name="nickname"
             autoComplete="username"
             value={signInData.nickname}
@@ -69,7 +69,7 @@ function SignIn() {
           />
         </FormControl>
         <FormControl isRequired>
-          <FormLabel color='blue.400'>
+          <FormLabel color="blue.400">
             Password:{signInData.password && signInData.password.length < 3 && ' 3 characters min'}
           </FormLabel>
           <Input

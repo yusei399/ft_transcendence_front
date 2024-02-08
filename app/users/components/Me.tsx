@@ -29,7 +29,7 @@ const Me = () => {
   };
 
   return (
-    <VStack p={5} spacing={4} boxShadow="md" borderRadius="lg" bg={bgColor} alignSelf="center">
+    <VStack p={5} spacing={4} boxShadow="md" borderRadius="lg" bg={bgColor}>
       <HStack justifyContent="center" alignContent="space-around" width="100%">
         <Avatar borderRadius="full" size="lg" src={data.avatarUrl ?? '/assets/sample.png'} />
         <Text fontSize="xl" fontWeight="bold">

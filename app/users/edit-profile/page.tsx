@@ -82,13 +82,13 @@ const EditProfile = () => {
         <FormLabel htmlFor="nickname" color="blue.400">
           {' '}
           Nickname: {updateInfo.nickname && updateInfo.nickname.length < 3 && ' 3 characters min'}
-          {updateInfo.nickname && updateInfo.nickname.length > 20 && ' 20 characters max'}
+          {updateInfo.nickname && updateInfo.nickname.length > 12 && ' 12 characters max'}
         </FormLabel>
         <Input
           id="nickname"
           type="text"
           minLength={3}
-          maxLength={20}
+          maxLength={12}
           value={updateInfo.nickname || ''}
           onChange={e => setUpdateInfo({...updateInfo, nickname: e.target.value})}
           placeholder={data.nickname}

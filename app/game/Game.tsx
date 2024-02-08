@@ -31,7 +31,7 @@ export default function Game() {
         />
       </Flex>
       <Flex height="calc(100% - 120px)" width="100%" justifyContent="center" align="center">
-        <GameCanvas gameData={currentGame}></GameCanvas>
+        <GameCanvas gameData={currentGame} />
       </Flex>
     </VStack>
   );

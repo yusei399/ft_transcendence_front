@@ -25,7 +25,7 @@ function GameModal({gameId}: {gameId: number}) {
 
   if (!currentData || !userId) return null;
 
-  const {player1, player2, status} = currentData;
+  const {player1, player2, status, rules} = currentData;
   const me = player1.profile.userId === userId ? player1 : player2;
   const opponent = player1.profile.userId === userId ? player2 : player1;
   const mySide = player1.profile.userId === userId ? 'left' : 'right';
@@ -56,14 +56,14 @@ function GameModal({gameId}: {gameId: number}) {
                   score={me.score}
                   side={mySide}
                   isMe={true}
-                  withChevron={false}
+                  isWinner={me.score >= rules.scoreToWin}
                 />
                 <InGamePlayerProfile
                   profile={opponent.profile}
                   score={opponent.score}
                   side={mySide === 'left' ? 'right' : 'left'}
                   isMe={false}
-                  withChevron={false}
+                  isWinner={opponent.score >= rules.scoreToWin}
                 />
               </Flex>
               <Heading size="md">{me.score > opponent.score ? 'You Win' : 'You Lose'}</Heading>

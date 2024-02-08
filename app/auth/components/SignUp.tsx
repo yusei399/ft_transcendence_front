@@ -38,15 +38,15 @@ function SignUp() {
       {isLoading && <Loading />}
       <form onSubmit={e => signUpUser(e)}>
         <FormControl isRequired>
-          <FormLabel color='blue.400'>
+          <FormLabel color="blue.400">
             Nickname: {signUpData.nickname && signUpData.nickname.length < 3 && ' 3 characters min'}
-            {signUpData.nickname && signUpData.nickname.length > 20 && ' 20 characters max'}
+            {signUpData.nickname && signUpData.nickname.length > 12 && ' 12 characters max'}
           </FormLabel>
           <Input
             type="text"
             name="nickname"
             minLength={3}
-            maxLength={20}
+            maxLength={12}
             autoComplete="username"
             value={signUpData.nickname}
             onChange={e => setSignUpData({...signUpData, nickname: e.target.value})}
@@ -54,7 +54,7 @@ function SignUp() {
           />
         </FormControl>
         <FormControl isRequired>
-          <FormLabel color='blue.400'>Email:</FormLabel>
+          <FormLabel color="blue.400">Email:</FormLabel>
           <Input
             type="email"
             name="email"
@@ -65,7 +65,7 @@ function SignUp() {
           />
         </FormControl>
         <FormControl isRequired>
-          <FormLabel color='blue.400'>
+          <FormLabel color="blue.400">
             Password:{signUpData.password && signUpData.password.length < 3 && ' 3 characters min'}
           </FormLabel>
           <Input
@@ -79,7 +79,7 @@ function SignUp() {
           />
         </FormControl>
         <FormControl>
-          <FormLabel color='blue.400'>Avatar</FormLabel>
+          <FormLabel color="blue.400">Avatar</FormLabel>
           <Input
             type="file"
             name="avatar"
