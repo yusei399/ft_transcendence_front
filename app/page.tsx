@@ -14,7 +14,7 @@ export default function IndexPage() {
       <Flex justifyContent="center" alignSelf="center">
         <Me />
       </Flex>
-      <Flex overflowY={{base: 'inherit', md: 'auto'}} justifyContent="center" alignSelf="center">
+      <Flex overflowY="auto" justifyContent="center" alignSelf="center">
         <MatchHistory />
       </Flex>
     </Flex>
