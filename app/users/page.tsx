@@ -1,24 +1,23 @@
 'use client';
 import InvitationsList from '../components/invitation/Invitation';
 import UsersList from './components/UsersList';
-import {HStack, StackDivider, VStack} from '@chakra-ui/react';
+import {Box, Flex, HStack, StackDivider} from '@chakra-ui/react';
 
 export default function IndexPage() {
   return (
     <HStack
       justifyContent="space-around"
       width="100%"
+      height="100%"
       align="flex-start"
       divider={<StackDivider borderColor="gray.400" />}>
-      <HStack as="section" spacing="12px">
+      <Box as="section" overflowY="auto" height="100%">
         <UsersList filter="withoutFriends" invitationButton="friend" />
-      </HStack>
-      <HStack as="section" spacing="12px">
-        <VStack>
-          <UsersList filter="friendsOnly" removeFriendButton={true} />
-          <InvitationsList kind_url="friend" />
-        </VStack>
-      </HStack>
+      </Box>
+      <Box as="section" flexDir="column" overflowY="auto" height="100%">
+        <UsersList filter="friendsOnly" removeFriendButton={true} />
+        <InvitationsList kind_url="friend" />
+      </Box>
     </HStack>
   );
 }

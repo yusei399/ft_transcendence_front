@@ -13,7 +13,21 @@ import {
   useUnblockUserMutation,
 } from '@/lib/redux/api';
 import {RepeatIcon, StarIcon} from '@chakra-ui/icons';
-import {Avatar, Button, Card, CardBody, CardHeader, Flex, Heading, Text} from '@chakra-ui/react';
+import {
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Flex,
+  HStack,
+  Heading,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
+import {format} from 'date-fns';
 import Link from 'next/link';
 import {useParams, useRouter} from 'next/navigation';
 import {useEffect} from 'react';
@@ -52,7 +66,12 @@ export default function IndexPage() {
 
   if (isLoading || !data || currentUserId === userId) return <Loading />;
 
-  const {nickname, avatarUrl, isOnline, isBlocked, hasBlockedMe, isFriend, status} = data;
+  const {nickname, avatarUrl, isOnline, isBlocked, hasBlockedMe, isFriend, status, achievements} =
+    data;
+
+  const formatDate = (dateString: Date) => {
+    return format(new Date(dateString), 'PPPpp');
+  };
 
   const blockUnblock = async () => {
     try {
@@ -112,74 +131,98 @@ export default function IndexPage() {
     <Flex
       flexDir="row"
       alignItems="center"
-      justifyContent="space-between"
-      width="90%"
-      overflowY="auto">
-      <MatchHistory userId={userId} />
-      <InvitationsList userId={userId} />
-      <Card
-        key={userId}
+      justifyContent="space-around"
+      width="100%"
+      height="100%">
+      <Box overflowY="auto" height="100%">
+        <MatchHistory userId={userId} />
+      </Box>
+      <Flex
+        flexFlow="wrap"
+        overflowY="auto"
+        height="100%"
         padding="8px"
-        alignItems={'center'}
-        rowGap="6px"
-        minWidth="200px"
-        height="fit-content"
-        maxH="100%">
-        <CardHeader padding={0}>
-          <Flex alignItems="center" justifyContent="space-around" gap="8px">
-            <RepeatIcon
-              color={isOnline ? 'green.500' : 'red.500'}
-              fontSize={isOnline ? '1.4em' : '1.2em'}
-            />
-            <Heading size="md" maxWidth={'80px'}>
-              {nickname}
-            </Heading>
-            <StarIcon
-              color={isFriend ? 'yellow.500' : 'gray.500'}
-              fontSize={isFriend ? '1.4em' : '1.2em'}
-            />
-          </Flex>
-        </CardHeader>
-        <CardBody padding="6px">
-          <Flex flexFlow="column" gap="12px">
-            <Avatar boxSize="80px" src={avatarUrl ?? '/assets/sample.png'} margin="auto" />
-            {isFriend && (
-              <Text
-                fontSize="1.4em"
-                fontStyle="italic"
-                textAlign="center"
-                color="teal.600"
-                fontWeight="700">
-                {
+        alignItems="center"
+        justify="center">
+        <Card
+          key={userId}
+          alignItems={'center'}
+          rowGap="6px"
+          padding="8px"
+          height="fit-content"
+          width="fit-content">
+          <CardHeader padding={0}>
+            <Flex alignItems="center" justifyContent="space-around" gap="8px">
+              <RepeatIcon
+                color={isOnline ? 'green.500' : 'red.500'}
+                fontSize={isOnline ? '1.4em' : '1.2em'}
+              />
+              <Heading size="md" maxWidth={'80px'}>
+                {nickname}
+              </Heading>
+              <StarIcon
+                color={isFriend ? 'yellow.500' : 'gray.500'}
+                fontSize={isFriend ? '1.4em' : '1.2em'}
+              />
+            </Flex>
+          </CardHeader>
+          <CardBody padding="6px">
+            <Flex flexFlow="column" gap="12px">
+              <Avatar boxSize="80px" src={avatarUrl ?? '/assets/sample.png'} margin="auto" />
+              {isFriend && (
+                <Text
+                  fontSize="1.4em"
+                  fontStyle="italic"
+                  textAlign="center"
+                  color="teal.600"
+                  fontWeight="700">
                   {
-                    offline: 'Offline',
-                    chilling: 'Chilling',
-                    onChat: 'Chatting',
-                    waitingForGame: 'Waiting for game',
-                    onGame: 'Playing game',
-                  }[status]
-                }
-              </Text>
-            )}
-            <Link href={`/users/${userId}/chat`} scroll={false}>
-              <Button colorScheme="orange" width={'100%'} isDisabled={hasBlockedMe || isBlocked}>
-                Direct Messages
+                    {
+                      offline: 'Offline',
+                      chilling: 'Chilling',
+                      onChat: 'Chatting',
+                      waitingForGame: 'Waiting for game',
+                      onGame: 'Playing game',
+                    }[status]
+                  }
+                </Text>
+              )}
+              <VStack spacing={2} align="stretch">
+                <Text fontSize="md" fontWeight="semibold">
+                  Achievements
+                </Text>
+                {achievements && achievements.length > 0 ? (
+                  achievements.map(achievement => (
+                    <HStack key={achievement.achievementId}>
+                      <Badge colorScheme="green">{achievement.name}</Badge>
+                      <Text fontSize="sm">{formatDate(achievement.obtainedAt)}</Text>
+                    </HStack>
+                  ))
+                ) : (
+                  <Text>No achievements yet</Text>
+                )}
+              </VStack>
+              <Link href={`/users/${userId}/chat`} scroll={false}>
+                <Button colorScheme="orange" width={'100%'} isDisabled={hasBlockedMe || isBlocked}>
+                  Direct Messages
+                </Button>
+              </Link>
+              {(isFriend && (
+                <Button colorScheme="red" onClick={() => handleRemoveFriend(userId, nickname)}>
+                  フレンド削除
+                </Button>
+              )) || <SendInvitationButton invitationKind="friend" userId={userId} />}
+              <Button
+                colorScheme={isBlocked ? 'green' : 'red'}
+                onClick={blockUnblock}
+                isDisabled={hasBlockedMe && !isBlocked}>
+                {isBlocked ? 'Unblock' : hasBlockedMe ? 'Blocked' : 'Block'}
               </Button>
-            </Link>
-            {(isFriend && (
-              <Button colorScheme="red" onClick={() => handleRemoveFriend(userId, nickname)}>
-                フレンド削除
-              </Button>
-            )) || <SendInvitationButton invitationKind="friend" userId={userId} />}
-            <Button
-              colorScheme={isBlocked ? 'green' : 'red'}
-              onClick={blockUnblock}
-              isDisabled={hasBlockedMe && !isBlocked}>
-              {isBlocked ? 'Unblock' : hasBlockedMe ? 'Blocked' : 'Block'}
-            </Button>
-          </Flex>
-        </CardBody>
-      </Card>
+            </Flex>
+          </CardBody>
+        </Card>
+        <InvitationsList userId={userId} />
+      </Flex>
     </Flex>
   );
 }

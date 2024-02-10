@@ -25,7 +25,7 @@ function InvitationsList(props: InvitationsListProps) {
     <HStack spacing="8px" wrap="wrap" justifyContent="center" padding="12px" flexDir="column">
       <Heading size="lg">招待</Heading>
       {invitations.length === 0 && <Heading size="lg">招待はありません</Heading>}
-      <Flex flexFlow="row">
+      <Flex flexFlow="wrap" gap="12px" justifyContent="center">
         {invitations.map(invitation => {
           const {sender, receiver, invitationId, kind} = invitation;
           const isSender = sender.userId === userId;

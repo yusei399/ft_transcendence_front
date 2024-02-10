@@ -1,22 +1,25 @@
-import {Flex} from '@chakra-ui/react';
+import {Box, Flex} from '@chakra-ui/react';
 import Me from './users/components/Me';
 import MatchHistory from './game/components/MatchHistory';
 
 export default function IndexPage() {
   return (
-    <Flex
-      direction={{base: 'column', md: 'row'}}
-      overflowY={{base: 'auto', md: 'unset'}}
-      justify="space-around"
+    <Box
+      display={{base: 'box', md: 'flex'}}
+      overflowY="auto"
+      flexFlow={{base: 'column', md: 'row'}}
+      justifyContent="space-around"
       width="100%"
-      height="100%"
-      gap="24px">
-      <Flex justifyContent="center" alignSelf="center">
+      height="100%">
+      <Flex
+        alignSelf="center"
+        justifyContent="center"
+        margin={{base: '0 0 24px 0', md: '0 0 24px 0'}}>
         <Me />
       </Flex>
-      <Flex overflowY={{base: 'inherit', md: 'auto'}} justifyContent="center" alignSelf="center">
+      <Flex justifyContent="center" overflowY={{md: 'auto'}}>
         <MatchHistory />
       </Flex>
-    </Flex>
+    </Box>
   );
 }

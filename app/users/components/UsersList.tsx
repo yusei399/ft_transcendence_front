@@ -5,7 +5,17 @@ import {useAllUsersQuery, useGetFriendQuery, useRemoveFriendMutation} from '@/li
 import {setNotification, userIdSelector, useAppDispatch, useAppSelector} from '@/lib/redux';
 import {UserPublicProfile} from '@/shared/HttpEndpoints/interfaces';
 import {RepeatIcon, StarIcon} from '@chakra-ui/icons';
-import {Avatar, Button, Card, CardBody, CardHeader, Flex, HStack, Heading} from '@chakra-ui/react';
+import {
+  Avatar,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Flex,
+  HStack,
+  Heading,
+  VStack,
+} from '@chakra-ui/react';
 import SeeUserProfileButton from './SeeUserProfileButton';
 
 type UsersListProps = {
@@ -96,49 +106,51 @@ function UsersList({
         : 'ユーザー一覧';
 
   return (
-    <HStack spacing="8px" wrap="wrap" justifyContent="center" padding="12px" flexDir="column">
+    <VStack spacing="8px" justifyContent="center" padding="12px">
       <Heading size="lg">{title}</Heading>
       {usersList.length === 0 && <Heading size="md">{userNotFoundMessage}</Heading>}
-      {usersList.map(user => {
-        const {userId, nickname, avatarUrl, isOnline, isFriend} = user;
-        return (
-          <Card key={userId} padding="8px" alignItems={'center'} rowGap="6px">
-            <CardHeader padding={0}>
-              <Flex alignItems="center" justifyContent="space-around" gap="8px">
-                <RepeatIcon
-                  color={isOnline ? 'green.500' : 'red.500'}
-                  fontSize={isOnline ? '1.4em' : '1.2em'}
+      <Flex flexFlow="wrap" gap="12px" justifyContent="center">
+        {usersList.map(user => {
+          const {userId, nickname, avatarUrl, isOnline, isFriend} = user;
+          return (
+            <Card key={userId} padding="8px" alignItems={'center'} rowGap="6px">
+              <CardHeader padding={0}>
+                <Flex alignItems="center" justifyContent="space-around" gap="8px">
+                  <RepeatIcon
+                    color={isOnline ? 'green.500' : 'red.500'}
+                    fontSize={isOnline ? '1.4em' : '1.2em'}
+                  />
+                  <Heading size="md" maxWidth={'80px'}>
+                    {nickname}
+                  </Heading>
+                  <StarIcon
+                    color={isFriend ? 'yellow.500' : 'gray.500'}
+                    fontSize={isFriend ? '1.4em' : '1.2em'}
+                  />
+                </Flex>
+              </CardHeader>
+              <CardBody padding="6px">
+                <Avatar boxSize="80px" src={avatarUrl ?? '/assets/sample.png'} />
+              </CardBody>
+              {invitationButton && (
+                <SendInvitationButton
+                  invitationKind={invitationButton}
+                  userId={userId}
+                  targetChatId={targetChatId}
+                  targetGameId={targetGameId}
                 />
-                <Heading size="md" maxWidth={'80px'}>
-                  {nickname}
-                </Heading>
-                <StarIcon
-                  color={isFriend ? 'yellow.500' : 'gray.500'}
-                  fontSize={isFriend ? '1.4em' : '1.2em'}
-                />
-              </Flex>
-            </CardHeader>
-            <CardBody padding="6px">
-              <Avatar boxSize="80px" src={avatarUrl ?? '/assets/sample.png'} />
-            </CardBody>
-            {invitationButton && (
-              <SendInvitationButton
-                invitationKind={invitationButton}
-                userId={userId}
-                targetChatId={targetChatId}
-                targetGameId={targetGameId}
-              />
-            )}
-            {removeFriendButton && isFriend && (
-              <Button colorScheme="red" onClick={() => handleRemoveFriend(userId, nickname)}>
-                フレンド削除
-              </Button>
-            )}
-            <SeeUserProfileButton userId={userId} />
-          </Card>
-        );
-      })}
-    </HStack>
+              )}
+              {removeFriendButton && isFriend && (
+                <Button colorScheme="red" onClick={() => handleRemoveFriend(userId, nickname)}>
+                  フレンド削除
+                </Button>
+              )}
+              <SeeUserProfileButton userId={userId} />
+            </Card>
+          );
+        })}
+      </Flex>
+    </VStack>
   );
 }
 
