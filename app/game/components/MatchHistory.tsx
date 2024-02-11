@@ -31,7 +31,7 @@ function MatchHistory({userId}: MatchHistoryProps) {
   }
 
   return (
-    <VStack spacing={4} alignItems="stretch" maxWidth="max-content" padding="8px">
+    <VStack spacing={4} maxWidth="max-content" padding="8px">
       {plays.map(play => {
         const currentPlayer =
           play.player1.profile.userId === playerId ? play.player1 : play.player2;

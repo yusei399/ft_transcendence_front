@@ -6,6 +6,7 @@ COPY package*.json yarn.lock tsconfig*.json next.config.mjs ./
 COPY app/ ./app
 COPY lib/ ./lib
 COPY services ./services
+COPY public ./public
 COPY shared ./shared
 
 RUN yarn install && \
