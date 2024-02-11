@@ -77,7 +77,13 @@ const EditProfile = () => {
   const has2FA = updateInfo.hasSet2Fa ?? data.hasSet2Fa;
 
   return (
-    <VStack as="form" action="submit" onSubmit={e => handleSubmit(e)} spacing={4} p={5}>
+    <VStack
+      as="form"
+      alignSelf="center"
+      action="submit"
+      onSubmit={e => handleSubmit(e)}
+      spacing={4}
+      p={5}>
       <FormControl isInvalid={(editError as ErrorType)?.status === 409}>
         <FormLabel htmlFor="nickname" color="blue.400">
           {' '}

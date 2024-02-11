@@ -1,7 +1,7 @@
 'use client';
 import InvitationsList from '../components/invitation/Invitation';
 import UsersList from './components/UsersList';
-import {Box, Flex, HStack, StackDivider} from '@chakra-ui/react';
+import {Box, HStack, StackDivider} from '@chakra-ui/react';
 
 export default function IndexPage() {
   return (

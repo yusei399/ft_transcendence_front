@@ -21,6 +21,7 @@ import {
   Card,
   CardBody,
   CardHeader,
+  Center,
   Flex,
   HStack,
   Heading,
@@ -128,29 +129,15 @@ export default function IndexPage() {
   };
 
   return (
-    <Flex
-      flexDir="row"
-      alignItems="center"
+    <Box
+      display={{base: 'box', md: 'flex'}}
+      overflowY="auto"
+      flexFlow={{base: 'column', md: 'row'}}
       justifyContent="space-around"
       width="100%"
       height="100%">
-      <Box overflowY="auto" height="100%">
-        <MatchHistory userId={userId} />
-      </Box>
-      <Flex
-        flexFlow="wrap"
-        overflowY="auto"
-        height="100%"
-        padding="8px"
-        alignItems="center"
-        justify="center">
-        <Card
-          key={userId}
-          alignItems={'center'}
-          rowGap="6px"
-          padding="8px"
-          height="fit-content"
-          width="fit-content">
+      <Center flexFlow="wrap" overflowY={{md: 'auto'}} padding="8px">
+        <Card key={userId} rowGap="6px" padding="8px" height="fit-content" width="fit-content">
           <CardHeader padding={0}>
             <Flex alignItems="center" justifyContent="space-around" gap="8px">
               <RepeatIcon
@@ -222,7 +209,12 @@ export default function IndexPage() {
           </CardBody>
         </Card>
         <InvitationsList userId={userId} />
-      </Flex>
-    </Flex>
+      </Center>
+      <Box overflowY={{md: 'auto'}} justifyContent="center">
+        <Center>
+          <MatchHistory userId={userId} />
+        </Center>
+      </Box>
+    </Box>
   );
 }
