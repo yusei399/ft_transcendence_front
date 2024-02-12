@@ -4,10 +4,11 @@ import Loading from '@/app/components/global/Loading';
 import {useVerify42Mutation} from '@/lib/redux/api';
 import {useAppDispatch} from '@/lib/redux';
 import {useRouter, useSearchParams} from 'next/navigation';
-import {useEffect} from 'react';
+import {useEffect, useRef} from 'react';
 import {logUserIn} from '../components/logUser';
 
 export default function IndexPage() {
+  const initialized = useRef<string | undefined>(undefined);
   const searchParams = useSearchParams();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -18,7 +19,8 @@ export default function IndexPage() {
   const [verify42] = useVerify42Mutation();
 
   useEffect(() => {
-    if (!userId || !code) return;
+    if (!userId || !code || initialized.current === code) return;
+    initialized.current = code;
     verify42([{userId, code}])
       .unwrap()
       .then(res =>
@@ -29,10 +31,7 @@ export default function IndexPage() {
         ),
       )
       .then(() => router.replace('/', {scroll: false}))
-      .catch(err => {
-        console.error(err);
-        router.replace('/auth', {scroll: false});
-      });
+      .catch(() => router.replace('/auth', {scroll: false}));
   }, [userId, code]);
 
   return <Loading />;

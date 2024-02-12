@@ -1,4 +1,4 @@
-import {Flex, Heading} from '@chakra-ui/react';
+import {Flex} from '@chakra-ui/react';
 import ChatList from './components/ChatList';
 import CreateChat from './components/CreateChat';
 import InvitationsList from '../components/invitation/Invitation';

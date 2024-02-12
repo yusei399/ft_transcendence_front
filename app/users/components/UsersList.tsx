@@ -5,17 +5,7 @@ import {useAllUsersQuery, useGetFriendQuery, useRemoveFriendMutation} from '@/li
 import {setNotification, userIdSelector, useAppDispatch, useAppSelector} from '@/lib/redux';
 import {UserPublicProfile} from '@/shared/HttpEndpoints/interfaces';
 import {RepeatIcon, StarIcon} from '@chakra-ui/icons';
-import {
-  Avatar,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Flex,
-  HStack,
-  Heading,
-  VStack,
-} from '@chakra-ui/react';
+import {Avatar, Button, Card, CardBody, CardHeader, Flex, Heading, VStack} from '@chakra-ui/react';
 import SeeUserProfileButton from './SeeUserProfileButton';
 
 type UsersListProps = {

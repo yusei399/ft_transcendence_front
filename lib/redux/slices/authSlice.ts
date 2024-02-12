@@ -1,24 +1,25 @@
 /* Core */
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
 import {RootState} from '../store';
+import {JwtData} from '@/shared/HttpEndpoints/types';
 
 interface AuthSliceState {
-  authToken?: string;
-  refreshToken?: string;
+  authToken?: JwtData;
+  refreshToken?: JwtData;
   auth2FACode?: string;
   isSignUp?: boolean;
   userId?: number;
 }
 
 export type SetTokensPayload = {
-  authToken: string;
-  refreshToken: string;
+  authToken: JwtData;
+  refreshToken: JwtData;
   userId: number;
 };
 
 export type RefreshPayload = {
-  authToken: string;
-  refreshToken: string;
+  authToken: JwtData;
+  refreshToken: JwtData;
 };
 
 const initialState: AuthSliceState = {

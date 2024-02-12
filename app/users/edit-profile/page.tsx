@@ -96,6 +96,7 @@ const EditProfile = () => {
           minLength={3}
           maxLength={12}
           value={updateInfo.nickname || ''}
+          autoComplete="username"
           onChange={e => setUpdateInfo({...updateInfo, nickname: e.target.value})}
           placeholder={data.nickname}
           bg={bgColor}
@@ -110,6 +111,7 @@ const EditProfile = () => {
             id="email"
             type="email"
             value={updateInfo.email || ''}
+            autoComplete="email"
             onChange={e => setUpdateInfo({...updateInfo, email: e.target.value})}
             placeholder={data.email}
             bg={bgColor}
@@ -153,6 +155,7 @@ const EditProfile = () => {
           type="password"
           minLength={3}
           value={updateInfo.password || ''}
+          autoComplete="new-password"
           onChange={e => setUpdateInfo({...updateInfo, password: e.target.value})}
           placeholder="your secret password"
           bg={bgColor}

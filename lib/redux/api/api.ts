@@ -1,18 +1,8 @@
 import {createApi} from '@reduxjs/toolkit/query/react';
 import {axiosBaseQuery} from './utils';
 
-export type TagType =
-  | 'User'
-  | 'OtherUsers'
-  | 'Friend'
-  | 'ChatOverView'
-  | 'ChatInfo'
-  | 'DirectMessage'
-  | 'Invitation'
-  | 'Game'
-  | 'GameMatchMaking'
-  | 'GameInCreation';
 const tagTypes = [
+  'Auth',
   'User',
   'OtherUsers',
   'Friend',
@@ -25,9 +15,11 @@ const tagTypes = [
   'GameInCreation',
 ] as const;
 
+export type TagType = (typeof tagTypes)[number];
+
 export const backEndApi = createApi({
   reducerPath: 'backEndApi',
   baseQuery: axiosBaseQuery({baseUrl: 'http://localhost:3333'}),
   tagTypes,
-  endpoints: build => ({}),
+  endpoints: () => ({}),
 });

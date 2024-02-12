@@ -6,6 +6,7 @@ const chatApi = backEndApi.injectEndpoints({
   endpoints: build => ({
     getAllChats: createQuery(build, HttpChat.getAll.requestSender, ['ChatOverView']),
     getAllDirectMessage: createQuery(build, HttpChat.getDirectMessages.requestSender, [
+      'Auth',
       'OtherUsers',
       'DirectMessage',
     ]),

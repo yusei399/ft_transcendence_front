@@ -10,6 +10,7 @@ import {
   Notification,
   clearNotifications,
 } from '@/lib/redux';
+import {backEndApi} from '@/lib/redux/api';
 
 export const logUserIn = (
   dispatch: AppDispatch,
@@ -18,6 +19,7 @@ export const logUserIn = (
 ) => {
   dispatch(login(payload));
   dispatch(clear2fa());
+  dispatch(backEndApi.util.resetApiState());
 
   let title: Notification['title'];
   let description: Notification['description'];
@@ -46,7 +48,7 @@ export const setLogInError = (dispatch: AppDispatch, errorMsg: LogErrorMessages)
   dispatch(setNotification({title, description, status}));
 };
 
-export const resetSlicesAndLogout = (dispatch: AppDispatch) => {
+export const resetApiAndLogout = (dispatch: AppDispatch) => {
   dispatch(clearRedirectTo());
   dispatch(resetCurrentGame());
   dispatch(clearNotifications());

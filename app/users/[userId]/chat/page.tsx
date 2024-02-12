@@ -26,8 +26,8 @@ export default function IndexPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const userId = Number(params.userId);
-  const {data: me, error: meError} = useGetMeQuery([]);
-  const {data, error, isLoading} = useGetAllDirectMessageQuery([userId], {
+  const {data: me} = useGetMeQuery([]);
+  const {data, error} = useGetAllDirectMessageQuery([userId], {
     skip: isNaN(userId),
   });
   const [toSend, setToSend] = useState('');
@@ -116,7 +116,7 @@ export default function IndexPage() {
           const {messageId, senderId, createdAt, messageContent} = message;
           const isSender = senderId === me.userId;
           const profile = isSender ? me : userProfile;
-          const {userId, nickname, avatarUrl} = profile;
+          const {nickname, avatarUrl} = profile;
           return (
             <ListItem
               key={messageId}

@@ -10,8 +10,12 @@ const invitationApi = backEndApi.injectEndpoints({
     updateInvitation: createMutation(build, HttpInvitation.updateInvitation.requestSender, [
       'Invitation',
     ]),
-    getInvitations: createQuery(build, HttpInvitation.getInvitations.requestSender, ['Invitation']),
+    getInvitations: createQuery(build, HttpInvitation.getInvitations.requestSender, [
+      'Auth',
+      'Invitation',
+    ]),
     getInvitationFromTo: createQuery(build, HttpInvitation.getInvitationsFromTo.requestSender, [
+      'Auth',
       'Invitation',
     ]),
   }),

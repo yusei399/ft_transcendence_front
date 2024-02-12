@@ -23,7 +23,7 @@ function GameModal({gameId}: {gameId: number}) {
   const dispatch = useAppDispatch();
   const {onClose} = useDisclosure();
 
-  if (!currentData || !userId) return null;
+  if (!currentData || !userId || currentData.status === 'IN_PROGRESS') return null;
 
   const {player1, player2, status, rules} = currentData;
   const me = player1.profile.userId === userId ? player1 : player2;

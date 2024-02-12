@@ -109,7 +109,7 @@ const UpdateChatMember = ({chatId, isAdmin, participation}: UpdateChatMemberProp
                     placeholder={now}
                   />
                 </FormControl>
-                {participation?.mutedUntil && (
+                {mutedUntil && (
                   <Checkbox
                     size={'lg'}
                     isChecked={updateInfo.mutedUntil === null}
@@ -118,7 +118,7 @@ const UpdateChatMember = ({chatId, isAdmin, participation}: UpdateChatMemberProp
                     onChange={e =>
                       setUpdateInfo({
                         ...updateInfo,
-                        mutedUntil: e.target.checked ? null : participation.mutedUntil,
+                        mutedUntil: e.target.checked ? null : mutedUntil,
                       })
                     }>
                     unmute

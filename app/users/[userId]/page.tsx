@@ -170,6 +170,7 @@ export default function IndexPage() {
                       onChat: 'Chatting',
                       waitingForGame: 'Waiting for game',
                       onGame: 'Playing game',
+                      lookingForChat: 'Looking for chat',
                     }[status]
                   }
                 </Text>
@@ -210,11 +211,9 @@ export default function IndexPage() {
         </Card>
         <InvitationsList userId={userId} />
       </Center>
-      <Box overflowY={{md: 'auto'}} justifyContent="center">
-        <Center>
-          <MatchHistory userId={userId} />
-        </Center>
-      </Box>
+      <Flex justifyContent="center" overflowY={{md: 'auto'}}>
+        <MatchHistory userId={userId} />
+      </Flex>
     </Box>
   );
 }

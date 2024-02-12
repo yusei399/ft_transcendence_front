@@ -7,15 +7,23 @@ const gameApi = backEndApi.injectEndpoints({
     joinWaitList: createMutation(build, HttpGame.joinWaitList.requestSender, ['GameMatchMaking']),
     leaveGame: createMutation(build, HttpGame.leaveGame.requestSender, ['GameMatchMaking', 'Game']),
     getMatchMakingInfo: createQuery(build, HttpGame.getMatchMakingInfo.requestSender, [
+      'Auth',
       'GameMatchMaking',
     ]),
     updateGameInCreation: createMutation(build, HttpGame.updateInCreation.requestSender, [
       'GameInCreation',
     ]),
     acceptGameInCreation: createMutation(build, HttpGame.acceptInCreation.requestSender, []),
-    getGameInCreation: createQuery(build, HttpGame.getInCreation.requestSender, ['GameInCreation']),
+    getGameInCreation: createQuery(build, HttpGame.getInCreation.requestSender, [
+      'Auth',
+      'GameInCreation',
+    ]),
     getGameHistory: createQuery(build, HttpGame.getMatchHistory.requestSender, ['GameMatchMaking']),
-    getGame: createQuery(build, HttpGame.getGame.requestSender, ['GameMatchMaking', 'Game']),
+    getGame: createQuery(build, HttpGame.getGame.requestSender, [
+      'Auth',
+      'GameMatchMaking',
+      'Game',
+    ]),
   }),
   // @ts-ignore
   overrideExisting: module.hot?.status() === 'apply',

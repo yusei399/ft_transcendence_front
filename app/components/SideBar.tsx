@@ -4,7 +4,8 @@ import {Button, Stack, StackDivider} from '@chakra-ui/react';
 import {ChatIcon, ArrowForwardIcon, TriangleUpIcon, AtSignIcon} from '@chakra-ui/icons';
 import Link from 'next/link';
 import {useAppDispatch} from '@/lib/redux';
-import {resetSlicesAndLogout} from '../auth/components/logUser';
+import {resetApiAndLogout} from '../auth/components/logUser';
+import {backEndApi} from '@/lib/redux/api';
 
 export default function Sidebar() {
   const dispatch = useAppDispatch();
@@ -19,7 +20,11 @@ export default function Sidebar() {
       justifyContent="space-between"
       fontSize={{base: '1.2em', lg: '1.4em'}}
       wrap="wrap">
-      <Button onClick={() => resetSlicesAndLogout(dispatch)}>
+      <Button
+        onClick={() => {
+          resetApiAndLogout(dispatch);
+          dispatch(backEndApi.util.resetApiState());
+        }}>
         <ArrowForwardIcon color="white" />
         Sign Out
       </Button>

@@ -61,9 +61,10 @@ function Navigation({children}: {children: React.ReactNode}) {
   useEffect(() => {
     if (!isSocketConnected) return;
     let status: UserStatusType = 'chilling';
-    if (pathname.includes('/chat')) status = 'onChat';
-    else if (pathname.includes('/game')) status = 'onGame';
-
+    if (pathname.match(/\/game\/\d+/)) status = 'onGame';
+    else if (pathname.match(/\/game/)) status = 'waitingForGame';
+    else if (pathname.match(/\/chat\/\d+/)) status = 'onChat';
+    else if (pathname.match(/\/chat/)) status = 'lookingForChat';
     SocketService.emit('setUserStatus', {status});
   }, [pathname, isSocketConnected]);
 
